@@ -7,5 +7,10 @@ export const routes: Routes = [
     title: 'Ouverture de caisses · Met Opening',
     loadComponent: () => import('./pages/case-opening/case-opening').then((m) => m.CaseOpening),
   },
+{
+    path: 'opening',
+    title: 'Ouverture en cours · Met Opening',
+    loadComponent: () => import('./pages/opening/opening').then((m) => m.Opening),
+  },
   { path: '**', redirectTo: 'case-opening' },
 ];

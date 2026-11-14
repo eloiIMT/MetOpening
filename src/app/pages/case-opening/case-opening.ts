@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { OPEN_AMOUNTS, OpenAmount, STOCK_MAX } from '../../core/game-rules';
+import { OpeningService } from '../../core/opening.service';
 import { StockService } from '../../core/stock.service';
 import { formatCountdown } from '../../core/stock-rules';
 import { CaseCrate } from '../../shared/case-crate/case-crate';
@@ -13,6 +14,8 @@ import { CaseCrate } from '../../shared/case-crate/case-crate';
 })
 export class CaseOpening {
   private readonly stockService = inject(StockService);
+  private readonly openingService = inject(OpeningService);
+  private readonly router = inject(Router);
 
   protected readonly stockMax = STOCK_MAX;
   protected readonly stock = this.stockService.stock;
@@ -64,6 +67,8 @@ export class CaseOpening {
   }
 
   protected open(): void {
-    this.stockService.consume(this.amount());
+    if (this.openingService.openFreeCases(this.amount())) {
+      this.router.navigate(['/opening']);
+    }
   }
 }

@@ -1,0 +1,27 @@
+<section class="loading-check glass">
+  @if (result(); as opening) {
+    <h1>{{ title() }}</h1>
+    @for (drawnCase of opening.cases; track $index; let caseIndex = $index) {
+      <h2 class="loading-check__case">Caisse {{ caseIndex + 1 }}</h2>
+      <ul class="loading-check__grid">
+        @for (item of drawnCase; track $index) {
+          <li class="loading-check__item">
+            <img class="loading-check__image" [src]="item.artwork.imageSmall" [alt]="item.artwork.title" />
+            <span class="loading-check__rarity" [style.color]="'var(--rarity-' + item.artwork.rarity + ')'">
+              {{ item.artwork.rarity }}
+            </span>
+            @if (item.isNew) {
+              <span class="loading-check__new">Nouveau</span>
+            }
+            <span>{{ item.artwork.title }}</span>
+          </li>
+        }
+      </ul>
+    }
+    <a class="btn-primary tap" routerLink="/case-opening">Retour aux caisses</a>
+  } @else {
+    <h1>Aucune ouverture en cours</h1>
+    <p>Choisissez des caisses à ouvrir sur l'écran d'ouverture.</p>
+    <a class="btn-primary tap" routerLink="/case-opening">Aller à l'ouverture de caisses</a>
+  }
+</section>

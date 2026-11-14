@@ -1,5 +1,5 @@
 :root {
-  --font-display: "Bodoni Moda", Georgia, serif;
+  --font-logo: "Bodoni Moda", Georgia, serif;
   --font-body: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
   --font-stencil: "Stardos Stencil", "Impact", sans-serif; 
 
@@ -25,10 +25,6 @@ body {
   font-family: var(--font-body);
   background: var(--mat);
   color: var(--ink);
-}
-
-h1, h2, h3 {
-  font-family: var(--font-display);
 }
 
 ::selection {
@@ -130,6 +126,9 @@ button:disabled {
 .btn-primary {
   min-height: 56px;
   box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 14px 32px;
   border: 0;
   border-radius: 999px;
