@@ -1,0 +1,19 @@
+<header class="nav-bar">
+  <nav class="nav-list" aria-label="Navigation principale">
+    @for (link of links; track link.path) {
+      <a class="nav-pill tap" [routerLink]="link.path">
+        <svg class="nav-pill__icon" viewBox="0 0 512 512" width="22" height="22" aria-hidden="true" focusable="false">
+          <path fill="currentColor" [attr.d]="link.icon"></path>
+        </svg>
+        <span>{{ link.label }}</span>
+      </a>
+    }
+  </nav>
+
+  <div class="nav-tools">
+    <p class="nav-coins">
+      <span class="sr-only">Solde : </span>
+      <span>320 pièces</span>
+    </p>
+  </div>
+</header>
