@@ -40,7 +40,7 @@
     <label class="filters__field">
       Tri
       <select class="filters__select" (change)="pickSort($event)">
-        @for (option of sortOptions; track option.id) {
+        @for (option of sortOptions(); track option.id) {
           <option [value]="option.id" [selected]="option.id === sort()">{{ option.label }}</option>
         }
       </select>
@@ -60,7 +60,7 @@
   <section class="results" aria-label="Œuvres">
     <div class="results__bar glass">
       <label class="results__search">
-        <span class="sr-only">Rechercher par titre ou par artiste</span>
+        <span class="sr-only">{{ searchLabel() }}</span>
         <input
           type="search"
           class="results__input"
@@ -79,7 +79,7 @@
       <p class="results__message glass">Chargement des œuvres…</p>
     } @else if (cards().length > 0) {
       <ul class="results__grid">
-        @for (card of cards(); track card.artwork.id) {
+        @for (card of shownCards(); track card.artwork.id) {
           <li class="results__cell">
             <app-artwork-card
               [artwork]="card.artwork"
@@ -90,6 +90,12 @@
           </li>
         }
       </ul>
+      @if (hasMore()) {
+        <div #sentinel class="results__more glass">
+          <p class="results__progress">{{ progressLabel() }}</p>
+          <button type="button" class="btn-secondary tap results__more-button" (click)="loadMore()">{{ moreLabel() }}</button>
+        </div>
+      }
     } @else {
       <div class="results__empty glass">
         @if (items().length === 0 && mode() === 'collection') {
@@ -97,7 +103,7 @@
           <p class="results__empty-text">Ouvrez des caisses pour découvrir vos premières œuvres.</p>
           <a class="btn-primary tap" routerLink="/case-opening">Ouvrir une caisse</a>
         } @else {
-          <h2 class="results__empty-title">Aucune œuvre ne correspond</h2>
+          <h2 class="results__empty-title">Aucune œuvre trouvée</h2>
           <p class="results__empty-text">Essayez une autre recherche ou d'autres filtres.</p>
           <button type="button" class="btn-secondary tap" (click)="clearFilters()">Effacer les filtres</button>
         }

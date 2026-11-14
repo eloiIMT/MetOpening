@@ -201,6 +201,28 @@
     display: grid;
   }
 
+  &__more {
+    padding: 14px 20px;
+    border-radius: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px 16px;
+  }
+
+  &__progress {
+    margin: 0;
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__more-button {
+    min-height: 44px;
+    padding: 8px 20px;
+    font-size: 15px;
+  }
+
   &__message {
     margin: 0;
     padding: 24px;

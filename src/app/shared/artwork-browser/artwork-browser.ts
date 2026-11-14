@@ -1,4 +1,15 @@
-import { Component, ElementRef, booleanAttribute, computed, input, output, signal, viewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  booleanAttribute,
+  computed,
+  effect,
+  input,
+  linkedSignal,
+  output,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Artwork, DepartmentId } from '../../core/artwork';
 import { BrowseCriteria, BrowserItem, SortId, browse, filterItems, summarizeDuplicates } from '../../core/browse';
@@ -15,6 +26,9 @@ const SORT_OPTIONS: readonly { id: SortId; label: string }[] = [
   { id: 'title', label: 'Titre (A → Z)' },
 ];
 
+const PAGE_SIZE = 24;
+const PRELOAD_MARGIN = '600px 0px';
+
 @Component({
   selector: 'app-artwork-browser',
   imports: [ArtworkCard, RouterLink],
@@ -28,6 +42,7 @@ export class ArtworkBrowser {
   readonly sellDuplicates = output<readonly Artwork[]>();
 
   private readonly saleDialog = viewChild<ElementRef<HTMLDialogElement>>('saleDialog');
+  private readonly sentinel = viewChild<ElementRef<HTMLElement>>('sentinel');
 
   protected readonly query = signal('');
   protected readonly rarities = signal<ReadonlySet<Rarity>>(new Set());
@@ -35,7 +50,13 @@ export class ArtworkBrowser {
   protected readonly sort = signal<SortId>('rarity-desc');
   protected readonly filtersOpen = signal(false);
 
-  protected readonly sortOptions = SORT_OPTIONS;
+  protected readonly sortOptions = computed(() =>
+    this.mode() === 'search' ? SORT_OPTIONS.filter((option) => option.id !== 'recent') : SORT_OPTIONS,
+  );
+
+  protected readonly searchLabel = computed(() =>
+    this.mode() === 'search' ? 'Rechercher dans toutes les œuvres' : 'Rechercher dans la collection',
+  );
   protected readonly departmentOptions = (Object.keys(DEPARTMENT_LABEL) as DepartmentId[])
     .map((value) => ({ value, label: DEPARTMENT_LABEL[value] }))
     .sort((a, b) => a.label.localeCompare(b.label, 'fr'));
@@ -52,10 +73,47 @@ export class ArtworkBrowser {
   protected readonly cards = computed(() =>
     this.visible().map((item) => ({
       artwork: item.artwork,
-      badge: item.copies > 1 ? `×${item.copies}` : null,
+      badge: this.badgeFor(item.copies),
       greyed: item.copies === 0,
     })),
   );
+
+  private readonly limit = linkedSignal({
+    source: this.criteria,
+    computation: () => PAGE_SIZE,
+  });
+
+  protected readonly shownCards = computed(() => this.cards().slice(0, this.limit()));
+  protected readonly hasMore = computed(() => this.limit() < this.cards().length);
+
+  protected readonly progressLabel = computed(
+    () => `${this.shownCards().length} sur ${formatCount(this.cards().length, 'œuvre affichée', 'œuvres affichées')}`,
+  );
+
+  protected readonly moreLabel = computed(() => {
+    const next = Math.min(PAGE_SIZE, this.cards().length - this.limit());
+    return `Afficher ${formatCount(next, 'œuvre', 'œuvres')} de plus`;
+  });
+
+  constructor() {
+    effect((onCleanup) => {
+      this.limit();
+      const element = this.sentinel()?.nativeElement;
+      if (!element) {
+        return;
+      }
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((entry) => entry.isIntersecting)) {
+            this.loadMore();
+          }
+        },
+        { rootMargin: PRELOAD_MARGIN },
+      );
+      observer.observe(element);
+      onCleanup(() => observer.disconnect());
+    });
+  }
 
   protected readonly rarityOptions = computed(() => {
     const pool = filterItems(this.items(), this.criteria(), true);
@@ -120,6 +178,19 @@ export class ArtworkBrowser {
 
   protected pickSort(event: Event): void {
     this.sort.set((event.target as HTMLSelectElement).value as SortId);
+  }
+
+  private badgeFor(copies: number): string | null {
+    if (this.mode() === 'search') {
+      return copies > 0 ? 'Possédée' : null;
+    }
+    return copies > 1 ? `×${copies}` : null;
+  }
+
+  protected loadMore(): void {
+    if (this.hasMore()) {
+      this.limit.update((limit) => limit + PAGE_SIZE);
+    }
   }
 
   protected clearFilters(): void {

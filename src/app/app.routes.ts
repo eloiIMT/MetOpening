@@ -29,5 +29,11 @@ export const routes: Routes = [
     data: { stickyHeader: true },
     loadComponent: () => import('./pages/view-collection/view-collection').then((m) => m.ViewCollection),
   },
+  {
+    path: 'search-all-items',
+    title: 'Rechercher dans les œuvres · Met Opening',
+    data: { stickyHeader: true },
+    loadComponent: () => import('./pages/search-all-items/search-all-items').then((m) => m.SearchAllItems),
+  },
   { path: '**', redirectTo: 'case-opening' },
 ];

@@ -1,5 +1,5 @@
 import { Component, DestroyRef, ElementRef, computed, effect, inject, signal, viewChild, viewChildren } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { sortByRarity } from '../../core/collection-rules';
 import { RARITY_RANK, Rarity } from '../../core/game-rules';
 import { RARITY_LABEL } from '../../core/labels';
@@ -11,6 +11,8 @@ const MIN_STAGGER_MS = 70;
 const MAX_STAGGER_MS = 160;
 const FLIP_AFTER_ARRIVAL_MS = 320;
 const TOP_SUSPENSE_MS = 280;
+const FLIP_DURATION_MS = 560;
+const END_PAUSE_MS = 700;
 const TRACK_PADDING_PX = 24;
 const PLAIN_LIGHT = '#FFF1C9';
 
@@ -22,8 +24,11 @@ const PLAIN_LIGHT = '#FFF1C9';
 })
 export class Opening {
   private readonly destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
   private readonly reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  private readonly startedAt = performance.now();
   private counter: ReturnType<typeof setInterval> | undefined;
+  private leave: ReturnType<typeof setTimeout> | undefined;
 
   private readonly track = viewChild<ElementRef<HTMLElement>>('track');
   private readonly cardItems = viewChildren<ElementRef<HTMLElement>>('cardItem');
@@ -100,6 +105,10 @@ export class Opening {
   constructor() {
     effect(() => this.followLatestCard());
 
+    this.destroyRef.onDestroy(() => {
+      clearInterval(this.counter);
+      clearTimeout(this.leave);
+    });
     if (this.result() === null) {
       return;
     }
@@ -111,10 +120,7 @@ export class Opening {
       this.revealNext();
       this.counter = setInterval(() => this.revealNext(), this.stagger());
     }, FIRST_CARD_DELAY_MS);
-    this.destroyRef.onDestroy(() => {
-      clearTimeout(start);
-      clearInterval(this.counter);
-    });
+    this.destroyRef.onDestroy(() => clearTimeout(start));
   }
 
   private revealNext(): void {
@@ -128,6 +134,14 @@ export class Opening {
     clearInterval(this.counter);
     this.done.set(true);
     this.revealed.set(this.total());
+    this.scheduleLeave();
+  }
+
+  private scheduleLeave(): void {
+    const lastCard = this.revealCards().at(-1);
+    const lastFlipEnd = (lastCard?.flipDelay ?? 0) + FLIP_DURATION_MS + END_PAUSE_MS;
+    const remaining = this.reduceMotion ? 0 : Math.max(0, lastFlipEnd - (performance.now() - this.startedAt));
+    this.leave = setTimeout(() => this.router.navigateByUrl(this.destination(), { replaceUrl: true }), remaining);
   }
 
   private followLatestCard(): void {

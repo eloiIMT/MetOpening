@@ -1,0 +1,10 @@
+<div class="page-bg search-bg" aria-hidden="true"></div>
+
+<section class="search" aria-labelledby="search-title">
+  <header class="search__header glass">
+    <h1 id="search-title" class="search__title">Toutes les œuvres</h1>
+    <p class="search__stats">{{ statsLabel() }}</p>
+  </header>
+
+  <app-artwork-browser mode="search" [items]="items()" [loading]="loading()" />
+</section>
