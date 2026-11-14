@@ -32,7 +32,7 @@ export class ArtworkBrowser {
   protected readonly query = signal('');
   protected readonly rarities = signal<ReadonlySet<Rarity>>(new Set());
   protected readonly department = signal<DepartmentId | null>(null);
-  protected readonly sort = signal<SortId>('rarity-asc');
+  protected readonly sort = signal<SortId>('rarity-desc');
   protected readonly filtersOpen = signal(false);
 
   protected readonly sortOptions = SORT_OPTIONS;

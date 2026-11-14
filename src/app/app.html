@@ -5,3 +5,6 @@
 @if (!immersive()) {
   <app-site-footer />
 }
+@if (openArtworkId(); as id) {
+  <app-artwork-dialog [artworkId]="id" (closed)="closeArtwork()" />
+}

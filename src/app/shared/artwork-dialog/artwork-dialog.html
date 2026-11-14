@@ -1,0 +1,89 @@
+<dialog
+  #dialog
+  class="artwork-dialog"
+  aria-labelledby="artwork-dialog-title"
+  (cancel)="onCancel($event)"
+  (click)="onDialogClick($event)"
+>
+  <ng-template #closeButton>
+    <button type="button" class="detail__close btn-secondary tap" aria-label="Fermer la fiche" (click)="requestClose()">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
+        <path d="M17 7L7 17M7 7l10 10"></path>
+      </svg>
+    </button>
+  </ng-template>
+
+  <div class="detail">
+    @if (loading()) {
+      <div class="detail__top">
+        <p class="detail__message">Chargement de l'œuvre…</p>
+        <ng-container [ngTemplateOutlet]="closeButton" />
+      </div>
+    } @else if (artwork(); as item) {
+      <article class="detail__body" [style.--tier-color]="'var(--rarity-' + item.rarity + ')'">
+        <div class="detail__media">
+          <img class="detail__image" [src]="item.imageSmall" [alt]="altText()" decoding="async" />
+        </div>
+
+        <div class="detail__info">
+          <div class="detail__top">
+            <p class="detail__tier">
+              <span class="detail__dot" aria-hidden="true"></span>
+              {{ tierLabel() }}
+            </p>
+            <ng-container [ngTemplateOutlet]="closeButton" />
+          </div>
+          <h2 id="artwork-dialog-title" class="detail__title">{{ item.title }}</h2>
+          <p class="detail__artist">{{ item.artist ?? 'Artiste non identifié' }}</p>
+          <p class="detail__date">{{ item.date ?? 'Date inconnue' }}</p>
+
+          <dl class="detail__record">
+            @for (row of record(); track row.label) {
+              <dt>{{ row.label }}</dt>
+              <dd>{{ row.value }}</dd>
+            }
+          </dl>
+
+          <div class="detail__ownership">
+            @if (copies() > 0) {
+              <p class="detail__copies">{{ copiesLabel() }}</p>
+              @if (copies() > 1) {
+                <button type="button" class="btn-primary tap detail__sell" (click)="askSale()">{{ saleLabel() }}</button>
+              }
+            } @else {
+              <p class="detail__copies">Pas dans votre collection</p>
+              <p class="detail__hint">
+                Elle peut sortir d'une caisse classique ou de la caisse « {{ departmentLabel() }} ».
+                <a routerLink="/case-shop">Voir la boutique</a>
+              </p>
+            }
+            <p class="detail__notice" role="status">{{ saleMessage() }}</p>
+            <a class="detail__met" [href]="item.metUrl" target="_blank" rel="noopener">
+              Voir sur le site du Met
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <path d="M14 5h5v5M19 5l-8 8M10 7H6a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-4"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </article>
+    } @else {
+      <div class="detail__missing">
+        <div class="detail__top">
+          <h2 id="artwork-dialog-title" class="detail__title">Œuvre introuvable</h2>
+          <ng-container [ngTemplateOutlet]="closeButton" />
+        </div>
+        <p class="detail__hint">Cette œuvre n'existe pas dans le jeu.</p>
+      </div>
+    }
+  </div>
+</dialog>
+
+<dialog #saleDialog class="sale-dialog" aria-labelledby="artwork-sale-title">
+  <h2 id="artwork-sale-title" class="sale-dialog__title">Vendre les doubles ?</h2>
+  <p class="sale-dialog__text">{{ saleQuestion() }}</p>
+  <div class="sale-dialog__actions">
+    <button type="button" class="btn-secondary tap" (click)="closeSale()">Annuler</button>
+    <button type="button" class="btn-primary tap" (click)="confirmSale()">Vendre</button>
+  </div>
+</dialog>

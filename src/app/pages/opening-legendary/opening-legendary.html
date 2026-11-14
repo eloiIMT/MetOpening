@@ -36,7 +36,7 @@
             Légendaire suivante ({{ entry.step + 2 }}/{{ legendaries().length }})
           </button>
         }
-        <a class="legendary__link" [href]="entry.artwork.metUrl" target="_blank" rel="noopener">Voir sur le site du Met</a>
+        <a class="legendary__link" [routerLink]="[]" [queryParams]="{ artwork: entry.artwork.id }">Voir la fiche de l'œuvre</a>
       </div>
     </div>
   </section>

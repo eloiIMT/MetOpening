@@ -4,10 +4,18 @@ import { ActivatedRouteSnapshot, Data, NavigationEnd, Router, RouterOutlet } fro
 import { filter, map } from 'rxjs';
 import { MainNav } from './layout/main-nav/main-nav';
 import { SiteFooter } from './layout/site-footer/site-footer';
+import { ArtworkDialog } from './shared/artwork-dialog/artwork-dialog';
+
+interface NavigationState {
+  readonly data: Data;
+  readonly artworkId: string | null;
+}
+
+const ARTWORK_PARAM = 'artwork';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, MainNav, SiteFooter],
+  imports: [RouterOutlet, MainNav, SiteFooter, ArtworkDialog],
   templateUrl: './app.html',
   styleUrl: './app.scss',
   host: {
@@ -17,22 +25,33 @@ import { SiteFooter } from './layout/site-footer/site-footer';
 export class App {
   private readonly router = inject(Router);
 
-  private readonly routeData = toSignal(
+  private readonly navigation = toSignal(
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
-      map(() => deepestData(this.router.routerState.snapshot.root)),
+      map(() => readNavigation(this.router.routerState.snapshot.root)),
     ),
-    { initialValue: {} as Data },
+    { initialValue: { data: {}, artworkId: null } as NavigationState },
   );
 
-  protected readonly immersive = computed(() => this.routeData()['immersive'] === true);
-  protected readonly stickyHeader = computed(() => this.routeData()['stickyHeader'] === true);
+  protected readonly immersive = computed(() => this.navigation().data['immersive'] === true);
+  protected readonly stickyHeader = computed(() => this.navigation().data['stickyHeader'] === true);
+  protected readonly openArtworkId = computed(() => this.navigation().artworkId);
+
+  protected closeArtwork(): void {
+    const tree = this.router.parseUrl(this.router.url);
+    const { [ARTWORK_PARAM]: _closed, ...others } = tree.queryParams;
+    tree.queryParams = others;
+    this.router.navigateByUrl(tree);
+  }
 }
 
-function deepestData(root: ActivatedRouteSnapshot): Data {
+function readNavigation(root: ActivatedRouteSnapshot): NavigationState {
   let route = root;
   while (route.firstChild) {
     route = route.firstChild;
   }
-  return route.data;
+  return {
+    data: route.data,
+    artworkId: root.queryParamMap.get(ARTWORK_PARAM),
+  };
 }

@@ -231,41 +231,6 @@
   }
 }
 
-.sale-dialog {
-  width: min(420px, calc(100vw - 32px));
-  box-sizing: border-box;
-  padding: 24px;
-  border: 0;
-  border-radius: 16px;
-  color: var(--ink);
-  box-shadow: 0 24px 60px rgba(20, 20, 25, .3);
-
-  &::backdrop {
-    background: rgba(20, 20, 25, .45);
-    -webkit-backdrop-filter: blur(4px);
-    backdrop-filter: blur(4px);
-  }
-
-  &__title {
-    margin: 0 0 8px;
-    font-size: 22px;
-    font-weight: 700;
-  }
-
-  &__text {
-    margin: 0 0 20px;
-    font-size: 16px;
-    line-height: 1.45;
-  }
-
-  &__actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    gap: 10px;
-  }
-}
-
 @media (max-width: 899.98px) {
   .browser {
     grid-template-columns: minmax(0, 1fr);

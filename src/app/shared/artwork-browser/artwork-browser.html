@@ -81,7 +81,12 @@
       <ul class="results__grid">
         @for (card of cards(); track card.artwork.id) {
           <li class="results__cell">
-            <app-artwork-card [artwork]="card.artwork" [badge]="card.badge" [greyed]="card.greyed" />
+            <app-artwork-card
+              [artwork]="card.artwork"
+              [badge]="card.badge"
+              [greyed]="card.greyed"
+              openable
+            />
           </li>
         }
       </ul>

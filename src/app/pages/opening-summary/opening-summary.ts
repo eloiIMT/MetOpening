@@ -59,8 +59,7 @@ export class OpeningSummary {
       return {
         artwork: item.artwork,
         badge: `${item.isNew ? 'Nouvelle' : 'Double'}${copies}`,
-        note: formatCoins(item.copies * RESALE_VALUE[item.artwork.rarity]),
-        delay: Math.min(FIRST_CARD_DELAY_MS + index * CARD_STAGGER_MS, MAX_CARD_DELAY_MS),
+        note: formatCoins(item.copies * RESALE_VALUE[item.artwork.rarity]),        delay: Math.min(FIRST_CARD_DELAY_MS + index * CARD_STAGGER_MS, MAX_CARD_DELAY_MS),
       };
     }),
   );

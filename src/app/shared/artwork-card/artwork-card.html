@@ -34,7 +34,13 @@
     </div>
   </div>
 
-  @if (link(); as target) {
-    <a class="card__open tap" [routerLink]="target" [attr.aria-label]="openLabel()"></a>
+  @if (openable()) {
+    <a
+      class="card__open tap"
+      [routerLink]="[]"
+      [queryParams]="openQuery()"
+      queryParamsHandling="merge"
+      [attr.aria-label]="openLabel()"
+    ></a>
   }
 </article>

@@ -14,8 +14,10 @@ export class ArtworkCard {
   readonly artwork = input.required<Artwork>();
   readonly badge = input<string | null>(null);
   readonly note = input<string | null>(null);
-  readonly link = input<string | null>(null);
+  readonly openable = input(false, { transform: booleanAttribute });
   readonly greyed = input(false, { transform: booleanAttribute });
+
+  protected readonly openQuery = computed(() => ({ artwork: this.artwork().id }));
 
   protected readonly artist = computed(() => this.artwork().artist ?? 'Artiste non identifié');
   protected readonly date = computed(() => this.artwork().date ?? 'Date inconnue');

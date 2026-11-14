@@ -22,7 +22,7 @@
       <ul class="summary__grid">
         @for (card of cards(); track card.artwork.id) {
           <li class="summary__cell" [style.animation-delay.ms]="card.delay">
-            <app-artwork-card [artwork]="card.artwork" [badge]="card.badge" [note]="card.note" />
+            <app-artwork-card [artwork]="card.artwork" [badge]="card.badge" [note]="card.note" openable />
           </li>
         }
       </ul>
