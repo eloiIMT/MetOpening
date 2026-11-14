@@ -3,7 +3,15 @@
 <section class="opening" aria-labelledby="opening-title">
   <div class="opening__crate">
     <div class="opening__crate-frame">
-      <app-case-crate [stencil]="stencil()" />
+      <button
+        type="button"
+        class="opening__crate-button"
+        [disabled]="amount() === 0"
+        [attr.aria-label]="openLabel()"
+        (click)="open()"
+      >
+        <app-case-crate [stencil]="stencil()" decorative />
+      </button>
       @if (amount() > 1) {
         <span class="opening__badge" aria-hidden="true">×{{ amount() }}</span>
       }

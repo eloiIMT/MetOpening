@@ -28,6 +28,25 @@
     justify-content: center;
   }
 
+  &__crate-button {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: 12px;
+    background: none;
+    cursor: pointer;
+    transition: transform 160ms var(--ease-out);
+
+    &:active:not(:disabled) {
+      transform: scale(.98);
+    }
+
+    &:disabled {
+      cursor: default;
+    }
+  }
+
   &__crate-frame {
     position: relative;
     width: min(500px, 100%);
@@ -225,5 +244,18 @@
   }
   .opening__shop-link:hover {
     color: var(--ink-2);
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .opening__crate-button:not(:disabled):hover {
+    transform: translateY(-4px) rotate(-1deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .opening__crate-button,
+  .opening__crate-button:active:not(:disabled) {
+    transition: none;
+    transform: none;
   }
 }
