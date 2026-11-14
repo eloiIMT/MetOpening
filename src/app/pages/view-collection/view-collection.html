@@ -1,0 +1,21 @@
+<div class="page-bg collection-bg" aria-hidden="true"></div>
+
+<section class="collection" aria-labelledby="collection-title">
+  <header class="collection__header glass">
+    <h1 id="collection-title" class="collection__title">Ma collection</h1>
+    <p class="collection__stats">{{ statsLabel() }}</p>
+  </header>
+
+  <p class="collection__notice" role="status">
+    @if (saleMessage(); as message) {
+      <span class="collection__toast label-glass">{{ message }}</span>
+    }
+  </p>
+
+  <app-artwork-browser
+    mode="collection"
+    [items]="items()"
+    [loading]="loading()"
+    (sellDuplicates)="sell($event)"
+  />
+</section>

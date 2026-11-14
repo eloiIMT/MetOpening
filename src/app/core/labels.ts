@@ -1,4 +1,19 @@
+import { DepartmentId } from './artwork';
 import { Rarity } from './game-rules';
+
+export const DEPARTMENT_LABEL: Readonly<Record<DepartmentId, string>> = {
+  'european-paintings': 'Peintures européennes',
+  'drawings-prints': 'Dessins et estampes',
+  'american-wing': 'Aile américaine',
+  'european-sculpture': 'Sculpture et arts décoratifs européens',
+  'asian-art': 'Art asiatique',
+  photographs: 'Photographies',
+  'musical-instruments': 'Instruments de musique',
+  'greek-roman': 'Art grec et romain',
+  'islamic-art': 'Art islamique',
+  'egyptian-art': 'Art égyptien',
+  'arms-armor': 'Armes et armures',
+};
 
 export const RARITY_LABEL: Readonly<Record<Rarity, string>> = {
   common: 'Commune',

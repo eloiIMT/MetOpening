@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, booleanAttribute, computed, inject, input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { formatCoins } from '../../core/labels';
 import { WalletService } from '../../core/wallet.service';
@@ -16,8 +16,13 @@ interface NavLink {
   imports: [RouterLink, RouterLinkActive],
   templateUrl: './main-nav.html',
   styleUrl: './main-nav.scss',
+  host: {
+    '[class.is-sticky]': 'sticky()',
+  },
 })
 export class MainNav {
+  readonly sticky = input(false, { transform: booleanAttribute });
+
   private readonly wallet = inject(WalletService);
 
   protected readonly links: readonly NavLink[] = [

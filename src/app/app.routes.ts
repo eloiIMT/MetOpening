@@ -23,5 +23,11 @@ export const routes: Routes = [
     title: 'Résumé de l’ouverture · Met Opening',
     loadComponent: () => import('./pages/opening-summary/opening-summary').then((m) => m.OpeningSummary),
   },
+  {
+    path: 'view-collection',
+    title: 'Ma collection · Met Opening',
+    data: { stickyHeader: true },
+    loadComponent: () => import('./pages/view-collection/view-collection').then((m) => m.ViewCollection),
+  },
   { path: '**', redirectTo: 'case-opening' },
 ];

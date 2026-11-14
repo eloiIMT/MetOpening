@@ -1,11 +1,20 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { Artwork } from './artwork';
-import { DrawnArtwork, OwnedEntry, OwnedMap, addToCollection } from './collection-rules';
+import {
+  DrawnArtwork,
+  OwnedEntry,
+  OwnedMap,
+  ResaleResult,
+  addToCollection,
+  resellDuplicates,
+} from './collection-rules';
+import { WalletService } from './wallet.service';
 
 export const COLLECTION_STORAGE_KEY = 'met-opening.collection';
 
 @Injectable({ providedIn: 'root' })
 export class CollectionService {
+  private readonly wallet = inject(WalletService);
   private readonly entries = signal<OwnedMap>(readStoredCollection());
 
   readonly owned = this.entries.asReadonly();
@@ -16,6 +25,16 @@ export class CollectionService {
     this.entries.set(owned);
     saveCollection(owned);
     return drawn;
+  }
+
+  sellDuplicates(artworks: readonly Artwork[]): ResaleResult {
+    const result = resellDuplicates(this.entries(), artworks);
+    if (result.sold > 0) {
+      this.entries.set(result.owned);
+      saveCollection(result.owned);
+      this.wallet.credit(result.coins);
+    }
+    return result;
   }
 
   countOf(id: number): number {

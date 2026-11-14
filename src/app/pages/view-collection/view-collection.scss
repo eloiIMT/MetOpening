@@ -1,0 +1,59 @@
+:host {
+  flex: 1;
+  display: flex;
+}
+
+.collection-bg {
+  background-image: url("/backgrounds/rayonnages.jpg");
+}
+
+.collection {
+  flex: 1;
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 8px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  &__header {
+    padding: 18px 24px;
+    border-radius: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px 24px;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: clamp(26px, 2.8vw, 36px);
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  &__stats {
+    margin: 0;
+    font-size: 16px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__notice {
+    margin: 0;
+    display: flex;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  &__toast {
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+}

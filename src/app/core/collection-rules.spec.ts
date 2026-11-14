@@ -1,5 +1,5 @@
 import { Artwork } from './artwork';
-import { OwnedMap, addToCollection, sortByRarity } from './collection-rules';
+import { OwnedMap, addToCollection, resellDuplicates, sortByRarity } from './collection-rules';
 import { Rarity } from './game-rules';
 
 function artwork(id: number, rarity: Rarity = 'common'): Artwork {
@@ -64,5 +64,38 @@ describe('sortByRarity', () => {
   it('keeps the draw order between artworks of the same rarity', () => {
     const { drawn } = addToCollection({}, [artwork(1, 'rare'), artwork(2, 'common'), artwork(3, 'rare')], NOW);
     expect(sortByRarity(drawn).map((item) => item.artwork.id)).toEqual([2, 1, 3]);
+  });
+});
+
+describe('resellDuplicates', () => {
+  const owned: OwnedMap = {
+    1: { count: 3, firstObtainedAt: NOW },
+    2: { count: 1, firstObtainedAt: NOW },
+    3: { count: 2, firstObtainedAt: NOW },
+  };
+
+  it('sells the extra copies and always keeps one', () => {
+    const result = resellDuplicates(owned, [artwork(1, 'common'), artwork(3, 'legendary')]);
+    expect(result.owned[1].count).toBe(1);
+    expect(result.owned[3].count).toBe(1);
+    expect(result.sold).toBe(2 + 1);
+    expect(result.coins).toBe(2 * 5 + 1 * 1000);
+  });
+
+  it('ignores artworks with a single copy or not owned', () => {
+    const result = resellDuplicates(owned, [artwork(2, 'rare'), artwork(99, 'epic')]);
+    expect(result.sold).toBe(0);
+    expect(result.coins).toBe(0);
+    expect(result.owned[2].count).toBe(1);
+  });
+
+  it('only sells the artworks it is given', () => {
+    const result = resellDuplicates(owned, [artwork(3, 'rare')]);
+    expect(result.owned[1].count).toBe(3);
+  });
+
+  it('does not modify the previous collection', () => {
+    resellDuplicates(owned, [artwork(1, 'common')]);
+    expect(owned[1].count).toBe(3);
   });
 });
