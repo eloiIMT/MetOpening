@@ -1,0 +1,27 @@
+<section class="summary glass">
+  @if (result(); as opening) {
+    <h1 class="summary__title">Résumé provisoire</h1>
+    @for (drawnCase of opening.cases; track $index; let caseIndex = $index) {
+      <h2 class="summary__case">Caisse {{ caseIndex + 1 }}</h2>
+      <ul class="summary__grid">
+        @for (item of drawnCase; track $index) {
+          <li class="summary__item">
+            <img class="summary__image" [src]="item.artwork.imageSmall" [alt]="item.artwork.title" />
+            <span class="summary__rarity" [style.color]="'var(--rarity-' + item.artwork.rarity + ')'">
+              {{ rarityLabel[item.artwork.rarity] }}
+            </span>
+            @if (item.isNew) {
+              <span class="summary__new">Nouveau</span>
+            }
+            <span>{{ item.artwork.title }}</span>
+          </li>
+        }
+      </ul>
+    }
+    <a class="btn-primary tap" routerLink="/case-opening">Retour aux caisses</a>
+  } @else {
+    <h1 class="summary__title">Aucune ouverture en cours</h1>
+    <p>Choisissez des caisses à ouvrir sur l'écran d'ouverture.</p>
+    <a class="btn-primary tap" routerLink="/case-opening">Aller à l'ouverture de caisses</a>
+  }
+</section>

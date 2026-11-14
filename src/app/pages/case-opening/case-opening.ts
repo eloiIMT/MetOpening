@@ -68,7 +68,7 @@ export class CaseOpening {
 
   protected open(): void {
     if (this.openingService.openFreeCases(this.amount())) {
-      this.router.navigate(['/opening']);
+      this.router.navigate(['/case-opening/open']);
     }
   }
 }
