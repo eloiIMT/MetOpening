@@ -1,5 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { formatCoins } from '../../core/labels';
 import { WalletService } from '../../core/wallet.service';
 import { NAV_ICONS } from '../nav-icons';
 
@@ -26,8 +27,5 @@ export class MainNav {
     { path: '/search-all-items', label: 'Rechercher dans les œuvres', shortLabel: 'Recherche', icon: NAV_ICONS.search },
   ];
 
-  protected readonly coinsLabel = computed(() => {
-    const coins = this.wallet.coins();
-    return `${coins.toLocaleString('fr-FR')} ${coins > 1 ? 'pièces' : 'pièce'}`;
-  });
+  protected readonly coinsLabel = computed(() => formatCoins(this.wallet.coins()));
 }

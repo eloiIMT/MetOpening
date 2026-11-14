@@ -144,4 +144,24 @@ button:disabled {
   .btn-primary:not(:disabled):hover {
     background: var(--accent-hover);
   }
+
+  .btn-secondary:not(:disabled):hover {
+    background: var(--mat);
+  }
+}
+
+.btn-secondary {
+  min-height: 52px;
+  box-sizing: border-box;
+  padding: 12px 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  background: #FFFFFF;
+  color: var(--ink);
+  font: 600 17px var(--font-body);
+  text-decoration: none;
+  cursor: pointer;
 }

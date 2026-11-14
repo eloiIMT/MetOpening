@@ -100,7 +100,7 @@
         <span class="progress__counter">{{ revealed() }} / {{ total() }} œuvres</span>
       </div>
       <p class="sr-only" role="status">{{ status() }}</p>
-      <a class="panel__cta tap" [class.panel__cta--done]="done()" routerLink="/case-opening/summary">
+      <a class="panel__cta tap" [class.panel__cta--done]="done()" [routerLink]="destination()">
         {{ done() ? 'Découvrir vos œuvres' : "Passer l'animation" }}
       </a>
     </div>

@@ -1,27 +1,46 @@
-<section class="summary glass">
-  @if (result(); as opening) {
-    <h1 class="summary__title">Résumé provisoire</h1>
-    @for (drawnCase of opening.cases; track $index; let caseIndex = $index) {
-      <h2 class="summary__case">Caisse {{ caseIndex + 1 }}</h2>
+<div class="page-bg page-bg--blur summary-bg" aria-hidden="true"></div>
+
+@if (recap(); as data) {
+  <section class="summary" aria-labelledby="summary-title">
+    <div class="summary__header glass">
+      <div class="summary__intro">
+        <h1 id="summary-title" class="summary__title">{{ heading() }}</h1>
+        <ul class="tally" aria-label="Répartition par rareté">
+          @for (entry of tally(); track entry.rarity) {
+            <li class="tally__item">
+              <span class="tally__dot" aria-hidden="true" [style.background]="entry.color"></span>
+              {{ entry.label }}
+            </li>
+          }
+        </ul>
+      </div>
+      <p class="summary__value">Valeur de revente : <strong>{{ valueLabel() }}</strong></p>
+    </div>
+
+    <div class="summary__group">
+      <h2 class="summary__group-title label-glass">{{ groupTitle() }}</h2>
       <ul class="summary__grid">
-        @for (item of drawnCase; track $index) {
-          <li class="summary__item">
-            <img class="summary__image" [src]="item.artwork.imageSmall" [alt]="item.artwork.title" />
-            <span class="summary__rarity" [style.color]="'var(--rarity-' + item.artwork.rarity + ')'">
-              {{ rarityLabel[item.artwork.rarity] }}
-            </span>
-            @if (item.isNew) {
-              <span class="summary__new">Nouveau</span>
-            }
-            <span>{{ item.artwork.title }}</span>
+        @for (card of cards(); track card.artwork.id) {
+          <li class="summary__cell" [style.animation-delay.ms]="card.delay">
+            <app-artwork-card [artwork]="card.artwork" [badge]="card.badge" [note]="card.note" />
           </li>
         }
       </ul>
-    }
-    <a class="btn-primary tap" routerLink="/case-opening">Retour aux caisses</a>
-  } @else {
-    <h1 class="summary__title">Aucune ouverture en cours</h1>
-    <p>Choisissez des caisses à ouvrir sur l'écran d'ouverture.</p>
-    <a class="btn-primary tap" routerLink="/case-opening">Aller à l'ouverture de caisses</a>
-  }
-</section>
+    </div>
+
+    <div class="summary__actions">
+      <a class="btn-primary tap" routerLink="/case-opening">Ouvrir une autre caisse</a>
+      <a class="btn-secondary tap" routerLink="/view-collection">Voir la collection</a>
+    </div>
+  </section>
+} @else {
+  <section class="summary summary--empty">
+    <div class="summary__header glass">
+      <div class="summary__intro">
+        <h1 class="summary__title">Aucune ouverture à résumer</h1>
+        <p class="summary__value">Ouvrez des caisses pour découvrir de nouvelles œuvres.</p>
+      </div>
+      <a class="btn-primary tap" routerLink="/case-opening">Aller à l'ouverture de caisses</a>
+    </div>
+  </section>
+}

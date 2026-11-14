@@ -85,7 +85,6 @@
   gap: 12px;
   overflow-x: auto;
   overscroll-behavior-x: contain;
-  scroll-snap-type: x proximity;
   scrollbar-width: thin;
   -webkit-mask-image: linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
   mask-image: linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
@@ -94,7 +93,6 @@
     flex: none;
     width: 104px;
     perspective: 700px;
-    scroll-snap-align: center;
     animation: card-slide 520ms var(--ease-out) backwards;
 
     &:first-child {

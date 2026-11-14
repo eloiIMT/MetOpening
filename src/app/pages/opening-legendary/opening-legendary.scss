@@ -1,0 +1,217 @@
+:host {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+}
+
+.legendary {
+  flex: 1;
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 48px 32px 24px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 40px 64px;
+
+  &__art {
+    flex: 0 1 780px;
+    min-width: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    animation: curtain 780ms cubic-bezier(.77, 0, .175, 1) both;
+  }
+
+  &__image {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 72vh;
+    box-shadow:
+      0 32px 72px rgba(20, 20, 25, .3),
+      0 6px 18px rgba(20, 20, 25, .16);
+  }
+
+  &__info {
+    flex: 0 1 360px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  &__heading {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: clamp(32px, 3.6vw, 52px);
+    font-weight: 700;
+    line-height: 1.05;
+    text-wrap: balance;
+    animation: rise 440ms var(--ease-out) 620ms both;
+  }
+
+  &__meta {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.4;
+    color: var(--ink-2);
+    animation: rise 440ms var(--ease-out) 700ms both;
+  }
+
+  &__tier-block {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__rule {
+    height: 2px;
+    width: 100%;
+    background: var(--rarity-legendary);
+    transform-origin: left center;
+    animation: draw 560ms var(--ease-out) 860ms both;
+  }
+
+  &__tier {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    animation: rise 440ms var(--ease-out) 940ms both;
+  }
+
+  &__tier-name {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  &__dot {
+    width: 14px;
+    height: 14px;
+    flex: none;
+    border-radius: 50%;
+    background: var(--rarity-legendary);
+    outline: 2px solid color-mix(in srgb, var(--rarity-legendary) 50%, transparent);
+    outline-offset: 2px;
+  }
+
+  &__facts {
+    margin: 6px 0 0;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 4px 14px;
+    font-size: 15px;
+
+    dt {
+      color: var(--ink-2);
+    }
+
+    dd {
+      margin: 0;
+      font-weight: 600;
+    }
+  }
+
+  &__number {
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__actions {
+    padding-top: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 18px;
+    animation: rise 360ms var(--ease-out) 1080ms backwards;
+  }
+
+  &__cta {
+    min-height: 52px;
+    box-sizing: border-box;
+    padding: 12px 30px;
+    display: inline-flex;
+    align-items: center;
+    border: 0;
+    border-radius: 999px;
+    background: var(--ink);
+    color: #FFFFFF;
+    font: 600 17px var(--font-body);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  &__link {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  &__credit {
+    margin: 0;
+    min-height: 44px;
+    padding: 8px 24px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: var(--ink-2);
+    text-align: center;
+  }
+}
+
+@keyframes curtain {
+  from { clip-path: inset(0 50% 0 50%); transform: scale(1.015); }
+  to { clip-path: inset(-240px); transform: none; }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes draw {
+  from { transform: scaleX(0); }
+  to { transform: none; }
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .legendary__cta:hover {
+    background: var(--ink-3);
+  }
+
+  .legendary__link:hover {
+    color: var(--ink-2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .legendary__art,
+  .legendary__title,
+  .legendary__meta,
+  .legendary__rule,
+  .legendary__tier,
+  .legendary__actions {
+    animation: fade 200ms ease-out both;
+  }
+}

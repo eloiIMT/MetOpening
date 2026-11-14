@@ -1,65 +1,132 @@
 :host {
   flex: 1;
-  display: block;
-  padding: 24px;
+  display: flex;
+}
+
+.summary-bg {
+  background-image: url("/backgrounds/escalier-met.jpg");
 }
 
 .summary {
-  max-width: 960px;
+  flex: 1;
+  width: 100%;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 24px;
-  border-radius: 16px;
+  box-sizing: border-box;
+  padding: 8px 24px 24px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
+  gap: 18px;
+
+  &--empty {
+    justify-content: center;
+  }
+
+  &__header {
+    padding: 20px 24px;
+    border-radius: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 32px;
+  }
+
+  &__intro {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
 
   &__title {
     margin: 0;
-    font-size: 26px;
+    font-size: clamp(24px, 2.6vw, 34px);
+    font-weight: 700;
+    line-height: 1.1;
+    text-wrap: balance;
   }
 
-  &__case {
-    margin: 8px 0 0;
-    font-size: 20px;
+  &__value {
+    margin: 0;
+    font-size: 16px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__group-title {
+    align-self: flex-start;
+    margin: 0;
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 16px;
+    font-weight: 600;
   }
 
   &__grid {
-    width: 100%;
     margin: 0;
     padding: 0;
     list-style: none;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr));
+    gap: 16px;
+  }
+
+  &__cell {
+    display: grid;
+    animation: summary-enter 360ms var(--ease-out) backwards;
+  }
+
+  &__actions {
+    padding-top: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 12px;
   }
+}
+
+.tally {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  font-size: 15px;
 
   &__item {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
-    font-size: 13px;
+    align-items: center;
+    gap: 7px;
+    font-variant-numeric: tabular-nums;
   }
 
-  &__image {
-    width: 100%;
-    height: 140px;
-    object-fit: cover;
-    border-radius: 8px;
-    background: var(--line);
+  &__dot {
+    width: 10px;
+    height: 10px;
+    flex: none;
+    border-radius: 50%;
   }
+}
 
-  &__rarity {
-    font-weight: 700;
-  }
+@keyframes summary-enter {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
 
-  &__new {
-    align-self: flex-start;
-    padding: 2px 8px;
-    border-radius: 999px;
-    background: var(--ink);
-    color: #FFFFFF;
-    font-size: 12px;
-    font-weight: 700;
+@media (prefers-reduced-motion: reduce) {
+  .summary__cell {
+    animation-name: summary-fade;
   }
+}
+
+@keyframes summary-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

@@ -69,9 +69,20 @@ export class Opening {
     }),
   );
 
+  private readonly legendaryCount = computed(
+    () => this.allDrawn().filter((item) => item.artwork.rarity === 'legendary').length,
+  );
+
+  protected readonly destination = computed(() =>
+    this.legendaryCount() > 0 ? '/case-opening/legendary' : '/case-opening/summary',
+  );
+
   protected readonly heading = computed(() => {
     if (!this.done()) {
       return 'Ouverture en cours';
+    }
+    if (this.legendaryCount() > 0) {
+      return this.legendaryCount() > 1 ? `${this.legendaryCount()} Légendaires !` : 'Une Légendaire !';
     }
     return this.caseCount() > 1 ? 'Caisses ouvertes' : 'Caisse ouverte';
   });
@@ -125,7 +136,10 @@ export class Opening {
     if (!track || !card || this.reduceMotion) {
       return;
     }
-    const target = card.offsetLeft + card.offsetWidth + TRACK_PADDING_PX - track.clientWidth;
+    const isLast = this.revealed() >= this.total();
+    const target = isLast
+      ? track.scrollWidth - track.clientWidth
+      : card.offsetLeft + card.offsetWidth + TRACK_PADDING_PX - track.clientWidth;
     if (target > track.scrollLeft) {
       track.scrollTo({ left: target, behavior: 'smooth' });
     }

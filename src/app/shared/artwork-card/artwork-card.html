@@ -1,0 +1,40 @@
+<article
+  class="card"
+  [class.card--greyed]="greyed()"
+  [class.card--top]="isTop()"
+  [style.--tier-color]="'var(--rarity-' + artwork().rarity + ')'"
+>
+  <div class="card__media">
+    <img
+      class="card__image"
+      [src]="artwork().imageSmall"
+      alt=""
+      loading="lazy"
+      decoding="async"
+      width="400"
+      height="300"
+    />
+    @if (badge(); as text) {
+      <span class="card__badge">{{ text }}</span>
+    }
+  </div>
+
+  <div class="card__body">
+    <h3 class="card__title" [title]="artwork().title">{{ artwork().title }}</h3>
+    <p class="card__meta">{{ artist() }}</p>
+    <p class="card__meta card__meta--date">{{ date() }}</p>
+    <div class="card__footer">
+      <span class="card__tier">
+        <span class="card__dot" aria-hidden="true"></span>
+        {{ tierLabel() }}
+      </span>
+      @if (note(); as text) {
+        <span class="card__note">{{ text }}</span>
+      }
+    </div>
+  </div>
+
+  @if (link(); as target) {
+    <a class="card__open tap" [routerLink]="target" [attr.aria-label]="openLabel()"></a>
+  }
+</article>

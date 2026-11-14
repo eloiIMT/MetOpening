@@ -1,3 +1,7 @@
-<app-main-nav />
+@if (!immersive()) {
+  <app-main-nav />
+}
 <router-outlet />
-<app-site-footer />
+@if (!immersive()) {
+  <app-site-footer />
+}

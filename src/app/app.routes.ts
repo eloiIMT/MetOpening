@@ -13,6 +13,12 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/opening/opening').then((m) => m.Opening),
   },
   {
+    path: 'case-opening/legendary',
+    title: 'Une Légendaire ! · Met Opening',
+    data: { immersive: true },
+    loadComponent: () => import('./pages/opening-legendary/opening-legendary').then((m) => m.OpeningLegendary),
+  },
+  {
     path: 'case-opening/summary',
     title: 'Résumé de l’ouverture · Met Opening',
     loadComponent: () => import('./pages/opening-summary/opening-summary').then((m) => m.OpeningSummary),

@@ -1,0 +1,56 @@
+@for (entry of shown(); track entry.step) {
+  <section class="legendary" aria-labelledby="legendary-title">
+    <figure class="legendary__art">
+      <img class="legendary__image" [src]="entry.artwork.imageSmall" [alt]="entry.alt" />
+    </figure>
+
+    <div class="legendary__info">
+      <div class="legendary__heading">
+        <h1 id="legendary-title" class="legendary__title">
+          <span class="sr-only">Légendaire : </span>{{ entry.artwork.title }}
+        </h1>
+        <p class="legendary__meta">{{ entry.meta }}</p>
+      </div>
+
+      <div class="legendary__tier-block">
+        <div class="legendary__rule" aria-hidden="true"></div>
+        <div class="legendary__tier">
+          <p class="legendary__tier-name">
+            <span class="legendary__dot" aria-hidden="true"></span>
+            Légendaire
+          </p>
+          <dl class="legendary__facts">
+            <dt>Statut</dt>
+            <dd>{{ entry.isNew ? 'Nouvelle œuvre dans votre collection' : 'Double : vous la possédiez déjà' }}</dd>
+            <dt>Revente</dt>
+            <dd class="legendary__number">{{ resaleLabel }}</dd>
+          </dl>
+        </div>
+      </div>
+
+      <div class="legendary__actions">
+        @if (isLast()) {
+          <a class="legendary__cta tap" routerLink="/case-opening/summary">Voir le résumé</a>
+        } @else {
+          <button type="button" class="legendary__cta tap" (click)="next()">
+            Légendaire suivante ({{ entry.step + 2 }}/{{ legendaries().length }})
+          </button>
+        }
+        <a class="legendary__link" [href]="entry.artwork.metUrl" target="_blank" rel="noopener">Voir sur le site du Met</a>
+      </div>
+    </div>
+  </section>
+} @empty {
+  <section class="legendary legendary--empty">
+    <div class="legendary__info">
+      <h1 class="legendary__title">Aucune Légendaire à révéler</h1>
+      <div class="legendary__actions">
+        <a class="legendary__cta tap" routerLink="/case-opening">Retour aux caisses</a>
+      </div>
+    </div>
+  </section>
+}
+
+<p class="legendary__credit">
+  Projet de fan, non affilié au Metropolitan Museum of Art · Œuvre : The Metropolitan Museum of Art, domaine public
+</p>
