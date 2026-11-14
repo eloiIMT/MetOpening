@@ -1,0 +1,57 @@
+<div class="page-bg opening-bg" aria-hidden="true"></div>
+
+<section class="opening" aria-labelledby="opening-title">
+  <div class="opening__crate">
+    <div class="crate-placeholder">CLASSIQUE</div>
+  </div>
+
+  <div class="opening__panel glass">
+    <div class="opening__intro">
+      <h1 id="opening-title" class="opening__title">Met Opening</h1>
+      <p class="opening__tagline">Découvrez l'art en ouvrant des caisses</p>
+    </div>
+
+    <div class="opening__stock">
+      <p class="opening__stock-count">
+        <strong>8/10</strong>
+        <span>caisses gratuites</span>
+      </p>
+      <p class="opening__refill">
+        Prochaine dans <span class="opening__refill-time">02:41</span>
+      </p>
+    </div>
+
+    <div class="opening__amount">
+      <p id="amount-label" class="opening__amount-label">Nombre de caisses à ouvrir</p>
+      <div class="amount-picker" role="group" aria-labelledby="amount-label">
+        <button type="button" class="amount-picker__option tap" aria-pressed="true">x1</button>
+        <button type="button" class="amount-picker__option tap" aria-pressed="false">x5</button>
+        <button type="button" class="amount-picker__option tap" aria-pressed="false">x10</button>
+      </div>
+    </div>
+
+    <button type="button" class="btn-primary tap">Ouvrir 1 caisse</button>
+
+    <div class="opening__contents">
+      <p class="opening__contents-title">Chaque caisse contient 5 œuvres</p>
+      <ul class="odds">
+        <li class="odds__item">
+          <span class="dot dot--common" aria-hidden="true"></span>
+          3 Communes
+        </li>
+        <li class="odds__item">
+          <span class="dot dot--uncommon" aria-hidden="true"></span>
+          1 Peu commune
+        </li>
+        <li class="odds__item odds__item--top">
+          <span class="odds__dots" aria-hidden="true">
+            <span class="dot dot--rare"></span>
+            <span class="dot dot--epic"></span>
+            <span class="dot dot--legendary"></span>
+          </span>
+          <span>1 Rare (80 %), Épique (17 %) ou Légendaire (3 %)</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>

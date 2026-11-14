@@ -1,0 +1,212 @@
+:host {
+  flex: 1;
+  display: flex;
+}
+
+.opening-bg {
+  background-image: url("/backgrounds/escalier-met.jpg");
+}
+
+.opening {
+  flex: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 8px 24px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px 64px;
+
+  &__crate {
+    flex: 1 1 360px;
+    min-width: 0;
+    max-width: 540px;
+    display: flex;
+    justify-content: center;
+  }
+
+  &__panel {
+    flex: 1 1 340px;
+    min-width: 0;
+    max-width: 440px;
+    box-sizing: border-box;
+    padding: 28px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  &__intro {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__title {
+    margin: 0;
+    font: 500 clamp(40px, 4vw, 56px) / 1 var(--font-display);
+  }
+
+  &__tagline {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.35;
+    text-wrap: pretty;
+  }
+
+  &__stock {
+    padding-top: 18px;
+    border-top: 1px solid rgba(31, 32, 35, .14);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 8px 20px;
+  }
+
+  &__stock-count {
+    margin: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-size: 16px;
+    line-height: 1.2;
+
+    strong {
+      font: 500 48px / 1 var(--font-display);
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+  }
+
+  &__refill {
+    margin: 0;
+    font-size: 15px;
+    color: var(--ink-3);
+  }
+
+  &__refill-time {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  &__amount {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__amount-label {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  &__contents {
+    padding-top: 18px;
+    border-top: 1px solid rgba(31, 32, 35, .14);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__contents-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+  }
+}
+
+.crate-placeholder {
+  width: min(500px, 100%);
+  aspect-ratio: 4 / 3;
+  display: grid;
+  place-items: center;
+  border: 2px dashed rgba(255, 255, 255, .8);
+  border-radius: 8px;
+  background: rgba(31, 32, 35, .35);
+  color: #FFFFFF;
+  font-family: var(--font-stencil);
+  font-size: 48px;
+}
+
+.amount-picker {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(31, 32, 35, .07);
+
+  &__option {
+    min-height: 44px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ink);
+    font: 600 16px var(--font-body);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+
+    &[aria-pressed="true"] {
+      background: #FFFFFF;
+      box-shadow: 0 1px 4px rgba(20, 20, 25, .22);
+    }
+
+    &:disabled {
+      color: #6E7075;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.odds {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 15px;
+  line-height: 1.4;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__item--top {
+    align-items: flex-start;
+  }
+
+  &__dots {
+    flex: none;
+    display: flex;
+    gap: 3px;
+    padding-top: 6px;
+  }
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border-radius: 50%;
+
+  &--common    { background: var(--rarity-common); }
+  &--uncommon  { background: var(--rarity-uncommon); }
+  &--rare      { background: var(--rarity-rare); }
+  &--epic      { background: var(--rarity-epic); }
+  &--legendary { background: var(--rarity-legendary); }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .amount-picker__option:not(:disabled):not([aria-pressed="true"]):hover {
+    background: rgba(255, 255, 255, .6);
+  }
+}

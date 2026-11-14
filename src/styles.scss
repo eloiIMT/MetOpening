@@ -1,1 +1,148 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --font-display: "Bodoni Moda", Georgia, serif;
+  --font-body: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-stencil: "Stardos Stencil", "Impact", sans-serif; 
+
+  --ink: #1F2023;
+  --ink-2: #5F6167;
+  --ink-3: #3F4146;
+  --line: #DFE0E2;
+  --mat: #F4F4F5;
+  --accent: #D10029;
+  --accent-hover: #B80024;
+
+  --rarity-common: #8C8E93;
+  --rarity-uncommon: #2F8F68;
+  --rarity-rare: #2B6CB0;
+  --rarity-epic: #7C4DBD;
+  --rarity-legendary: #D19A1E;
+
+  --ease-out: cubic-bezier(.23, 1, .32, 1);
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--mat);
+  color: var(--ink);
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+}
+
+::selection {
+  background: var(--ink);
+  color: #FFFFFF;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+a {
+  color: var(--ink);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+:where(a, button, input, select, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px #FFFFFF;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+.glass {
+  background: rgba(255, 255, 255, .78);
+  -webkit-backdrop-filter: blur(16px) saturate(170%);
+  backdrop-filter: blur(16px) saturate(170%);
+  border: 1px solid rgba(255, 255, 255, .72);
+  box-shadow:
+    0 6px 22px rgba(20, 20, 25, .16),
+    inset 0 1px 0 rgba(255, 255, 255, .8);
+}
+
+.label-glass {
+  background: rgba(255, 255, 255, .9);
+  border: 1px solid rgba(255, 255, 255, .8);
+  box-shadow: 0 6px 22px rgba(20, 20, 25, .12);
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.tap {
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  transition:
+    transform 120ms var(--ease-out),
+    background-color 120ms ease-out,
+    color 120ms ease-out,
+    box-shadow 120ms ease-out;
+
+  &:active:not(:disabled):not([aria-disabled="true"]) {
+    transform: scale(.97);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tap {
+    transition:
+      background-color 120ms ease-out,
+      color 120ms ease-out;
+
+    &:active:not(:disabled) {
+      transform: none;
+    }
+  }
+}
+
+.page-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-position: center 40%;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.page-bg--blur {
+  inset: -24px;
+  filter: blur(14px);
+}
+
+.btn-primary {
+  min-height: 56px;
+  box-sizing: border-box;
+  padding: 14px 32px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #FFFFFF;
+  font: 600 18px var(--font-body);
+  text-decoration: none;
+  box-shadow: 0 6px 22px rgba(20, 20, 25, .28);
+  cursor: pointer;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:not(:disabled):hover {
+    background: var(--accent-hover);
+  }
+}
