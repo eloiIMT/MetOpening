@@ -1,0 +1,33 @@
+<footer class="footer">
+  <div class="footer__inner">
+    <p class="footer__notice label-glass">
+      Projet de fan, non affilié au Metropolitan Museum of Art ·
+      <button
+        type="button"
+        class="footer__toggle tap"
+        aria-controls="credits"
+        [attr.aria-expanded]="creditsOpen()"
+        (click)="toggleCredits()"
+      >
+        Crédits
+      </button>
+    </p>
+
+    @if (creditsOpen()) {
+      <ul id="credits" class="footer__credits label-glass">
+        <li>Œuvres : The Metropolitan Museum of Art, domaine public (Open Access).</li>
+        <li>
+          Escalier du Met : Allen McGregor,
+          <a href="https://creativecommons.org/licenses/by/2.0/deed.fr" target="_blank" rel="noopener">CC BY 2.0</a>,
+          image redimensionnée.
+        </li>
+        <li>Rayonnages : CHUTTERSNAP, licence Unsplash.</li>
+        <li>
+          Icônes : Delapouite et Lorc, game-icons.net,
+          <a href="https://creativecommons.org/licenses/by/3.0/deed.fr" target="_blank" rel="noopener">CC BY 3.0</a>.
+        </li>
+        <li>Caisse : dessin vectoriel réalisé avec l'aide d'une IA.</li>
+      </ul>
+    }
+  </div>
+</footer>

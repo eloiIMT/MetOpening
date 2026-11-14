@@ -1,0 +1,53 @@
+<div
+  class="crate"
+  [attr.role]="decorative() ? null : 'img'"
+  [attr.aria-label]="decorative() ? null : label()"
+  [attr.aria-hidden]="decorative() ? 'true' : null"
+>
+  <svg class="crate__drawing" viewBox="0 0 360 270" aria-hidden="true" focusable="false">
+    <g fill="#141418">
+      <ellipse cx="180" cy="258" rx="176" ry="12" opacity="0.06"></ellipse>
+      <ellipse cx="180" cy="257" rx="160" ry="9" opacity="0.08"></ellipse>
+      <ellipse cx="180" cy="256" rx="146" ry="6" opacity="0.12"></ellipse>
+    </g>
+    <g>
+      <rect x="24" y="74" width="312" height="182" fill="#7C4F24"></rect>
+      <rect x="24" y="74" width="312" height="44" fill="#946233"></rect>
+      <rect x="24" y="118" width="312" height="46" fill="#8A5A2D"></rect>
+      <rect x="24" y="164" width="312" height="46" fill="#9A6838"></rect>
+      <rect x="24" y="210" width="312" height="46" fill="#855629"></rect>
+      <path d="M24 118H336M24 164H336M24 210H336" stroke="#3F2711" stroke-width="2.5" fill="none"></path>
+      <path d="M60 90C110 86 180 94 240 88M50 140C120 136 200 146 320 138M70 188C150 182 220 194 310 186M60 234C120 230 210 240 300 232" stroke="#6B4420" stroke-width="1.4" fill="none" opacity="0.7"></path>
+      <path d="M56 240L304 90L304 112L78 250Z" fill="#6E4620" opacity="0.92"></path>
+      <rect x="24" y="74" width="34" height="182" fill="#6B4420"></rect>
+      <rect x="302" y="74" width="34" height="182" fill="#6B4420"></rect>
+      <rect x="24" y="238" width="312" height="18" fill="#5C3A1A"></rect>
+      <path d="M58 74V256M302 74V256" stroke="#3F2711" stroke-width="2.5" fill="none"></path>
+      <g fill="#2B2118">
+        <circle cx="41" cy="96" r="3.2"></circle>
+        <circle cx="41" cy="140" r="3.2"></circle>
+        <circle cx="41" cy="186" r="3.2"></circle>
+        <circle cx="41" cy="230" r="3.2"></circle>
+        <circle cx="319" cy="96" r="3.2"></circle>
+        <circle cx="319" cy="140" r="3.2"></circle>
+        <circle cx="319" cy="186" r="3.2"></circle>
+        <circle cx="319" cy="230" r="3.2"></circle>
+      </g>
+    </g>
+    <g>
+      <rect x="14" y="40" width="332" height="36" fill="#A87140"></rect>
+      <rect x="14" y="40" width="332" height="10" fill="#BE8650"></rect>
+      <rect x="14" y="70" width="332" height="6" fill="#5C3A1A"></rect>
+      <path d="M112 40V76M216 40V76" stroke="#3F2711" stroke-width="2" fill="none"></path>
+      <g fill="#2B2118">
+        <circle cx="30" cy="58" r="3.2"></circle>
+        <circle cx="98" cy="58" r="3.2"></circle>
+        <circle cx="126" cy="58" r="3.2"></circle>
+        <circle cx="202" cy="58" r="3.2"></circle>
+        <circle cx="230" cy="58" r="3.2"></circle>
+        <circle cx="330" cy="58" r="3.2"></circle>
+      </g>
+    </g>
+  </svg>
+  <span class="crate__stencil" aria-hidden="true" [style.font-size]="fontSize()">{{ stencilText() }}</span>
+</div>
