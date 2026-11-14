@@ -3,7 +3,7 @@
 <section class="opening" aria-labelledby="opening-title">
   <div class="opening__crate">
     <div class="opening__crate-frame">
-      <app-case-crate stencil="CLASSIQUE" />
+      <app-case-crate [stencil]="stencil()" />
       @if (amount() > 1) {
         <span class="opening__badge" aria-hidden="true">×{{ amount() }}</span>
       }
@@ -16,19 +16,40 @@
       <p class="opening__tagline">Découvrez l'art en ouvrant des caisses</p>
     </div>
 
-    <div class="opening__stock">
-      <p class="opening__stock-count">
-        <strong>{{ stock() }}/{{ stockMax }}</strong>
-        <span>{{ stockUnit() }}</span>
-      </p>
-      <p class="opening__refill">
-        @if (countdown(); as time) {
-          Prochaine dans <span class="opening__refill-time">{{ time }}</span>
-        } @else {
-          <span class="opening__refill-time">Stock plein</span>
-        }
-      </p>
-    </div>
+    @if (typeOptions().length > 1) {
+      <label class="opening__type">
+        <span class="opening__amount-label">Type de caisse</span>
+        <select class="opening__select" (change)="pickType($event)">
+          @for (option of typeOptions(); track option.value) {
+            <option [value]="option.value" [selected]="option.value === caseType()">{{ option.label }}</option>
+          }
+        </select>
+      </label>
+    }
+
+    @if (isFree()) {
+      <div class="opening__stock">
+        <p class="opening__stock-count">
+          <strong>{{ stock() }}/{{ stockMax }}</strong>
+          <span>{{ stockUnit() }}</span>
+        </p>
+        <p class="opening__refill">
+          @if (countdown(); as time) {
+            Prochaine dans <span class="opening__refill-time">{{ time }}</span>
+          } @else {
+            <span class="opening__refill-time">Stock plein</span>
+          }
+        </p>
+      </div>
+    } @else {
+      <div class="opening__stock">
+        <p class="opening__stock-count">
+          <strong>{{ available() }}</strong>
+          <span>{{ ownedUnit() }}</span>
+        </p>
+        <p class="opening__refill">{{ shopCaseText() }}</p>
+      </div>
+    }
 
     <div class="opening__amount">
       <p id="amount-label" class="opening__amount-label">Nombre de caisses à ouvrir</p>
@@ -60,26 +81,6 @@
       </div>
     }
 
-    <div class="opening__contents">
-      <p class="opening__contents-title">Chaque caisse contient 5 œuvres. Pour chacune :</p>
-      <ul class="odds">
-        <li class="odds__item">
-          <span class="dot dot--common" aria-hidden="true"></span>
-          Commune : 50 %
-        </li>
-        <li class="odds__item">
-          <span class="dot dot--uncommon" aria-hidden="true"></span>
-          Peu commune : 30 %
-        </li>
-        <li class="odds__item odds__item--top">
-          <span class="odds__dots" aria-hidden="true">
-            <span class="dot dot--rare"></span>
-            <span class="dot dot--epic"></span>
-            <span class="dot dot--legendary"></span>
-          </span>
-          <span>Rare, Épique ou Légendaire : 20 % (Rare 16 %, Épique 3,4 %, Légendaire 0,6 %)</span>
-        </li>
-      </ul>
-    </div>
+    <app-case-odds class="opening__contents" />
   </div>
 </section>

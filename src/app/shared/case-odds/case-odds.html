@@ -1,0 +1,22 @@
+<p class="odds__title">Chaque caisse contient {{ artworksPerCase }} œuvres. Pour chacune :</p>
+<ul class="odds">
+  <li class="odds__item">
+    <span class="dot dot--common" aria-hidden="true"></span>
+    Commune : {{ odds.common }} %
+  </li>
+  <li class="odds__item">
+    <span class="dot dot--uncommon" aria-hidden="true"></span>
+    Peu commune : {{ odds.uncommon }} %
+  </li>
+  <li class="odds__item odds__item--top">
+    <span class="odds__dots" aria-hidden="true">
+      <span class="dot dot--rare"></span>
+      <span class="dot dot--epic"></span>
+      <span class="dot dot--legendary"></span>
+    </span>
+    <span>
+      Rare, Épique ou Légendaire : {{ odds.top }} % (Rare {{ odds.rare }} %, Épique {{ odds.epic }} %, Légendaire
+      {{ odds.legendary }} %)
+    </span>
+  </li>
+</ul>

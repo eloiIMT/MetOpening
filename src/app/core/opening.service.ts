@@ -2,7 +2,10 @@ import { Injectable, inject, signal } from '@angular/core';
 import { ArtworkService } from './artwork.service';
 import { CollectionService } from './collection.service';
 import { DrawnArtwork, sortByRarity } from './collection-rules';
+import { Artwork } from './artwork';
 import { drawCases, poolFor } from './draw';
+import { InventoryService } from './inventory.service';
+import { ShopCase } from './shop';
 import { StockService } from './stock.service';
 
 export const OPENING_STORAGE_KEY = 'met-opening.last-opening';
@@ -17,6 +20,7 @@ export class OpeningService {
   private readonly artworkService = inject(ArtworkService);
   private readonly stockService = inject(StockService);
   private readonly collection = inject(CollectionService);
+  private readonly inventory = inject(InventoryService);
 
   private readonly result = signal<OpeningResult | null>(readStoredOpening());
   readonly current = this.result.asReadonly();
@@ -26,11 +30,24 @@ export class OpeningService {
     if (pool.length === 0 || !this.stockService.consume(amount)) {
       return false;
     }
-    const cases = drawCases(pool, amount).map((drawnCase) => sortByRarity(this.collection.add(drawnCase)));
-    const result: OpeningResult = { stencil: 'CLASSIQUE', cases };
+    this.finishOpening('CLASSIQUE', drawCases(pool, amount));
+    return true;
+  }
+
+  openBoughtCases(shopCase: ShopCase, amount: number): boolean {
+    const pool = poolFor(this.artworkService.artworks(), shopCase.department);
+    if (pool.length === 0 || !this.inventory.consume(shopCase.id, amount)) {
+      return false;
+    }
+    this.finishOpening(shopCase.stencil, drawCases(pool, amount));
+    return true;
+  }
+
+  private finishOpening(stencil: string, drawnCases: readonly Artwork[][]): void {
+    const cases = drawnCases.map((drawnCase) => sortByRarity(this.collection.add(drawnCase)));
+    const result: OpeningResult = { stencil, cases };
     this.result.set(result);
     saveOpening(result);
-    return true;
   }
 }
 

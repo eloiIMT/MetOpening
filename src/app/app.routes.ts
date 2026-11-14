@@ -26,14 +26,17 @@ export const routes: Routes = [
   {
     path: 'view-collection',
     title: 'Ma collection · Met Opening',
-    data: { stickyHeader: true },
     loadComponent: () => import('./pages/view-collection/view-collection').then((m) => m.ViewCollection),
   },
   {
     path: 'search-all-items',
     title: 'Rechercher dans les œuvres · Met Opening',
-    data: { stickyHeader: true },
     loadComponent: () => import('./pages/search-all-items/search-all-items').then((m) => m.SearchAllItems),
+  },
+  {
+    path: 'case-shop',
+    title: 'Boutique de caisses · Met Opening',
+    loadComponent: () => import('./pages/case-shop/case-shop').then((m) => m.CaseShop),
   },
   { path: '**', redirectTo: 'case-opening' },
 ];

@@ -1,0 +1,52 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.odds {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 15px;
+  line-height: 1.4;
+
+  &__title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__item--top {
+    align-items: flex-start;
+  }
+
+  &__dots {
+    flex: none;
+    display: flex;
+    gap: 3px;
+    padding-top: 6px;
+  }
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border-radius: 50%;
+
+  &--common    { background: var(--rarity-common); }
+  &--uncommon  { background: var(--rarity-uncommon); }
+  &--rare      { background: var(--rarity-rare); }
+  &--epic      { background: var(--rarity-epic); }
+  &--legendary { background: var(--rarity-legendary); }
+}

@@ -164,18 +164,28 @@
     font-weight: 600;
   }
 
-  &__contents {
+  &__type {
     padding-top: 18px;
     border-top: 1px solid rgba(31, 32, 35, .14);
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
   }
 
-  &__contents-title {
-    margin: 0;
-    font-size: 15px;
-    font-weight: 600;
+  &__select {
+    min-height: 44px;
+    box-sizing: border-box;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #FFFFFF;
+    color: var(--ink);
+    font: 400 16px var(--font-body);
+  }
+
+  &__contents {
+    padding-top: 18px;
+    border-top: 1px solid rgba(31, 32, 35, .14);
   }
 }
 
@@ -207,47 +217,6 @@
       cursor: not-allowed;
     }
   }
-}
-
-.odds {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 15px;
-  line-height: 1.4;
-
-  &__item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  &__item--top {
-    align-items: flex-start;
-  }
-
-  &__dots {
-    flex: none;
-    display: flex;
-    gap: 3px;
-    padding-top: 6px;
-  }
-}
-
-.dot {
-  width: 10px;
-  height: 10px;
-  flex: none;
-  border-radius: 50%;
-
-  &--common    { background: var(--rarity-common); }
-  &--uncommon  { background: var(--rarity-uncommon); }
-  &--rare      { background: var(--rarity-rare); }
-  &--epic      { background: var(--rarity-epic); }
-  &--legendary { background: var(--rarity-legendary); }
 }
 
 @media (hover: hover) and (pointer: fine) {

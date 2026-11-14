@@ -1,15 +1,12 @@
 :host {
+  --sticky-offset: 96px;
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
 }
 
-:host(.has-sticky-header) {
-  --sticky-offset: 96px;
-}
-
 @media (max-width: 899.98px) {
-  :host(.has-sticky-header) {
+  :host {
     --sticky-offset: 0px;
   }
 }

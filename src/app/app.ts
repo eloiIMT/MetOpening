@@ -18,9 +18,6 @@ const ARTWORK_PARAM = 'artwork';
   imports: [RouterOutlet, MainNav, SiteFooter, ArtworkDialog],
   templateUrl: './app.html',
   styleUrl: './app.scss',
-  host: {
-    '[class.has-sticky-header]': 'stickyHeader()',
-  },
 })
 export class App {
   private readonly router = inject(Router);
@@ -34,7 +31,6 @@ export class App {
   );
 
   protected readonly immersive = computed(() => this.navigation().data['immersive'] === true);
-  protected readonly stickyHeader = computed(() => this.navigation().data['stickyHeader'] === true);
   protected readonly openArtworkId = computed(() => this.navigation().artworkId);
 
   protected closeArtwork(): void {
