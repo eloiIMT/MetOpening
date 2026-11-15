@@ -7,6 +7,7 @@ import {
   ResaleResult,
   addToCollection,
   resellDuplicates,
+  sellCopies,
 } from './collection-rules';
 import { WalletService } from './wallet.service';
 
@@ -27,8 +28,15 @@ export class CollectionService {
     return drawn;
   }
 
+  sellCopy(artwork: Artwork): ResaleResult {
+    return this.applySale(sellCopies(this.entries(), artwork, 1));
+  }
+
   sellDuplicates(artworks: readonly Artwork[]): ResaleResult {
-    const result = resellDuplicates(this.entries(), artworks);
+    return this.applySale(resellDuplicates(this.entries(), artworks));
+  }
+
+  private applySale(result: ResaleResult): ResaleResult {
     if (result.sold > 0) {
       this.entries.set(result.owned);
       saveCollection(result.owned);

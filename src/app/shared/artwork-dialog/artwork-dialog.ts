@@ -17,6 +17,8 @@ import { CollectionService } from '../../core/collection.service';
 import { RESALE_VALUE } from '../../core/game-rules';
 import { DEPARTMENT_LABEL, RARITY_LABEL, formatCoins, formatCount } from '../../core/labels';
 
+type SaleKind = 'one' | 'duplicates';
+
 @Component({
   selector: 'app-artwork-dialog',
   imports: [NgTemplateOutlet, RouterLink],
@@ -74,19 +76,32 @@ export class ArtworkDialog {
     () => `Vous en possédez ${formatCount(this.copies(), 'exemplaire', 'exemplaires')}`,
   );
 
-  private readonly duplicateCoins = computed(() => {
+  private readonly unitPrice = computed(() => {
     const artwork = this.artwork();
-    return artwork ? (this.copies() - 1) * RESALE_VALUE[artwork.rarity] : 0;
+    return artwork ? RESALE_VALUE[artwork.rarity] : 0;
   });
 
-  protected readonly saleLabel = computed(
-    () => `Vendre ${formatCount(this.copies() - 1, 'double', 'doubles')} · ${formatCoins(this.duplicateCoins())}`,
+  protected readonly pendingSale = signal<SaleKind>('one');
+
+  protected readonly sellOneLabel = computed(() => `Vendre 1 exemplaire · ${formatCoins(this.unitPrice())}`);
+
+  protected readonly sellDuplicatesLabel = computed(
+    () =>
+      `Vendre ${formatCount(this.copies() - 1, 'double', 'doubles')} · ${formatCoins((this.copies() - 1) * this.unitPrice())}`,
   );
 
-  protected readonly saleQuestion = computed(
-    () =>
-      `Vous allez vendre ${formatCount(this.copies() - 1, 'exemplaire en double', 'exemplaires en double')} pour ${formatCoins(this.duplicateCoins())}. Vous garderez un exemplaire.`,
+  protected readonly saleTitle = computed(() =>
+    this.pendingSale() === 'one' ? 'Vendre un exemplaire ?' : 'Vendre les doubles ?',
   );
+
+  protected readonly saleQuestion = computed(() => {
+    if (this.pendingSale() === 'duplicates') {
+      const extra = this.copies() - 1;
+      return `Vous allez vendre ${formatCount(extra, 'exemplaire en double', 'exemplaires en double')} pour ${formatCoins(extra * this.unitPrice())}. Vous garderez un exemplaire.`;
+    }
+    const last = this.copies() === 1;
+    return `Vous allez vendre 1 exemplaire pour ${formatCoins(this.unitPrice())}.${last ? ' C’est votre dernier : l’œuvre quittera votre collection.' : ''}`;
+  });
 
   constructor() {
     afterNextRender(() => this.dialog().nativeElement.showModal());
@@ -111,15 +126,21 @@ export class ArtworkDialog {
     }
   }
 
-  protected askSale(): void {
+  protected askSale(kind: SaleKind): void {
+    this.pendingSale.set(kind);
     this.saleDialog().nativeElement.showModal();
   }
 
   protected confirmSale(): void {
     const artwork = this.artwork();
     if (artwork) {
-      const result = this.collection.sellDuplicates([artwork]);
-      this.saleMessage.set(`${formatCount(result.sold, 'double vendu', 'doubles vendus')} pour ${formatCoins(result.coins)}.`);
+      const result =
+        this.pendingSale() === 'one'
+          ? this.collection.sellCopy(artwork)
+          : this.collection.sellDuplicates([artwork]);
+      this.saleMessage.set(
+        `${formatCount(result.sold, 'exemplaire vendu', 'exemplaires vendus')} pour ${formatCoins(result.coins)}.`,
+      );
     }
     this.closeSale();
   }

@@ -1,5 +1,5 @@
 import { Artwork } from './artwork';
-import { OwnedMap, addToCollection, resellDuplicates, sortByRarity } from './collection-rules';
+import { OwnedMap, addToCollection, resellDuplicates, sellCopies, sortByRarity } from './collection-rules';
 import { Rarity } from './game-rules';
 
 function artwork(id: number, rarity: Rarity = 'common'): Artwork {
@@ -98,5 +98,35 @@ describe('resellDuplicates', () => {
   it('does not modify the previous collection', () => {
     resellDuplicates(owned, [artwork(1, 'common')]);
     expect(owned[1].count).toBe(3);
+  });
+});
+
+describe('sellCopies', () => {
+  const owned: OwnedMap = {
+    1: { count: 3, firstObtainedAt: NOW },
+    2: { count: 1, firstObtainedAt: NOW },
+  };
+
+  it('sells one copy and keeps the others', () => {
+    const result = sellCopies(owned, artwork(1, 'rare'), 1);
+    expect(result.owned[1].count).toBe(2);
+    expect(result.sold).toBe(1);
+    expect(result.coins).toBe(50);
+  });
+
+  it('can sell the last copy, which leaves the collection', () => {
+    const result = sellCopies(owned, artwork(2, 'legendary'), 1);
+    expect(result.owned[2]).toBeUndefined();
+    expect(result.coins).toBe(1000);
+  });
+
+  it('refuses to sell more copies than owned, or an artwork not owned', () => {
+    expect(sellCopies(owned, artwork(2, 'common'), 2).sold).toBe(0);
+    expect(sellCopies(owned, artwork(99, 'common'), 1).sold).toBe(0);
+  });
+
+  it('does not modify the previous collection', () => {
+    sellCopies(owned, artwork(2, 'common'), 1);
+    expect(owned[2].count).toBe(1);
   });
 });

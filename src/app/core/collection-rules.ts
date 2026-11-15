@@ -38,6 +38,20 @@ export interface ResaleResult {
   readonly coins: number;
 }
 
+export function sellCopies(owned: OwnedMap, artwork: Artwork, amount: number): ResaleResult {
+  const entry: OwnedEntry | undefined = owned[artwork.id];
+  if (!entry || !Number.isInteger(amount) || amount <= 0 || amount > entry.count) {
+    return { owned, sold: 0, coins: 0 };
+  }
+  const next: Record<number, OwnedEntry> = { ...owned };
+  if (amount === entry.count) {
+    delete next[artwork.id];
+  } else {
+    next[artwork.id] = { ...entry, count: entry.count - amount };
+  }
+  return { owned: next, sold: amount, coins: amount * RESALE_VALUE[artwork.rarity] };
+}
+
 export function resellDuplicates(owned: OwnedMap, artworks: readonly Artwork[]): ResaleResult {
   const next: Record<number, OwnedEntry> = { ...owned };
   let sold = 0;

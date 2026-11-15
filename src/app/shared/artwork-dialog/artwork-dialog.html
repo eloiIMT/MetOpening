@@ -47,9 +47,14 @@
           <div class="detail__ownership">
             @if (copies() > 0) {
               <p class="detail__copies">{{ copiesLabel() }}</p>
-              @if (copies() > 1) {
-                <button type="button" class="btn-primary tap detail__sell" (click)="askSale()">{{ saleLabel() }}</button>
-              }
+              <div class="detail__sales">
+                <button type="button" class="btn-secondary tap detail__sell" (click)="askSale('one')">{{ sellOneLabel() }}</button>
+                @if (copies() > 1) {
+                  <button type="button" class="btn-primary tap detail__sell" (click)="askSale('duplicates')">
+                    {{ sellDuplicatesLabel() }}
+                  </button>
+                }
+              </div>
             } @else {
               <p class="detail__copies">Pas dans votre collection</p>
               <p class="detail__hint">
@@ -80,7 +85,7 @@
 </dialog>
 
 <dialog #saleDialog class="sale-dialog" aria-labelledby="artwork-sale-title">
-  <h2 id="artwork-sale-title" class="sale-dialog__title">Vendre les doubles ?</h2>
+  <h2 id="artwork-sale-title" class="sale-dialog__title">{{ saleTitle() }}</h2>
   <p class="sale-dialog__text">{{ saleQuestion() }}</p>
   <div class="sale-dialog__actions">
     <button type="button" class="btn-secondary tap" (click)="closeSale()">Annuler</button>
