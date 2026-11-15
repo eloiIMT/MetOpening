@@ -80,6 +80,17 @@
     cursor: pointer;
   }
 
+  &__favorites {
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+
+  &__heart {
+    width: 14px;
+    text-align: center;
+    color: var(--accent);
+  }
+
   &__checkbox {
     width: 18px;
     height: 18px;

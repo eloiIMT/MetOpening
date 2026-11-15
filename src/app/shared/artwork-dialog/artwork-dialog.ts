@@ -12,6 +12,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
+import { FavoriteButton } from '../favorite-button/favorite-button';
 import { RouterLink } from '@angular/router';
 import { Artwork } from '../../core/artworks/artwork';
 import { CardIndexService } from '../../core/artworks/card-index.service';
@@ -24,7 +25,7 @@ type SaleKind = 'one' | 'duplicates';
 
 @Component({
   selector: 'app-artwork-dialog',
-  imports: [NgTemplateOutlet, RouterLink],
+  imports: [FavoriteButton, NgTemplateOutlet, RouterLink],
   templateUrl: './artwork-dialog.html',
   styleUrl: './artwork-dialog.scss',
 })

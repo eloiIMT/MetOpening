@@ -17,6 +17,9 @@
     @if (badge(); as text) {
       <span class="card__badge">{{ text }}</span>
     }
+    @if (openable()) {
+      <app-favorite-button class="card__favorite" [artworkId]="artwork().id" [title]="artwork().title" />
+    }
   </div>
 
   <div class="card__body">

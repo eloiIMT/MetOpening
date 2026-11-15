@@ -29,6 +29,12 @@
   <aside id="browser-filters" class="filters glass" [class.filters--open]="filtersOpen()" [attr.aria-label]="t('artworks.filters')">
     <h2 class="filters__title">{{ t('artworks.filters') }}</h2>
 
+    <label class="filters__check filters__favorites">
+      <input type="checkbox" class="filters__checkbox" [checked]="favoritesOnly()" (change)="toggleFavoritesOnly()" />
+      <span class="filters__heart" aria-hidden="true">♥</span>
+      <span class="filters__name">{{ t('favorites.filter') }}</span>
+    </label>
+
     <fieldset class="filters__group">
       <legend class="filters__legend">{{ t('artworks.filterRarity') }}</legend>
       @for (tier of rarityOptions(); track tier.rarity) {
@@ -119,6 +125,10 @@
           <h2 class="results__empty-title">{{ t('artworks.emptyCollectionTitle') }}</h2>
           <p class="results__empty-text">{{ t('artworks.emptyCollectionText') }}</p>
           <a class="btn-primary tap" routerLink="/case-opening">{{ t('artworks.openCase') }}</a>
+        } @else if (favoritesOnly()) {
+          <h2 class="results__empty-title">{{ t('favorites.emptyTitle') }}</h2>
+          <p class="results__empty-text">{{ t('favorites.emptyText') }}</p>
+          <button type="button" class="btn-secondary tap" (click)="clearFilters()">{{ t('artworks.clearFilters') }}</button>
         } @else {
           <h2 class="results__empty-title">{{ t('artworks.noneFoundTitle') }}</h2>
           <p class="results__empty-text">{{ t('artworks.noneFoundText') }}</p>

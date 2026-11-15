@@ -3,10 +3,11 @@ import { RouterLink } from '@angular/router';
 import { Artwork } from '../../core/artworks/artwork';
 import { RARITY_RANK } from '../../core/game/game-rules';
 import { I18n } from '../../core/i18n/i18n.service';
+import { FavoriteButton } from '../favorite-button/favorite-button';
 
 @Component({
   selector: 'app-artwork-card',
-  imports: [RouterLink],
+  imports: [FavoriteButton, RouterLink],
   templateUrl: './artwork-card.html',
   styleUrl: './artwork-card.scss',
 })

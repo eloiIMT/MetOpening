@@ -29,7 +29,7 @@ const ITEMS: BrowserItem[] = [
   item(3, 'Éventail', 'common', { artist: 'Hokusai', obtainedAt: 20, copies: 4 }),
 ];
 
-const ALL: BrowseCriteria = { query: '', rarities: new Set(), department: null, sort: 'rarity-asc' };
+const ALL: BrowseCriteria = { query: '', rarities: new Set(), department: null, favorites: null, sort: 'rarity-asc' };
 
 describe('browse', () => {
   it('finds a title without caring about accents or case', () => {
@@ -55,6 +55,10 @@ describe('browse', () => {
     expect(ids('rarity-desc')).toEqual([1, 2, 3]);
     expect(ids('recent')).toEqual([2, 3, 1]);
     expect(ids('title')).toEqual([2, 3, 1]);
+  });
+
+  it('keeps only the favorites when asked', () => {
+    expect(browse(ITEMS, { ...ALL, favorites: new Set([3, 99]) }).map((entry) => entry.id)).toEqual([3]);
   });
 
   it('can ignore the rarity filter to count each rarity', () => {

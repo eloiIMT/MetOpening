@@ -15,6 +15,7 @@ export interface BrowseCriteria {
   readonly query: string;
   readonly rarities: ReadonlySet<Rarity>;
   readonly department: DepartmentId | null;
+  readonly favorites: ReadonlySet<number> | null;
   readonly sort: SortId;
 }
 
@@ -51,6 +52,7 @@ export function filterItems(
         (item.artwork !== null &&
           normalizeText(`${item.artwork.title} ${item.artwork.artist ?? ''}`).includes(needle))) &&
       (criteria.department === null || item.department === criteria.department) &&
+      (criteria.favorites === null || criteria.favorites.has(item.id)) &&
       (ignoreRarity || criteria.rarities.size === 0 || criteria.rarities.has(item.rarity)),
   );
 }

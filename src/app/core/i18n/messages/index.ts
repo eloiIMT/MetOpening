@@ -3,6 +3,7 @@ import { artworks } from './artworks';
 import { cases } from './cases';
 import { crate, departments, rarities, raritiesPlural, stencils } from './catalog';
 import { common } from './common';
+import { favorites } from './favorites';
 import { footer, nav, routes } from './layout';
 import { openings } from './openings';
 
@@ -19,6 +20,7 @@ export const MESSAGES = {
   cases,
   openings,
   artworks,
+  favorites,
 };
 
 type Areas = typeof MESSAGES;

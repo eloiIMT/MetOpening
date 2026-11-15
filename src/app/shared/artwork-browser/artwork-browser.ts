@@ -20,6 +20,7 @@ import { I18n } from '../../core/i18n/i18n.service';
 import { MessageKey } from '../../core/i18n/messages';
 import { ArtworkCharts } from '../artwork-charts/artwork-charts';
 import { CatalogCard } from '../catalog-card/catalog-card';
+import { FavoritesService } from '../../core/collection/favorites.service';
 
 const RARITIES = (Object.keys(RARITY_RANK) as Rarity[]).sort((a, b) => RARITY_RANK[a] - RARITY_RANK[b]);
 
@@ -51,6 +52,7 @@ export class ArtworkBrowser {
   readonly queryChange = output<string>();
 
   private readonly i18n = inject(I18n);
+  private readonly favoritesService = inject(FavoritesService);
   protected readonly t = this.i18n.t;
 
   private readonly saleDialog = viewChild<ElementRef<HTMLDialogElement>>('saleDialog');
@@ -59,6 +61,7 @@ export class ArtworkBrowser {
   protected readonly query = signal('');
   protected readonly rarities = signal<ReadonlySet<Rarity>>(new Set());
   protected readonly department = signal<DepartmentId | null>(null);
+  protected readonly favoritesOnly = signal(false);
   protected readonly sort = signal<SortId>('rarity-desc');
   protected readonly filtersOpen = signal(false);
   protected readonly chartsOpen = signal(!window.matchMedia(NARROW_QUERY).matches);
@@ -81,6 +84,7 @@ export class ArtworkBrowser {
     query: this.query(),
     rarities: this.rarities(),
     department: this.department(),
+    favorites: this.favoritesOnly() ? this.favoritesService.favorites() : null,
     sort: this.sort(),
   }));
 
@@ -130,7 +134,7 @@ export class ArtworkBrowser {
   });
 
   protected readonly activeFilterCount = computed(
-    () => this.rarities().size + (this.department() === null ? 0 : 1) + (this.query().trim() === '' ? 0 : 1),
+    () => this.rarities().size + (this.department() === null ? 0 : 1) + (this.favoritesOnly() ? 1 : 0) + (this.query().trim() === '' ? 0 : 1),
   );
 
   protected readonly hasFilters = computed(() => this.activeFilterCount() > 0);
@@ -220,10 +224,15 @@ export class ArtworkBrowser {
     this.filtersOpen.update((open) => !open);
   }
 
+  protected toggleFavoritesOnly(): void {
+    this.favoritesOnly.update((on) => !on);
+  }
+
   protected clearFilters(): void {
     this.setQuery('');
     this.rarities.set(new Set());
     this.department.set(null);
+    this.favoritesOnly.set(false);
   }
 
   protected loadMore(): void {
