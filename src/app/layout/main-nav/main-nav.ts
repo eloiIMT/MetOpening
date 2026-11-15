@@ -2,7 +2,7 @@ import { Component, booleanAttribute, computed, inject, input } from '@angular/c
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { I18n } from '../../core/i18n/i18n.service';
 import { MessageKey } from '../../core/i18n/messages';
-import { WalletService } from '../../core/wallet.service';
+import { WalletService } from '../../core/economy/wallet.service';
 import { NAV_ICONS } from '../nav-icons';
 
 interface NavLink {

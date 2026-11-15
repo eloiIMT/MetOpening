@@ -1,9 +1,9 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { RESALE_VALUE } from '../../core/game-rules';
+import { RESALE_VALUE } from '../../core/game/game-rules';
 import { I18n } from '../../core/i18n/i18n.service';
-import { OpeningService } from '../../core/opening.service';
-import { summarizeOpening } from '../../core/summary';
+import { OpeningService } from '../../core/game/opening.service';
+import { summarizeOpening } from '../../core/game/summary';
 import { ArtworkCard } from '../../shared/artwork-card/artwork-card';
 
 const FIRST_CARD_DELAY_MS = 80;

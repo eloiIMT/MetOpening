@@ -1,5 +1,5 @@
 import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
-import { DepartmentId } from '../../core/artwork';
+import { DepartmentId } from '../../core/artworks/artwork';
 import {
   Century,
   ChartItem,
@@ -9,8 +9,8 @@ import {
   departmentRows,
   pieSlicePath,
   rarityRows,
-} from '../../core/charts';
-import { Rarity } from '../../core/game-rules';
+} from '../../core/artworks/charts';
+import { Rarity } from '../../core/game/game-rules';
 import { I18n } from '../../core/i18n/i18n.service';
 import { MessageKey } from '../../core/i18n/messages';
 

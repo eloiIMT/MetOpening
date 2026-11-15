@@ -13,12 +13,12 @@ import {
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { Artwork } from '../../core/artwork';
-import { CardIndexService } from '../../core/card-index.service';
-import { CollectionService } from '../../core/collection.service';
-import { RESALE_VALUE } from '../../core/game-rules';
+import { Artwork } from '../../core/artworks/artwork';
+import { CardIndexService } from '../../core/artworks/card-index.service';
+import { CollectionService } from '../../core/collection/collection.service';
+import { RESALE_VALUE } from '../../core/game/game-rules';
 import { I18n } from '../../core/i18n/i18n.service';
-import { MetApiService } from '../../core/met-api.service';
+import { MetApiService } from '../../core/met/met-api.service';
 
 type SaleKind = 'one' | 'duplicates';
 

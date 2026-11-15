@@ -1,5 +1,5 @@
-import { Artwork } from './artwork';
-import { DrawnArtwork } from './collection-rules';
+import { Artwork } from '../artworks/artwork';
+import { DrawnArtwork } from '../collection/collection-rules';
 import { RARITY_RANK, RESALE_VALUE, Rarity } from './game-rules';
 
 export interface SummaryItem {

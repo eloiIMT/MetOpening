@@ -1,4 +1,4 @@
-import { IndexEntry } from './card-index';
+import { IndexEntry } from '../artworks/card-index';
 import { MetObject, toArtwork, yearOf } from './met-object';
 
 const ENTRY: IndexEntry = { id: 436535, rarity: 'legendary', department: 'european-paintings', century: 19 };

@@ -1,4 +1,4 @@
-import { Artwork, DepartmentId } from './artwork';
+import { Artwork, DepartmentId } from '../artworks/artwork';
 import { Rarity } from './game-rules';
 import { EMPTY_RESERVE, RESERVE_TARGET, Reserve, addToReserve, mostNeededRarity, takeFromReserve } from './reserve';
 

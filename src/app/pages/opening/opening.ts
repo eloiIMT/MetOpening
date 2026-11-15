@@ -1,9 +1,9 @@
 import { Component, DestroyRef, ElementRef, computed, effect, inject, signal, viewChild, viewChildren } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { sortByRarity } from '../../core/collection-rules';
-import { RARITY_RANK, Rarity } from '../../core/game-rules';
+import { sortByRarity } from '../../core/collection/collection-rules';
+import { RARITY_RANK, Rarity } from '../../core/game/game-rules';
 import { I18n } from '../../core/i18n/i18n.service';
-import { OpeningService } from '../../core/opening.service';
+import { OpeningService } from '../../core/game/opening.service';
 
 const FIRST_CARD_DELAY_MS = 1500;
 const REVEAL_WINDOW_MS = 2400;

@@ -1,4 +1,4 @@
-import type { ShopDepartmentId } from './artwork';
+import type { ShopDepartmentId } from '../artworks/artwork';
 
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
 

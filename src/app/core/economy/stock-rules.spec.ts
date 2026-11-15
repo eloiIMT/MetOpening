@@ -1,4 +1,4 @@
-import { STOCK_MAX, STOCK_REFILL_MS } from './game-rules';
+import { STOCK_MAX, STOCK_REFILL_MS } from '../game/game-rules';
 import { consumeStock, formatCountdown, msUntilNextRefill, settleStock } from './stock-rules';
 
 const MINUTE = 60_000;

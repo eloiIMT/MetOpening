@@ -1,4 +1,4 @@
-import { Artwork, DepartmentId } from './artwork';
+import { Artwork, DepartmentId } from '../artworks/artwork';
 import { Rarity } from './game-rules';
 
 export type Reserve = Readonly<Record<Rarity, readonly Artwork[]>>;

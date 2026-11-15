@@ -1,7 +1,7 @@
 import { Artwork, DepartmentId } from './artwork';
 import { IndexEntry } from './card-index';
 import { centuryOf } from './charts';
-import { RARITY_RANK, RESALE_VALUE, Rarity } from './game-rules';
+import { RARITY_RANK, RESALE_VALUE, Rarity } from '../game/game-rules';
 
 export interface BrowserItem extends IndexEntry {
   readonly artwork: Artwork | null;

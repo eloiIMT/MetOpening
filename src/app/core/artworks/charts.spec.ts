@@ -1,7 +1,7 @@
 import { Artwork, DepartmentId } from './artwork';
 import { itemFromArtwork } from './browse';
 import { centuryFromOrder, centuryOf, centuryRows, departmentRows, pieSlicePath, rarityRows } from './charts';
-import { Rarity } from './game-rules';
+import { Rarity } from '../game/game-rules';
 
 function artwork(id: number, rarity: Rarity, department: DepartmentId, year: number | null): Artwork {
   return { id, title: `Artwork ${id}`, artist: null, date: null, year, department, rarity, imageSmall: '', image: '', metUrl: '' };

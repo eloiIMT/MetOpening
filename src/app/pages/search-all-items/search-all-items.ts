@@ -1,10 +1,10 @@
 import { Component, DestroyRef, computed, inject, resource, signal } from '@angular/core';
-import { BrowserItem } from '../../core/browse';
-import { CardIndex, entryAt } from '../../core/card-index';
-import { CardIndexService } from '../../core/card-index.service';
-import { CollectionService } from '../../core/collection.service';
+import { BrowserItem } from '../../core/artworks/browse';
+import { CardIndex, entryAt } from '../../core/artworks/card-index';
+import { CardIndexService } from '../../core/artworks/card-index.service';
+import { CollectionService } from '../../core/collection/collection.service';
 import { I18n } from '../../core/i18n/i18n.service';
-import { MetApiService } from '../../core/met-api.service';
+import { MetApiService } from '../../core/met/met-api.service';
 import { ArtworkBrowser } from '../../shared/artwork-browser/artwork-browser';
 
 const SEARCH_DELAY_MS = 400;

@@ -12,10 +12,10 @@ import {
   viewChild,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Artwork, DepartmentId } from '../../core/artwork';
-import { BrowseCriteria, BrowserItem, SortId, browse, filterItems, summarizeDuplicates } from '../../core/browse';
-import { DEPARTMENT_COLOR, rarityRows } from '../../core/charts';
-import { RARITY_RANK, Rarity } from '../../core/game-rules';
+import { Artwork, DepartmentId } from '../../core/artworks/artwork';
+import { BrowseCriteria, BrowserItem, SortId, browse, filterItems, summarizeDuplicates } from '../../core/artworks/browse';
+import { DEPARTMENT_COLOR, rarityRows } from '../../core/artworks/charts';
+import { RARITY_RANK, Rarity } from '../../core/game/game-rules';
 import { I18n } from '../../core/i18n/i18n.service';
 import { MessageKey } from '../../core/i18n/messages';
 import { ArtworkCharts } from '../artwork-charts/artwork-charts';

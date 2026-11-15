@@ -1,7 +1,7 @@
 import { Injectable, computed, signal } from '@angular/core';
-import { Artwork } from './artwork';
+import { Artwork } from '../artworks/artwork';
 import { readCachedArtwork, writeCachedArtwork } from './artwork-cache';
-import { IndexEntry } from './card-index';
+import { IndexEntry } from '../artworks/card-index';
 import { MetObject, MetSearchResult, toArtwork } from './met-object';
 import { delayBeforeNext, recentRequests } from './rate-limit';
 

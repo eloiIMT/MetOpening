@@ -1,5 +1,5 @@
 import { DepartmentId } from './artwork';
-import { Rarity } from './game-rules';
+import { Rarity } from '../game/game-rules';
 
 export const CARD_INDEX_VERSION = 1;
 

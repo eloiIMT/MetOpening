@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { I18n } from '../../core/i18n/i18n.service';
-import { ARTWORKS_PER_CASE, SLOT_ODDS, TOP_SLOT_ODDS } from '../../core/game-rules';
+import { ARTWORKS_PER_CASE, SLOT_ODDS, TOP_SLOT_ODDS } from '../../core/game/game-rules';
 
 @Component({
   selector: 'app-case-odds',

@@ -1,6 +1,6 @@
-import { DepartmentId } from '../../artwork';
-import { Rarity } from '../../game-rules';
-import { ShopCaseId } from '../../shop';
+import { DepartmentId } from '../../artworks/artwork';
+import { Rarity } from '../../game/game-rules';
+import { ShopCaseId } from '../../economy/shop';
 import { defineMessages } from '../i18n';
 
 export const departments = defineMessages<DepartmentId>(

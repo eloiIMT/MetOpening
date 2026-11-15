@@ -1,12 +1,12 @@
 import { Component, computed, inject, input, linkedSignal, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { OPEN_AMOUNTS, OpenAmount, STOCK_MAX } from '../../core/game-rules';
+import { OPEN_AMOUNTS, OpenAmount, STOCK_MAX } from '../../core/game/game-rules';
 import { I18n } from '../../core/i18n/i18n.service';
-import { InventoryService } from '../../core/inventory.service';
-import { OpeningService } from '../../core/opening.service';
-import { SHOP_CASES, ShopCaseId, findShopCase } from '../../core/shop';
-import { StockService } from '../../core/stock.service';
-import { formatCountdown } from '../../core/stock-rules';
+import { InventoryService } from '../../core/economy/inventory.service';
+import { OpeningService } from '../../core/game/opening.service';
+import { SHOP_CASES, ShopCaseId, findShopCase } from '../../core/economy/shop';
+import { StockService } from '../../core/economy/stock.service';
+import { formatCountdown } from '../../core/economy/stock-rules';
 import { CaseCrate } from '../../shared/case-crate/case-crate';
 import { CaseOdds } from '../../shared/case-odds/case-odds';
 

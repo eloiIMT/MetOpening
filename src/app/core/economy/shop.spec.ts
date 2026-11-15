@@ -1,4 +1,4 @@
-import { CASE_PRICES } from './game-rules';
+import { CASE_PRICES } from '../game/game-rules';
 import { SHOP_CASES, findShopCase, groupByPrice } from './shop';
 
 describe('SHOP_CASES', () => {

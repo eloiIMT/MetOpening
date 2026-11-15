@@ -1,4 +1,4 @@
-import { Artwork } from './artwork';
+import { Artwork } from '../artworks/artwork';
 
 const DB_NAME = 'met-opening';
 const DB_VERSION = 1;

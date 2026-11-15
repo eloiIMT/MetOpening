@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { STARTING_COINS } from './game-rules';
+import { STARTING_COINS } from '../game/game-rules';
 import { WALLET_STORAGE_KEY, WalletService } from './wallet.service';
 
 describe('WalletService', () => {

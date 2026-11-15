@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { DepartmentId } from './artwork';
 import { CardIndex, CardIndexFile, IndexEntry, decodeCardIndex, findEntry, poolIds } from './card-index';
-import { Rarity } from './game-rules';
+import { Rarity } from '../game/game-rules';
 
 const INDEX_URL = 'data/card-index.json';
 

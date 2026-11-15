@@ -1,9 +1,9 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { InventoryService } from '../../core/inventory.service';
+import { InventoryService } from '../../core/economy/inventory.service';
 import { I18n } from '../../core/i18n/i18n.service';
-import { SHOP_CASES, ShopCaseId, findShopCase, groupByPrice } from '../../core/shop';
-import { WalletService } from '../../core/wallet.service';
+import { SHOP_CASES, ShopCaseId, findShopCase, groupByPrice } from '../../core/economy/shop';
+import { WalletService } from '../../core/economy/wallet.service';
 import { CaseCrate } from '../../shared/case-crate/case-crate';
 
 @Component({

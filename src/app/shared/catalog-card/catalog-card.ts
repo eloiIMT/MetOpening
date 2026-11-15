@@ -1,7 +1,7 @@
 import { Component, booleanAttribute, computed, inject, input, resource } from '@angular/core';
-import { BrowserItem } from '../../core/browse';
+import { BrowserItem } from '../../core/artworks/browse';
 import { I18n } from '../../core/i18n/i18n.service';
-import { MetApiService } from '../../core/met-api.service';
+import { MetApiService } from '../../core/met/met-api.service';
 import { ArtworkCard } from '../artwork-card/artwork-card';
 
 @Component({

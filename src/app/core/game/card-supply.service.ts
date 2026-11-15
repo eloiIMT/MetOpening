@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { Artwork, DepartmentId, isArtwork } from './artwork';
-import { CardIndexService } from './card-index.service';
+import { Artwork, DepartmentId, isArtwork } from '../artworks/artwork';
+import { CardIndexService } from '../artworks/card-index.service';
 import { RandomFn, pickRandom } from './draw';
 import { Rarity } from './game-rules';
-import { MetApiService, isAbortError } from './met-api.service';
+import { MetApiService, isAbortError } from '../met/met-api.service';
 import { EMPTY_RESERVE, RESERVE_TARGET, Reserve, addToReserve, mostNeededRarity, takeFromReserve } from './reserve';
 
 export const RESERVE_STORAGE_KEY = 'met-opening.reserve';

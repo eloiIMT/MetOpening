@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { Artwork, isArtwork } from './artwork';
-import { CardIndexService } from './card-index.service';
+import { Artwork, isArtwork } from '../artworks/artwork';
+import { CardIndexService } from '../artworks/card-index.service';
 import {
   DrawnArtwork,
   OwnedEntry,
@@ -10,8 +10,8 @@ import {
   resellDuplicates,
   sellCopies,
 } from './collection-rules';
-import { MetApiService } from './met-api.service';
-import { WalletService } from './wallet.service';
+import { MetApiService } from '../met/met-api.service';
+import { WalletService } from '../economy/wallet.service';
 
 export const COLLECTION_STORAGE_KEY = 'met-opening.collection';
 

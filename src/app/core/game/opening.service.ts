@@ -1,12 +1,12 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { Artwork, DepartmentId } from './artwork';
+import { Artwork, DepartmentId } from '../artworks/artwork';
 import { CardSupplyService } from './card-supply.service';
-import { CollectionService } from './collection.service';
-import { DrawnArtwork, sortByRarity } from './collection-rules';
+import { CollectionService } from '../collection/collection.service';
+import { DrawnArtwork, sortByRarity } from '../collection/collection-rules';
 import { rollCaseRarities } from './draw';
-import { InventoryService } from './inventory.service';
-import { ShopCase, ShopCaseId, findShopCase } from './shop';
-import { StockService } from './stock.service';
+import { InventoryService } from '../economy/inventory.service';
+import { ShopCase, ShopCaseId, findShopCase } from '../economy/shop';
+import { StockService } from '../economy/stock.service';
 
 export const OPENING_STORAGE_KEY = 'met-opening.last-opening';
 

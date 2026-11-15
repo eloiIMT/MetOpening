@@ -1,5 +1,5 @@
-import { Artwork } from './artwork';
-import { IndexEntry } from './card-index';
+import { Artwork } from '../artworks/artwork';
+import { IndexEntry } from '../artworks/card-index';
 
 export interface MetObject {
   readonly objectID: number;

@@ -1,5 +1,5 @@
 import { DepartmentId } from './artwork';
-import { RARITY_RANK, Rarity } from './game-rules';
+import { RARITY_RANK, Rarity } from '../game/game-rules';
 
 export interface ChartRow<K> {
   readonly key: K;

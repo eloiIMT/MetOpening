@@ -1,6 +1,6 @@
-import { Artwork } from './artwork';
+import { Artwork } from '../artworks/artwork';
 import { OwnedEntry, OwnedMap, addToCollection, resellDuplicates, sellCopies, sortByRarity } from './collection-rules';
-import { Rarity } from './game-rules';
+import { Rarity } from '../game/game-rules';
 
 function artwork(id: number, rarity: Rarity = 'common'): Artwork {
   return {

@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { STARTING_COINS } from './game-rules';
+import { STARTING_COINS } from '../game/game-rules';
 
 export const WALLET_STORAGE_KEY = 'met-opening.coins';
 

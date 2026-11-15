@@ -1,8 +1,8 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { Artwork } from '../../core/artwork';
-import { BrowserItem, itemFromArtwork } from '../../core/browse';
-import { CardIndexService } from '../../core/card-index.service';
-import { CollectionService } from '../../core/collection.service';
+import { Artwork } from '../../core/artworks/artwork';
+import { BrowserItem, itemFromArtwork } from '../../core/artworks/browse';
+import { CardIndexService } from '../../core/artworks/card-index.service';
+import { CollectionService } from '../../core/collection/collection.service';
 import { I18n } from '../../core/i18n/i18n.service';
 import { ArtworkBrowser } from '../../shared/artwork-browser/artwork-browser';
 

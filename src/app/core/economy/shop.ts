@@ -1,5 +1,5 @@
-import type { ShopDepartmentId } from './artwork';
-import { CASE_PRICES } from './game-rules';
+import type { ShopDepartmentId } from '../artworks/artwork';
+import { CASE_PRICES } from '../game/game-rules';
 
 export type ShopCaseId = 'classic' | ShopDepartmentId;
 

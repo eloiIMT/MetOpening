@@ -1,6 +1,6 @@
 import { Component, booleanAttribute, computed, inject, input } from '@angular/core';
 import { I18n } from '../../core/i18n/i18n.service';
-import { ShopCaseId } from '../../core/shop';
+import { ShopCaseId } from '../../core/economy/shop';
 
 @Component({
   selector: 'app-case-crate',

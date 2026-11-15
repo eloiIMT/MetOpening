@@ -1,5 +1,5 @@
-import { Artwork } from './artwork';
-import { RARITY_RANK, RESALE_VALUE } from './game-rules';
+import { Artwork } from '../artworks/artwork';
+import { RARITY_RANK, RESALE_VALUE } from '../game/game-rules';
 
 export interface OwnedEntry {
   readonly count: number;

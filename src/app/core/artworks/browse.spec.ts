@@ -1,6 +1,6 @@
 import { Artwork, DepartmentId } from './artwork';
 import { BrowseCriteria, BrowserItem, browse, filterItems, itemFromArtwork, summarizeDuplicates } from './browse';
-import { Rarity } from './game-rules';
+import { Rarity } from '../game/game-rules';
 
 function item(
   id: number,

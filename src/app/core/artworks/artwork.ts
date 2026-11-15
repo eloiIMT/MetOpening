@@ -1,4 +1,4 @@
-import { Rarity } from './game-rules';
+import { Rarity } from '../game/game-rules';
 
 export type ShopDepartmentId =
   | 'european-paintings'

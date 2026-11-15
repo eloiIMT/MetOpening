@@ -1,7 +1,7 @@
 import { Component, booleanAttribute, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Artwork } from '../../core/artwork';
-import { RARITY_RANK } from '../../core/game-rules';
+import { Artwork } from '../../core/artworks/artwork';
+import { RARITY_RANK } from '../../core/game/game-rules';
 import { I18n } from '../../core/i18n/i18n.service';
 
 @Component({
