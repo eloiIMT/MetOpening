@@ -118,7 +118,7 @@ export class ArtworkCharts {
       width: (entry.value / max) * 100,
       height: (entry.value / max) * 100,
       showLabel: index % step === 0 || index === entries.length - 1,
-      valueLabel: `${entry.value} · ${percentLabel(entry.share)}`,
+      valueLabel: `(${entry.value}) ${percentLabel(entry.share)}`,
       readout: `${entry.longLabel} : ${formatCount(entry.value, 'œuvre', 'œuvres')} (${percentLabel(entry.share)})`,
     }));
   });
