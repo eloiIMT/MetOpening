@@ -3,7 +3,7 @@ import { Artwork } from '../../core/artwork';
 import { BrowserItem, itemFromArtwork } from '../../core/browse';
 import { CardIndexService } from '../../core/card-index.service';
 import { CollectionService } from '../../core/collection.service';
-import { formatCoins, formatCount } from '../../core/labels';
+import { I18n } from '../../core/i18n/i18n.service';
 import { ArtworkBrowser } from '../../shared/artwork-browser/artwork-browser';
 
 @Component({
@@ -13,6 +13,9 @@ import { ArtworkBrowser } from '../../shared/artwork-browser/artwork-browser';
   styleUrl: './view-collection.scss',
 })
 export class ViewCollection {
+  private readonly i18n = inject(I18n);
+  protected readonly t = this.i18n.t;
+
   private readonly cardIndex = inject(CardIndexService);
   private readonly collection = inject(CollectionService);
 
@@ -31,18 +34,23 @@ export class ViewCollection {
   protected readonly statsLabel = computed(() => {
     const items = this.items();
     const copies = items.reduce((sum, item) => sum + item.copies, 0);
-    const owned = formatCount(items.length, 'œuvre', 'œuvres');
+    const owned = this.t('common.artworks', { count: items.length });
+    const copiesText = this.t('common.copies', { count: copies });
     const total = this.cardIndex.index()?.size;
-    const outOf = total === undefined ? '' : ` sur ${total.toLocaleString('fr-FR')}`;
-    return `${owned}${outOf} · ${formatCount(copies, 'exemplaire', 'exemplaires')}`;
+    return total === undefined
+      ? this.t('artworks.collectionStats', { owned, copies: copiesText })
+      : this.t('artworks.collectionStatsOf', { owned, total: this.i18n.number(total), copies: copiesText });
   });
 
   protected sell(artworks: readonly Artwork[]): void {
     const result = this.collection.sellDuplicates(artworks);
     this.saleMessage.set(
       result.sold === 0
-        ? 'Aucun double à vendre.'
-        : `${formatCount(result.sold, 'double vendu', 'doubles vendus')} pour ${formatCoins(result.coins)}.`,
+        ? this.t('artworks.collectionNoDuplicates')
+        : this.t('artworks.collectionSold', {
+            count: result.sold,
+            coins: this.t('common.coins', { count: result.coins }),
+          }),
     );
   }
 }

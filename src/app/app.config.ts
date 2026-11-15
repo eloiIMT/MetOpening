@@ -1,12 +1,12 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideHttpClient } from '@angular/common/http';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { TitleStrategy, provideRouter, withComponentInputBinding } from '@angular/router';
+import { TranslatedTitle } from './core/i18n/translated-title';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(),
+    { provide: TitleStrategy, useExisting: TranslatedTitle },
   ],
 };

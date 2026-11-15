@@ -15,8 +15,6 @@ import { WalletService } from './wallet.service';
 
 export const COLLECTION_STORAGE_KEY = 'met-opening.collection';
 
-const LEGACY_ARTWORKS_URL = 'data/artworks.json';
-
 type LegacyEntry = Omit<OwnedEntry, 'artwork'>;
 
 interface StoredCollection {
@@ -82,10 +80,9 @@ export class CollectionService {
   }
 
   private async convertLegacy(): Promise<void> {
-    const known = await fetchLegacyArtworks();
     for (const [key, entry] of Object.entries(this.legacy)) {
       const id = Number(key);
-      const artwork = known.get(id) ?? (await this.fetchArtwork(id));
+      const artwork = await this.fetchArtwork(id);
       if (artwork && this.legacy[id]) {
         delete this.legacy[id];
         this.save({ ...this.entries(), [id]: { ...entry, artwork } });
@@ -145,14 +142,4 @@ function isLegacyEntry(value: unknown): value is LegacyEntry {
     typeof firstObtainedAt === 'number' &&
     Number.isFinite(firstObtainedAt)
   );
-}
-
-async function fetchLegacyArtworks(): Promise<ReadonlyMap<number, Artwork>> {
-  try {
-    const response = await fetch(LEGACY_ARTWORKS_URL);
-    const artworks: unknown = response.ok ? await response.json() : [];
-    return new Map((Array.isArray(artworks) ? artworks : []).filter(isArtwork).map((artwork) => [artwork.id, artwork]));
-  } catch {
-    return new Map();
-  }
 }

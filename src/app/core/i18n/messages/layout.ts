@@ -1,0 +1,86 @@
+import { defineMessages } from '../i18n';
+
+export const routes = defineMessages(
+  {
+    caseOpening: 'Ouverture de caisses · Met Opening',
+    opening: 'Ouverture en cours · Met Opening',
+    legendary: 'Une Légendaire ! · Met Opening',
+    summary: 'Résumé de l’ouverture · Met Opening',
+    collection: 'Ma collection · Met Opening',
+    search: 'Rechercher dans les œuvres · Met Opening',
+    shop: 'Boutique de caisses · Met Opening',
+  },
+  {
+    caseOpening: 'Case opening · Met Opening',
+    opening: 'Opening · Met Opening',
+    legendary: 'A Legendary! · Met Opening',
+    summary: 'Opening summary · Met Opening',
+    collection: 'My collection · Met Opening',
+    search: 'Search the artworks · Met Opening',
+    shop: 'Case shop · Met Opening',
+  },
+);
+
+export const nav = defineMessages(
+  {
+    label: 'Navigation principale',
+    collection: 'Voir la collection',
+    collectionShort: 'Collection',
+    opening: 'Ouverture de caisses',
+    openingShort: 'Ouverture',
+    shop: 'Boutique de caisses',
+    shopShort: 'Boutique',
+    search: 'Rechercher dans les œuvres',
+    searchShort: 'Recherche',
+    balance: 'Solde : ',
+    openShop: ', ouvrir la boutique',
+    languageButton: 'FR',
+    languageLabel: 'Switch to English',
+    metPaused: 'Le Met a besoin d’une minute, les œuvres arrivent bientôt…',
+  },
+  {
+    label: 'Main navigation',
+    collection: 'View collection',
+    collectionShort: 'Collection',
+    opening: 'Case opening',
+    openingShort: 'Opening',
+    shop: 'Case shop',
+    shopShort: 'Shop',
+    search: 'Search the artworks',
+    searchShort: 'Search',
+    balance: 'Balance: ',
+    openShop: ', open the shop',
+    languageButton: 'EN',
+    languageLabel: 'Passer en français',
+    metPaused: 'The Met needs a minute, artworks are on their way…',
+  },
+);
+
+export const footer = defineMessages(
+  {
+    notice: 'Projet de fan, non affilié au Metropolitan Museum of Art ·',
+    credits: 'Crédits',
+    artworks: 'Œuvres : The Metropolitan Museum of Art, domaine public (Open Access).',
+    stairs: 'Escalier du Met : Allen McGregor,',
+    resized: 'image redimensionnée.',
+    shelves: 'Rayonnages : CHUTTERSNAP, licence Unsplash.',
+    bookshop: 'Librairie (boutique) : Sui Xu, licence Unsplash.',
+    showcases: 'Vitrines (recherche) : Michael Pointner, licence Unsplash.',
+    icons: 'Icônes : Delapouite et Lorc, game-icons.net,',
+    crate: 'Caisse : dessin vectoriel réalisé avec l’aide d’une IA.',
+    licenseLang: 'deed.fr',
+  },
+  {
+    notice: 'Fan project, not affiliated with The Metropolitan Museum of Art ·',
+    credits: 'Credits',
+    artworks: 'Artworks: The Metropolitan Museum of Art, public domain (Open Access).',
+    stairs: 'Met staircase: Allen McGregor,',
+    resized: 'resized image.',
+    shelves: 'Shelves: CHUTTERSNAP, Unsplash license.',
+    bookshop: 'Bookshop (shop): Sui Xu, Unsplash license.',
+    showcases: 'Showcases (search): Michael Pointner, Unsplash license.',
+    icons: 'Icons: Delapouite and Lorc, game-icons.net,',
+    crate: 'Case: vector drawing made with the help of an AI.',
+    licenseLang: 'deed.en',
+  },
+);

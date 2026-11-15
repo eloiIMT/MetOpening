@@ -2,7 +2,7 @@ import { Component, DestroyRef, ElementRef, computed, effect, inject, signal, vi
 import { Router, RouterLink } from '@angular/router';
 import { sortByRarity } from '../../core/collection-rules';
 import { RARITY_RANK, Rarity } from '../../core/game-rules';
-import { RARITY_LABEL } from '../../core/labels';
+import { I18n } from '../../core/i18n/i18n.service';
 import { OpeningService } from '../../core/opening.service';
 
 const FIRST_CARD_DELAY_MS = 1500;
@@ -25,6 +25,7 @@ const PLAIN_LIGHT = '#FFF1C9';
 export class Opening {
   private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
+  private readonly i18n = inject(I18n);
   private readonly reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   private readonly startedAt = performance.now();
   private counter: ReturnType<typeof setInterval> | undefined;
@@ -33,7 +34,12 @@ export class Opening {
   private readonly track = viewChild<ElementRef<HTMLElement>>('track');
   private readonly cardItems = viewChildren<ElementRef<HTMLElement>>('cardItem');
 
+  protected readonly t = this.i18n.t;
   protected readonly result = inject(OpeningService).current;
+  protected readonly stencilText = computed(() => {
+    const result = this.result();
+    return result ? this.t(`stencils.${result.caseId}`) : '';
+  });
   protected readonly revealed = signal(0);
   protected readonly done = signal(false);
 
@@ -65,7 +71,7 @@ export class Opening {
       return {
         top,
         rarity: item.artwork.rarity,
-        label: RARITY_LABEL[item.artwork.rarity],
+        label: this.t(`rarities.${item.artwork.rarity}`),
         image: item.artwork.imageSmall,
         title: item.artwork.title,
         delay,
@@ -84,23 +90,29 @@ export class Opening {
 
   protected readonly heading = computed(() => {
     if (!this.done()) {
-      return 'Ouverture en cours';
+      return this.t('openings.openingInProgress');
     }
     if (this.legendaryCount() > 0) {
-      return this.legendaryCount() > 1 ? `${this.legendaryCount()} Légendaires !` : 'Une Légendaire !';
+      return this.legendaryCount() > 1
+        ? this.t('openings.openingLegendaryMany', { count: this.legendaryCount() })
+        : this.t('openings.openingLegendaryOne');
     }
-    return this.caseCount() > 1 ? 'Caisses ouvertes' : 'Caisse ouverte';
+    return this.caseCount() > 1 ? this.t('openings.openingCasesOpenedMany') : this.t('openings.openingCasesOpenedOne');
   });
 
-  protected readonly meta = computed(() => {
-    const cases = this.caseCount() > 1 ? `${this.caseCount()} caisses` : '1 caisse';
-    return `${cases} · ${this.total()} œuvres`;
-  });
+  private readonly casesLabel = computed(() => this.t('openings.openingCases', { count: Math.max(this.caseCount(), 1) }));
 
-  protected readonly status = computed(() => {
-    const cases = this.caseCount() > 1 ? `${this.caseCount()} caisses` : '1 caisse';
-    return this.done() ? `${cases} ouvertes : ${this.total()} œuvres.` : `Ouverture de ${cases} en cours.`;
-  });
+  private readonly artworksLabel = computed(() => this.t('common.artworks', { count: this.total() }));
+
+  protected readonly meta = computed(() =>
+    this.t('openings.openingMeta', { cases: this.casesLabel(), artworks: this.artworksLabel() }),
+  );
+
+  protected readonly status = computed(() =>
+    this.done()
+      ? this.t('openings.openingStatusDone', { cases: this.casesLabel(), artworks: this.artworksLabel() })
+      : this.t('openings.openingStatusProgress', { cases: this.casesLabel() }),
+  );
 
   constructor() {
     effect(() => this.followLatestCard());

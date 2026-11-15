@@ -5,7 +5,7 @@
     <div class="summary__header glass">
       <div class="summary__intro">
         <h1 id="summary-title" class="summary__title">{{ heading() }}</h1>
-        <ul class="tally" aria-label="Répartition par rareté">
+        <ul class="tally" [attr.aria-label]="t('openings.summaryTallyLabel')">
           @for (entry of tally(); track entry.rarity) {
             <li class="tally__item">
               <span class="tally__dot" aria-hidden="true" [style.background]="entry.color"></span>
@@ -14,7 +14,7 @@
           }
         </ul>
       </div>
-      <p class="summary__value">Valeur de revente : <strong>{{ valueLabel() }}</strong></p>
+      <p class="summary__value">{{ t('openings.summaryValue') }} <strong>{{ valueLabel() }}</strong></p>
     </div>
 
     <div class="summary__group">
@@ -29,18 +29,18 @@
     </div>
 
     <div class="summary__actions">
-      <a class="btn-primary tap" routerLink="/case-opening">Ouvrir une autre caisse</a>
-      <a class="btn-secondary tap" routerLink="/view-collection">Voir la collection</a>
+      <a class="btn-primary tap" routerLink="/case-opening">{{ t('openings.summaryAgain') }}</a>
+      <a class="btn-secondary tap" routerLink="/view-collection">{{ t('openings.summaryCollection') }}</a>
     </div>
   </section>
 } @else {
   <section class="summary summary--empty">
     <div class="summary__header glass">
       <div class="summary__intro">
-        <h1 class="summary__title">Aucune ouverture à résumer</h1>
-        <p class="summary__value">Ouvrez des caisses pour découvrir de nouvelles œuvres.</p>
+        <h1 class="summary__title">{{ t('openings.summaryNoneTitle') }}</h1>
+        <p class="summary__value">{{ t('openings.summaryNoneText') }}</p>
       </div>
-      <a class="btn-primary tap" routerLink="/case-opening">Aller à l'ouverture de caisses</a>
+      <a class="btn-primary tap" routerLink="/case-opening">{{ t('openings.summaryNoneCta') }}</a>
     </div>
   </section>
 }

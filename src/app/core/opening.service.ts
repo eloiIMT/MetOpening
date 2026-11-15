@@ -5,13 +5,13 @@ import { CollectionService } from './collection.service';
 import { DrawnArtwork, sortByRarity } from './collection-rules';
 import { rollCaseRarities } from './draw';
 import { InventoryService } from './inventory.service';
-import { ShopCase } from './shop';
+import { ShopCase, ShopCaseId, findShopCase } from './shop';
 import { StockService } from './stock.service';
 
 export const OPENING_STORAGE_KEY = 'met-opening.last-opening';
 
 export interface OpeningResult {
-  readonly stencil: string;
+  readonly caseId: ShopCaseId;
   readonly cases: readonly (readonly DrawnArtwork[])[];
 }
 
@@ -29,21 +29,21 @@ export class OpeningService {
   readonly preparing = this.preparingState.asReadonly();
 
   openFreeCases(amount: number): Promise<boolean> {
-    return this.open('CLASSIQUE', null, amount, {
+    return this.open('classic', null, amount, {
       canPay: () => this.stockService.canConsume(amount),
       pay: () => this.stockService.consume(amount),
     });
   }
 
   openBoughtCases(shopCase: ShopCase, amount: number): Promise<boolean> {
-    return this.open(shopCase.stencil, shopCase.department, amount, {
+    return this.open(shopCase.id, shopCase.department, amount, {
       canPay: () => this.inventory.countOf(shopCase.id) >= amount,
       pay: () => this.inventory.consume(shopCase.id, amount),
     });
   }
 
   private async open(
-    stencil: string,
+    caseId: ShopCaseId,
     department: DepartmentId | null,
     amount: number,
     payment: { canPay: () => boolean; pay: () => boolean },
@@ -58,16 +58,16 @@ export class OpeningService {
       if (!payment.pay()) {
         return false;
       }
-      this.finishOpening(stencil, drawnCases);
+      this.finishOpening(caseId, drawnCases);
       return true;
     } finally {
       this.preparingState.set(false);
     }
   }
 
-  private finishOpening(stencil: string, drawnCases: readonly Artwork[][]): void {
+  private finishOpening(caseId: ShopCaseId, drawnCases: readonly Artwork[][]): void {
     const cases = drawnCases.map((drawnCase) => sortByRarity(this.collection.add(drawnCase)));
-    const result: OpeningResult = { stencil, cases };
+    const result: OpeningResult = { caseId, cases };
     this.result.set(result);
     saveOpening(result);
   }
@@ -90,8 +90,8 @@ function isOpeningResult(value: unknown): value is OpeningResult {
   if (typeof value !== 'object' || value === null) {
     return false;
   }
-  const { stencil, cases } = value as Partial<OpeningResult>;
-  return typeof stencil === 'string' && Array.isArray(cases) && cases.every((drawnCase) => Array.isArray(drawnCase));
+  const { caseId, cases } = value as Partial<OpeningResult>;
+  return typeof caseId === 'string' && findShopCase(caseId) !== undefined && Array.isArray(cases) && cases.every((drawnCase) => Array.isArray(drawnCase));
 }
 
 function saveOpening(result: OpeningResult): void {

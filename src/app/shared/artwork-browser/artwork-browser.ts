@@ -4,6 +4,7 @@ import {
   booleanAttribute,
   computed,
   effect,
+  inject,
   input,
   linkedSignal,
   output,
@@ -13,19 +14,22 @@ import {
 import { RouterLink } from '@angular/router';
 import { Artwork, DepartmentId } from '../../core/artwork';
 import { BrowseCriteria, BrowserItem, SortId, browse, filterItems, summarizeDuplicates } from '../../core/browse';
-import { rarityRows } from '../../core/charts';
+import { DEPARTMENT_COLOR, rarityRows } from '../../core/charts';
 import { RARITY_RANK, Rarity } from '../../core/game-rules';
-import { DEPARTMENT_LABEL, RARITY_LABEL, formatCoins, formatCount } from '../../core/labels';
+import { I18n } from '../../core/i18n/i18n.service';
+import { MessageKey } from '../../core/i18n/messages';
 import { ArtworkCharts } from '../artwork-charts/artwork-charts';
 import { CatalogCard } from '../catalog-card/catalog-card';
 
 const RARITIES = (Object.keys(RARITY_RANK) as Rarity[]).sort((a, b) => RARITY_RANK[a] - RARITY_RANK[b]);
 
-const SORT_OPTIONS: readonly { id: SortId; label: string }[] = [
-  { id: 'rarity-asc', label: 'Rareté : moins rares d’abord' },
-  { id: 'rarity-desc', label: 'Rareté : plus rares d’abord' },
-  { id: 'recent', label: 'Date d’obtention : récentes d’abord' },
-  { id: 'title', label: 'Titre (A → Z)' },
+const DEPARTMENT_IDS = Object.keys(DEPARTMENT_COLOR) as DepartmentId[];
+
+const SORT_OPTIONS: readonly { id: SortId; label: MessageKey }[] = [
+  { id: 'rarity-asc', label: 'artworks.sortRarityAsc' },
+  { id: 'rarity-desc', label: 'artworks.sortRarityDesc' },
+  { id: 'recent', label: 'artworks.sortRecent' },
+  { id: 'title', label: 'artworks.sortTitle' },
 ];
 
 const PAGE_SIZE = 24;
@@ -46,6 +50,9 @@ export class ArtworkBrowser {
   readonly sellDuplicates = output<readonly Artwork[]>();
   readonly queryChange = output<string>();
 
+  private readonly i18n = inject(I18n);
+  protected readonly t = this.i18n.t;
+
   private readonly saleDialog = viewChild<ElementRef<HTMLDialogElement>>('saleDialog');
   private readonly sentinel = viewChild<ElementRef<HTMLElement>>('sentinel');
 
@@ -61,12 +68,14 @@ export class ArtworkBrowser {
   );
 
   protected readonly searchLabel = computed(() =>
-    this.mode() === 'search' ? 'Rechercher dans toutes les œuvres' : 'Rechercher dans la collection',
+    this.t(this.mode() === 'search' ? 'artworks.searchAll' : 'artworks.searchCollection'),
   );
 
-  protected readonly departmentOptions = (Object.keys(DEPARTMENT_LABEL) as DepartmentId[])
-    .map((value) => ({ value, label: DEPARTMENT_LABEL[value] }))
-    .sort((a, b) => a.label.localeCompare(b.label, 'fr'));
+  protected readonly departmentOptions = computed(() =>
+    DEPARTMENT_IDS.map((value) => ({ value, label: this.t(`departments.${value}`) })).sort((a, b) =>
+      a.label.localeCompare(b.label, this.i18n.tag()),
+    ),
+  );
 
   private readonly criteria = computed<BrowseCriteria>(() => ({
     query: this.query(),
@@ -100,24 +109,23 @@ export class ArtworkBrowser {
 
   protected readonly hasMore = computed(() => this.limit() < this.visible().length);
 
-  protected readonly progressLabel = computed(
-    () =>
-      `${this.shownCards().length} sur ${formatCount(this.visible().length, 'œuvre affichée', 'œuvres affichées')}`,
+  protected readonly progressLabel = computed(() =>
+    this.t('artworks.progress', { shown: this.shownCards().length, count: this.visible().length }),
   );
 
   protected readonly moreLabel = computed(() => {
     const next = Math.min(PAGE_SIZE, this.visible().length - this.limit());
-    return `Afficher ${formatCount(next, 'œuvre', 'œuvres')} de plus`;
+    return this.t('artworks.more', { count: next });
   });
 
   protected readonly rarityOptions = computed(() => {
     const rows = rarityRows(this.rarityPool());
     return RARITIES.map((rarity) => ({
       rarity,
-      label: RARITY_LABEL[rarity],
+      label: this.t(`rarities.${rarity}`),
       color: `var(--rarity-${rarity})`,
       checked: this.rarities().has(rarity),
-      count: (rows.find((row) => row.key === rarity)?.value ?? 0).toLocaleString('fr-FR'),
+      count: this.i18n.number(rows.find((row) => row.key === rarity)?.value ?? 0),
     }));
   });
 
@@ -128,13 +136,15 @@ export class ArtworkBrowser {
   protected readonly hasFilters = computed(() => this.activeFilterCount() > 0);
 
   protected readonly filtersToggleLabel = computed(() =>
-    this.activeFilterCount() > 0 ? `Filtres (${this.activeFilterCount()})` : 'Filtres',
+    this.activeFilterCount() > 0
+      ? this.t('artworks.filtersCount', { count: this.activeFilterCount() })
+      : this.t('artworks.filters'),
   );
 
   protected readonly resultLabel = computed(() => {
-    const shown = formatCount(this.visible().length, 'œuvre', 'œuvres');
+    const shown = this.t('common.artworks', { count: this.visible().length });
     return this.visible().length < this.items().length
-      ? `${shown} sur ${this.items().length.toLocaleString('fr-FR')}`
+      ? this.t('artworks.resultOf', { shown, total: this.i18n.number(this.items().length) })
       : shown;
   });
 
@@ -143,13 +153,13 @@ export class ArtworkBrowser {
   protected readonly saleLabel = computed(() => {
     const { copies, coins } = this.duplicates();
     return copies === 0
-      ? 'Aucun double à vendre'
-      : `Vendre ${formatCount(copies, 'double', 'doubles')} · ${formatCoins(coins)}`;
+      ? this.t('artworks.saleNone')
+      : this.t('artworks.saleLabel', { count: copies, coins: this.t('common.coins', { count: coins }) });
   });
 
   protected readonly saleQuestion = computed(() => {
     const { copies, coins } = this.duplicates();
-    return `Vous allez vendre ${formatCount(copies, 'exemplaire en double', 'exemplaires en double')} pour ${formatCoins(coins)}. Un exemplaire de chaque œuvre reste dans votre collection.`;
+    return this.t('artworks.saleQuestion', { count: copies, coins: this.t('common.coins', { count: coins }) });
   });
 
   constructor() {
@@ -237,7 +247,7 @@ export class ArtworkBrowser {
 
   private badgeFor(copies: number): string | null {
     if (this.mode() === 'search') {
-      return copies > 0 ? 'Possédée' : null;
+      return copies > 0 ? this.t('artworks.badgeOwned') : null;
     }
     return copies > 1 ? `×${copies}` : null;
   }

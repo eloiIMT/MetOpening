@@ -12,10 +12,10 @@
       @if (loading()) {
         <span class="placeholder__line"></span>
         <span class="placeholder__line placeholder__line--short"></span>
-        <span class="sr-only">Chargement de l'œuvre n° {{ item().id }}</span>
+        <span class="sr-only">{{ t('artworks.catalogLoading', { id: idText() }) }}</span>
       } @else {
         <p class="placeholder__text">{{ missingText() }}</p>
-        <p class="placeholder__meta">N° au Met {{ item().id }}</p>
+        <p class="placeholder__meta">{{ t('artworks.catalogMetNumber', { id: idText() }) }}</p>
       }
       <span class="placeholder__tier">
         <span class="placeholder__dot" aria-hidden="true"></span>

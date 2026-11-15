@@ -1,7 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { RESALE_VALUE } from '../../core/game-rules';
-import { RARITY_LABEL, RARITY_LABEL_PLURAL, formatCoins, formatCount } from '../../core/labels';
+import { I18n } from '../../core/i18n/i18n.service';
 import { OpeningService } from '../../core/opening.service';
 import { summarizeOpening } from '../../core/summary';
 import { ArtworkCard } from '../../shared/artwork-card/artwork-card';
@@ -17,6 +17,8 @@ const MAX_CARD_DELAY_MS = 800;
   styleUrl: './opening-summary.scss',
 })
 export class OpeningSummary {
+  private readonly i18n = inject(I18n);
+  protected readonly t = this.i18n.t;
   private readonly result = inject(OpeningService).current;
 
   protected readonly recap = computed(() => {
@@ -29,19 +31,22 @@ export class OpeningSummary {
   protected readonly heading = computed(() => {
     const total = this.recap()?.total ?? 0;
     return this.caseCount() > 1
-      ? `Vos ${this.caseCount()} caisses contenaient ${total} œuvres`
-      : `Votre caisse contenait ${total} œuvres`;
+      ? this.t('openings.summaryHeadingMany', { cases: this.caseCount(), count: total })
+      : this.t('openings.summaryHeadingOne', { count: total });
   });
 
   protected readonly tally = computed(() =>
     (this.recap()?.tally ?? []).map((entry) => ({
       rarity: entry.rarity,
       color: `var(--rarity-${entry.rarity})`,
-      label: formatCount(entry.count, RARITY_LABEL[entry.rarity], RARITY_LABEL_PLURAL[entry.rarity]),
+      label: this.t('openings.summaryTally', {
+        count: entry.count,
+        name: this.t(entry.count > 1 ? `raritiesPlural.${entry.rarity}` : `rarities.${entry.rarity}`),
+      }),
     })),
   );
 
-  protected readonly valueLabel = computed(() => formatCoins(this.recap()?.value ?? 0));
+  protected readonly valueLabel = computed(() => this.t('common.coins', { count: this.recap()?.value ?? 0 }));
 
   protected readonly groupTitle = computed(() => {
     const recap = this.recap();
@@ -49,8 +54,8 @@ export class OpeningSummary {
       return '';
     }
     return recap.items.length === recap.total
-      ? `Les ${recap.total} œuvres`
-      : `${recap.items.length} œuvres différentes`;
+      ? this.t('openings.summaryGroupAll', { count: recap.total })
+      : this.t('openings.summaryGroupDistinct', { count: recap.items.length });
   });
 
   protected readonly cards = computed(() =>
@@ -58,8 +63,9 @@ export class OpeningSummary {
       const copies = item.copies > 1 ? ` · ×${item.copies}` : '';
       return {
         artwork: item.artwork,
-        badge: `${item.isNew ? 'Nouvelle' : 'Double'}${copies}`,
-        note: formatCoins(item.copies * RESALE_VALUE[item.artwork.rarity]),        delay: Math.min(FIRST_CARD_DELAY_MS + index * CARD_STAGGER_MS, MAX_CARD_DELAY_MS),
+        badge: `${this.t(item.isNew ? 'openings.summaryBadgeNew' : 'openings.summaryBadgeDuplicate')}${copies}`,
+        note: this.t('common.coins', { count: item.copies * RESALE_VALUE[item.artwork.rarity] }),
+        delay: Math.min(FIRST_CARD_DELAY_MS + index * CARD_STAGGER_MS, MAX_CARD_DELAY_MS),
       };
     }),
   );

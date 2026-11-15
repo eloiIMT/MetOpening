@@ -1,4 +1,5 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { I18n } from '../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-site-footer',
@@ -6,6 +7,7 @@ import { Component, signal } from '@angular/core';
   styleUrl: './site-footer.scss',
 })
 export class SiteFooter {
+  protected readonly t = inject(I18n).t;
   protected readonly creditsOpen = signal(false);
 
   protected toggleCredits(): void {

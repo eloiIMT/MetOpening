@@ -1,41 +1,42 @@
 import { Routes } from '@angular/router';
+import { MessageKey } from './core/i18n/messages';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'case-opening', pathMatch: 'full' },
   {
     path: 'case-opening',
-    title: 'Ouverture de caisses · Met Opening',
+    title: 'routes.caseOpening' satisfies MessageKey,
     loadComponent: () => import('./pages/case-opening/case-opening').then((m) => m.CaseOpening),
   },
   {
     path: 'case-opening/open',
-    title: 'Ouverture en cours · Met Opening',
+    title: 'routes.opening' satisfies MessageKey,
     loadComponent: () => import('./pages/opening/opening').then((m) => m.Opening),
   },
   {
     path: 'case-opening/legendary',
-    title: 'Une Légendaire ! · Met Opening',
+    title: 'routes.legendary' satisfies MessageKey,
     data: { immersive: true },
     loadComponent: () => import('./pages/opening-legendary/opening-legendary').then((m) => m.OpeningLegendary),
   },
   {
     path: 'case-opening/summary',
-    title: 'Résumé de l’ouverture · Met Opening',
+    title: 'routes.summary' satisfies MessageKey,
     loadComponent: () => import('./pages/opening-summary/opening-summary').then((m) => m.OpeningSummary),
   },
   {
     path: 'view-collection',
-    title: 'Ma collection · Met Opening',
+    title: 'routes.collection' satisfies MessageKey,
     loadComponent: () => import('./pages/view-collection/view-collection').then((m) => m.ViewCollection),
   },
   {
     path: 'search-all-items',
-    title: 'Rechercher dans les œuvres · Met Opening',
+    title: 'routes.search' satisfies MessageKey,
     loadComponent: () => import('./pages/search-all-items/search-all-items').then((m) => m.SearchAllItems),
   },
   {
     path: 'case-shop',
-    title: 'Boutique de caisses · Met Opening',
+    title: 'routes.shop' satisfies MessageKey,
     loadComponent: () => import('./pages/case-shop/case-shop').then((m) => m.CaseShop),
   },
   { path: '**', redirectTo: 'case-opening' },

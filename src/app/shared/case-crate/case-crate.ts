@@ -1,4 +1,6 @@
-import { Component, booleanAttribute, computed, input } from '@angular/core';
+import { Component, booleanAttribute, computed, inject, input } from '@angular/core';
+import { I18n } from '../../core/i18n/i18n.service';
+import { ShopCaseId } from '../../core/shop';
 
 @Component({
   selector: 'app-case-crate',
@@ -6,10 +8,12 @@ import { Component, booleanAttribute, computed, input } from '@angular/core';
   styleUrl: './case-crate.scss',
 })
 export class CaseCrate {
-  readonly stencil = input.required<string>();
+  readonly caseId = input.required<ShopCaseId>();
   readonly decorative = input(false, { transform: booleanAttribute });
 
-  protected readonly stencilText = computed(() => this.stencil().trim().toUpperCase() || 'CAISSE');
+  private readonly i18n = inject(I18n);
+
+  protected readonly stencilText = computed(() => this.i18n.t(`stencils.${this.caseId()}`));
 
   protected readonly fontSize = computed(() => {
     const length = Math.max(Array.from(this.stencilText()).length, 1);
@@ -17,5 +21,5 @@ export class CaseCrate {
     return `${(units / 3.6).toFixed(2)}cqw`;
   });
 
-  protected readonly label = computed(() => `Caisse en bois marquée ${this.stencilText()}`);
+  protected readonly label = computed(() => this.i18n.t('crate.label', { stencil: this.stencilText() }));
 }

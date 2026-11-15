@@ -1,22 +1,22 @@
 <div class="charts__head">
-  <h2 id="charts-title" class="charts__title">Graphiques</h2>
+  <h2 id="charts-title" class="charts__title">{{ t('artworks.chartsTitle') }}</h2>
   <button type="button" class="charts__hide tap" aria-controls="browser-charts" aria-expanded="true" (click)="closed.emit()">
-    Masquer
+    {{ t('artworks.chartsHide') }}
   </button>
 </div>
 
 <label class="charts__field">
-  Donnée
+  {{ t('artworks.chartsData') }}
   <select class="charts__select" (change)="pickData($event)">
     @for (option of dataOptions; track option.id) {
-      <option [value]="option.id" [selected]="option.id === data()">{{ option.label }}</option>
+      <option [value]="option.id" [selected]="option.id === data()">{{ t(option.label) }}</option>
     }
   </select>
 </label>
 
 @if (typeOptions().length > 1) {
   <label class="charts__field">
-    Type de graphique
+    {{ t('artworks.chartsType') }}
     <select class="charts__select" (change)="pickType($event)">
       @for (option of typeOptions(); track option.id) {
         <option [value]="option.id" [selected]="option.id === type()">{{ option.label }}</option>
@@ -26,7 +26,7 @@
 }
 
 @if (entries().length === 0) {
-  <p class="charts__hint">Aucune donnée à afficher.</p>
+  <p class="charts__hint">{{ t('artworks.chartsEmpty') }}</p>
 } @else {
   <p class="charts__hint" aria-live="polite">{{ readout() ?? hint() }}</p>
 

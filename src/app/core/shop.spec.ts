@@ -16,7 +16,7 @@ describe('SHOP_CASES', () => {
 
 describe('findShopCase', () => {
   it('finds a case by its id and ignores unknown ids', () => {
-    expect(findShopCase('asian-art')?.stencil).toBe('ASIE');
+    expect(findShopCase('asian-art')?.department).toBe('asian-art');
     expect(findShopCase('unknown')).toBeUndefined();
   });
 });

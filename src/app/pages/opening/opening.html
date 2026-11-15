@@ -39,7 +39,7 @@
             <circle cx="319" cy="230" r="3.2"></circle>
           </g>
           <text x="180" y="180" text-anchor="middle" font-size="40" fill="#1E140A" opacity="0.88" letter-spacing="1.5">
-            {{ opening.stencil }}
+            {{ stencilText() }}
           </text>
           <g class="case-lid">
             <rect x="14" y="40" width="332" height="36" fill="#A87140"></rect>
@@ -64,7 +64,7 @@
       </svg>
     </div>
 
-    <ol #track class="reveal" aria-label="Œuvres obtenues" tabindex="0">
+    <ol #track class="reveal" [attr.aria-label]="t('openings.openingObtained')" tabindex="0">
       @for (card of revealCards(); track $index) {
         <li
           #cardItem
@@ -97,20 +97,20 @@
         <div class="progress__track">
           <div class="progress__fill" [style.transform]="'scaleX(' + progress() + ')'"></div>
         </div>
-        <span class="progress__counter">{{ revealed() }} / {{ total() }} œuvres</span>
+        <span class="progress__counter">{{ t('openings.openingCounter', { revealed: revealed(), count: total() }) }}</span>
       </div>
       <p class="sr-only" role="status">{{ status() }}</p>
       @if (!done()) {
-        <a class="panel__cta tap" [routerLink]="destination()" [replaceUrl]="true">Passer l'animation</a>
+        <a class="panel__cta tap" [routerLink]="destination()" [replaceUrl]="true">{{ t('openings.openingSkip') }}</a>
       }
     </div>
   </section>
 } @else {
   <section class="stage-section">
     <div class="panel glass">
-      <h1 class="panel__heading">Aucune ouverture en cours</h1>
-      <p class="panel__meta">Choisissez des caisses à ouvrir sur l'écran d'ouverture.</p>
-      <a class="panel__cta panel__cta--done tap" routerLink="/case-opening">Aller à l'ouverture de caisses</a>
+      <h1 class="panel__heading">{{ t('openings.openingNoneTitle') }}</h1>
+      <p class="panel__meta">{{ t('openings.openingNoneText') }}</p>
+      <a class="panel__cta panel__cta--done tap" routerLink="/case-opening">{{ t('openings.openingNoneCta') }}</a>
     </div>
   </section>
 }

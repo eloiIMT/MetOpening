@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { RESALE_VALUE } from '../../core/game-rules';
+import { I18n } from '../../core/i18n/i18n.service';
 import { OpeningService } from '../../core/opening.service';
 
 @Component({
@@ -10,6 +11,8 @@ import { OpeningService } from '../../core/opening.service';
   styleUrl: './opening-legendary.scss',
 })
 export class OpeningLegendary {
+  private readonly i18n = inject(I18n);
+  protected readonly t = this.i18n.t;
   private readonly result = inject(OpeningService).current;
   private readonly step = signal(0);
 
@@ -25,7 +28,7 @@ export class OpeningLegendary {
       return [];
     }
     const { artwork } = item;
-    const artist = artwork.artist ?? 'Artiste inconnu';
+    const artist = artwork.artist ?? this.t('openings.legendaryUnknownArtist');
     return [
       {
         step: this.step(),
@@ -37,7 +40,7 @@ export class OpeningLegendary {
     ];
   });
 
-  protected readonly resaleLabel = `${RESALE_VALUE.legendary.toLocaleString('fr-FR')} pièces`;
+  protected readonly resaleLabel = computed(() => this.t('common.coins', { count: RESALE_VALUE.legendary }));
 
   protected next(): void {
     this.step.update((step) => step + 1);

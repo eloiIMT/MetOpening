@@ -3,6 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRouteSnapshot, Data, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { CardSupplyService } from './core/card-supply.service';
+import { I18n } from './core/i18n/i18n.service';
 import { MetApiService } from './core/met-api.service';
 import { MainNav } from './layout/main-nav/main-nav';
 import { SiteFooter } from './layout/site-footer/site-footer';
@@ -24,6 +25,7 @@ const ARTWORK_PARAM = 'artwork';
 export class App {
   private readonly router = inject(Router);
 
+  protected readonly t = inject(I18n).t;
   protected readonly metPaused = inject(MetApiService).paused;
 
   private readonly navigation = toSignal(

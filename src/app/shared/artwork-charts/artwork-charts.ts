@@ -1,4 +1,4 @@
-import { Component, computed, input, linkedSignal, output, signal } from '@angular/core';
+import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
 import { DepartmentId } from '../../core/artwork';
 import {
   Century,
@@ -11,7 +11,8 @@ import {
   rarityRows,
 } from '../../core/charts';
 import { Rarity } from '../../core/game-rules';
-import { DEPARTMENT_LABEL, RARITY_LABEL, formatCount } from '../../core/labels';
+import { I18n } from '../../core/i18n/i18n.service';
+import { MessageKey } from '../../core/i18n/messages';
 
 type ChartData = 'rarity' | 'department' | 'century';
 type ChartType = 'pie' | 'bar' | 'column';
@@ -27,31 +28,25 @@ interface ChartEntry {
   readonly pickable: boolean;
 }
 
-const DATA_OPTIONS: readonly { id: ChartData; label: string }[] = [
-  { id: 'rarity', label: 'Rareté' },
-  { id: 'department', label: 'Département' },
-  { id: 'century', label: 'Siècle' },
+const DATA_OPTIONS: readonly { id: ChartData; label: MessageKey }[] = [
+  { id: 'rarity', label: 'artworks.chartDataRarity' },
+  { id: 'department', label: 'artworks.chartDataDepartment' },
+  { id: 'century', label: 'artworks.chartDataCentury' },
 ];
 
-const TYPE_LABEL: Readonly<Record<ChartType, string>> = {
-  pie: 'Camembert',
-  bar: 'Barres',
-  column: 'Colonnes',
+const TYPE_LABEL: Readonly<Record<ChartType, MessageKey>> = {
+  pie: 'artworks.chartTypePie',
+  bar: 'artworks.chartTypeBar',
+  column: 'artworks.chartTypeColumn',
+};
+
+const SUMMARY_LABEL: Readonly<Record<ChartData, MessageKey>> = {
+  rarity: 'artworks.chartSummaryRarity',
+  department: 'artworks.chartSummaryDepartment',
+  century: 'artworks.chartSummaryCentury',
 };
 
 const AXIS_LABEL_COUNT = 5;
-
-function percentLabel(share: number): string {
-  return `${Math.round(share * 100)} %`;
-}
-
-function centuryLabel(century: Century, long: boolean): string {
-  const ordinal = century.number === 1 ? '1er' : `${century.number}e`;
-  if (long) {
-    return `${ordinal} siècle${century.beforeCommonEra ? ' av. J.-C.' : ''}`;
-  }
-  return `${ordinal}${century.beforeCommonEra ? ' av.' : ''}`;
-}
 
 @Component({
   selector: 'app-artwork-charts',
@@ -67,6 +62,9 @@ export class ArtworkCharts {
 
   readonly closed = output<void>();
 
+  private readonly i18n = inject(I18n);
+  protected readonly t = this.i18n.t;
+
   protected readonly dataOptions = DATA_OPTIONS;
   protected readonly data = signal<ChartData>('rarity');
   protected readonly readout = signal<string | null>(null);
@@ -78,7 +76,7 @@ export class ArtworkCharts {
 
   protected readonly typeOptions = computed(() => {
     const types: ChartType[] = this.data() === 'century' ? ['column'] : ['pie', 'bar'];
-    return types.map((id) => ({ id, label: TYPE_LABEL[id] }));
+    return types.map((id) => ({ id, label: this.t(TYPE_LABEL[id]) }));
   });
 
   private readonly rawEntries = computed<ChartEntry[]>(() => {
@@ -86,8 +84,8 @@ export class ArtworkCharts {
       case 'rarity':
         return rarityRows(this.rarityPool()).map((row) => ({
           id: row.key,
-          label: RARITY_LABEL[row.key],
-          longLabel: RARITY_LABEL[row.key],
+          label: this.t(`rarities.${row.key}`),
+          longLabel: this.t(`rarities.${row.key}`),
           value: row.value,
           share: row.share,
           color: `var(--rarity-${row.key})`,
@@ -99,8 +97,8 @@ export class ArtworkCharts {
       case 'century':
         return centuryRows(this.visible()).map((row) => ({
           id: String(row.key.order),
-          label: centuryLabel(row.key, false),
-          longLabel: centuryLabel(row.key, true),
+          label: this.centuryLabel(row.key, false),
+          longLabel: this.centuryLabel(row.key, true),
           value: row.value,
           share: row.share,
           color: SERIES_COLOR,
@@ -119,8 +117,12 @@ export class ArtworkCharts {
       width: (entry.value / max) * 100,
       height: (entry.value / max) * 100,
       showLabel: index % step === 0 || index === entries.length - 1,
-      valueLabel: `(${entry.value}) ${percentLabel(entry.share)}`,
-      readout: `${entry.longLabel} : ${formatCount(entry.value, 'œuvre', 'œuvres')} (${percentLabel(entry.share)})`,
+      valueLabel: `(${entry.value}) ${this.percentLabel(entry.share)}`,
+      readout: this.t('artworks.chartReadout', {
+        label: entry.longLabel,
+        artworks: this.t('common.artworks', { count: entry.value }),
+        percent: this.percentLabel(entry.share),
+      }),
     }));
   });
 
@@ -134,16 +136,15 @@ export class ArtworkCharts {
   });
 
   protected readonly summary = computed(() => {
-    const title = DATA_OPTIONS.find((option) => option.id === this.data())?.label ?? '';
-    return `Répartition par ${title.toLowerCase()} : ${this.entries()
-      .map((entry) => entry.readout)
-      .join(' ; ')}`;
+    return this.t(SUMMARY_LABEL[this.data()], {
+      details: this.entries()
+        .map((entry) => entry.readout)
+        .join(' ; '),
+    });
   });
 
   protected readonly hint = computed(() =>
-    this.data() === 'century'
-      ? 'Survolez le graphique pour voir le détail.'
-      : 'Répartition des œuvres affichées.',
+    this.t(this.data() === 'century' ? 'artworks.chartHintCentury' : 'artworks.chartHintDefault'),
   );
 
   protected pickData(event: Event): void {
@@ -156,11 +157,42 @@ export class ArtworkCharts {
     this.readout.set(null);
   }
 
+  private percentLabel(share: number): string {
+    return this.t('artworks.chartPercent', { value: Math.round(share * 100) });
+  }
+
+  private ordinal(number: number): string {
+    let key: MessageKey;
+    if (this.i18n.locale() === 'fr') {
+      key = number === 1 ? 'artworks.ordinalSt' : 'artworks.ordinalTh';
+    } else if (number % 100 >= 11 && number % 100 <= 13) {
+      key = 'artworks.ordinalTh';
+    } else if (number % 10 === 1) {
+      key = 'artworks.ordinalSt';
+    } else if (number % 10 === 2) {
+      key = 'artworks.ordinalNd';
+    } else if (number % 10 === 3) {
+      key = 'artworks.ordinalRd';
+    } else {
+      key = 'artworks.ordinalTh';
+    }
+    return this.t(key, { number });
+  }
+
+  private centuryLabel(century: Century, long: boolean): string {
+    const ordinal = this.ordinal(century.number);
+    const bce = century.beforeCommonEra;
+    if (long) {
+      return this.t(bce ? 'artworks.centuryLongBce' : 'artworks.centuryLong', { ordinal });
+    }
+    return this.t(bce ? 'artworks.centuryShortBce' : 'artworks.centuryShort', { ordinal });
+  }
+
   private departmentEntries(): ChartEntry[] {
     return departmentRows(this.departmentPool()).map((row) => ({
       id: row.key,
-      label: DEPARTMENT_LABEL[row.key],
-      longLabel: DEPARTMENT_LABEL[row.key],
+      label: this.t(`departments.${row.key}`),
+      longLabel: this.t(`departments.${row.key}`),
       value: row.value,
       share: row.share,
       color: DEPARTMENT_COLOR[row.key],

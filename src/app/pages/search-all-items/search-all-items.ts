@@ -3,7 +3,7 @@ import { BrowserItem } from '../../core/browse';
 import { CardIndex, entryAt } from '../../core/card-index';
 import { CardIndexService } from '../../core/card-index.service';
 import { CollectionService } from '../../core/collection.service';
-import { formatCount } from '../../core/labels';
+import { I18n } from '../../core/i18n/i18n.service';
 import { MetApiService } from '../../core/met-api.service';
 import { ArtworkBrowser } from '../../shared/artwork-browser/artwork-browser';
 
@@ -16,6 +16,9 @@ const SEARCH_DELAY_MS = 400;
   styleUrl: './search-all-items.scss',
 })
 export class SearchAllItems {
+  private readonly i18n = inject(I18n);
+  protected readonly t = this.i18n.t;
+
   private readonly cardIndex = inject(CardIndexService);
   private readonly collection = inject(CollectionService);
   private readonly met = inject(MetApiService);
@@ -61,21 +64,22 @@ export class SearchAllItems {
       return null;
     }
     if (this.matches.status() === 'error') {
-      return 'Le Met ne répond pas pour le moment. Réessayez dans une minute.';
+      return this.t('artworks.searchFailed');
     }
     if (!this.matches.hasValue()) {
       return null;
     }
     const { total, ids } = this.matches.value();
-    return total > ids.length
-      ? `Le Met trouve ${formatCount(total, 'résultat', 'résultats')} : les ${ids.length} plus pertinents sont parcourus.`
-      : null;
+    return total > ids.length ? this.t('artworks.searchNote', { count: total, shown: ids.length }) : null;
   });
 
   protected readonly statsLabel = computed(() => {
     const all = this.allItems();
     const owned = Object.keys(this.collection.owned()).length;
-    return `${formatCount(all.length, 'œuvre', 'œuvres')} dans le jeu · ${formatCount(owned, 'possédée', 'possédées')}`;
+    return this.t('artworks.searchStats', {
+      artworks: this.t('common.artworks', { count: all.length }),
+      owned: this.t('artworks.searchOwned', { count: owned }),
+    });
   });
 
   constructor() {

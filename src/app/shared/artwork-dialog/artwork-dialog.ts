@@ -14,11 +14,10 @@ import {
 import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Artwork } from '../../core/artwork';
-import { ArtworkService } from '../../core/artwork.service';
 import { CardIndexService } from '../../core/card-index.service';
 import { CollectionService } from '../../core/collection.service';
 import { RESALE_VALUE } from '../../core/game-rules';
-import { DEPARTMENT_LABEL, RARITY_LABEL, formatCoins, formatCount } from '../../core/labels';
+import { I18n } from '../../core/i18n/i18n.service';
 import { MetApiService } from '../../core/met-api.service';
 
 type SaleKind = 'one' | 'duplicates';
@@ -33,7 +32,9 @@ export class ArtworkDialog {
   readonly artworkId = input.required<string>();
   readonly closed = output<void>();
 
-  private readonly artworkService = inject(ArtworkService);
+  private readonly i18n = inject(I18n);
+  protected readonly t = this.i18n.t;
+
   private readonly collection = inject(CollectionService);
   private readonly cardIndex = inject(CardIndexService);
   private readonly met = inject(MetApiService);
@@ -53,17 +54,22 @@ export class ArtworkDialog {
 
   protected readonly tierLabel = computed(() => {
     const artwork = this.artwork();
-    return artwork ? RARITY_LABEL[artwork.rarity] : '';
+    return artwork ? this.t(`rarities.${artwork.rarity}`) : '';
   });
 
   protected readonly departmentLabel = computed(() => {
     const artwork = this.artwork();
-    return artwork ? DEPARTMENT_LABEL[artwork.department] : '';
+    return artwork ? this.t(`departments.${artwork.department}`) : '';
   });
 
   protected readonly altText = computed(() => {
     const artwork = this.artwork();
-    return artwork ? `${artwork.title}, ${artwork.artist ?? 'artiste non identifié'}` : '';
+    return artwork
+      ? this.t('artworks.dialogAlt', {
+          title: artwork.title,
+          artist: artwork.artist ?? this.t('artworks.dialogAltUnknownArtist'),
+        })
+      : '';
   });
 
   protected readonly record = computed(() => {
@@ -72,10 +78,10 @@ export class ArtworkDialog {
       return [];
     }
     return [
-      { label: 'Département', value: DEPARTMENT_LABEL[artwork.department] },
-      { label: 'Date', value: artwork.date ?? 'Inconnue' },
-      { label: 'Revente', value: formatCoins(RESALE_VALUE[artwork.rarity]) },
-      { label: 'N° au Met', value: String(artwork.id) },
+      { label: this.t('artworks.recordDepartment'), value: this.t(`departments.${artwork.department}`) },
+      { label: this.t('artworks.recordDate'), value: artwork.date ?? this.t('artworks.recordDateUnknown') },
+      { label: this.t('artworks.recordResale'), value: this.coins(RESALE_VALUE[artwork.rarity]) },
+      { label: this.t('artworks.recordMetNumber'), value: String(artwork.id) },
     ];
   });
 
@@ -84,9 +90,7 @@ export class ArtworkDialog {
     return artwork ? this.collection.countOf(artwork.id) : 0;
   });
 
-  protected readonly copiesLabel = computed(
-    () => `Vous en possédez ${formatCount(this.copies(), 'exemplaire', 'exemplaires')}`,
-  );
+  protected readonly copiesLabel = computed(() => this.t('artworks.copiesOwned', { count: this.copies() }));
 
   private readonly unitPrice = computed(() => {
     const artwork = this.artwork();
@@ -95,24 +99,32 @@ export class ArtworkDialog {
 
   protected readonly pendingSale = signal<SaleKind>('one');
 
-  protected readonly sellOneLabel = computed(() => `Vendre 1 exemplaire · ${formatCoins(this.unitPrice())}`);
+  protected readonly sellOneLabel = computed(() =>
+    this.t('artworks.sellOne', { coins: this.coins(this.unitPrice()) }),
+  );
 
-  protected readonly sellDuplicatesLabel = computed(
-    () =>
-      `Vendre ${formatCount(this.copies() - 1, 'double', 'doubles')} · ${formatCoins((this.copies() - 1) * this.unitPrice())}`,
+  protected readonly sellDuplicatesLabel = computed(() =>
+    this.t('artworks.sellDuplicates', {
+      count: this.copies() - 1,
+      coins: this.coins((this.copies() - 1) * this.unitPrice()),
+    }),
   );
 
   protected readonly saleTitle = computed(() =>
-    this.pendingSale() === 'one' ? 'Vendre un exemplaire ?' : 'Vendre les doubles ?',
+    this.t(this.pendingSale() === 'one' ? 'artworks.saleTitleOne' : 'artworks.saleTitleDuplicates'),
   );
 
   protected readonly saleQuestion = computed(() => {
     if (this.pendingSale() === 'duplicates') {
       const extra = this.copies() - 1;
-      return `Vous allez vendre ${formatCount(extra, 'exemplaire en double', 'exemplaires en double')} pour ${formatCoins(extra * this.unitPrice())}. Vous garderez un exemplaire.`;
+      return this.t('artworks.dialogSaleDuplicates', {
+        count: extra,
+        coins: this.coins(extra * this.unitPrice()),
+      });
     }
-    const last = this.copies() === 1;
-    return `Vous allez vendre 1 exemplaire pour ${formatCoins(this.unitPrice())}.${last ? ' C’est votre dernier : l’œuvre quittera votre collection.' : ''}`;
+    return this.t(this.copies() === 1 ? 'artworks.dialogSaleOneLast' : 'artworks.dialogSaleOne', {
+      coins: this.coins(this.unitPrice()),
+    });
   });
 
   constructor() {
@@ -123,8 +135,12 @@ export class ArtworkDialog {
     });
   }
 
+  private coins(count: number): string {
+    return this.t('common.coins', { count });
+  }
+
   private async findArtwork(id: number): Promise<Artwork | null> {
-    const known = this.collection.owned()[id]?.artwork ?? this.artworkService.find(id);
+    const known = this.collection.owned()[id]?.artwork;
     if (known) {
       return known;
     }
@@ -160,7 +176,7 @@ export class ArtworkDialog {
           ? this.collection.sellCopy(artwork)
           : this.collection.sellDuplicates([artwork]);
       this.saleMessage.set(
-        `${formatCount(result.sold, 'exemplaire vendu', 'exemplaires vendus')} pour ${formatCoins(result.coins)}.`,
+        this.t('artworks.dialogSold', { count: result.sold, coins: this.coins(result.coins) }),
       );
     }
     this.closeSale();

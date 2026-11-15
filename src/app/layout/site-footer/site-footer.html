@@ -1,7 +1,7 @@
 <footer class="footer">
   <div class="footer__inner">
     <p class="footer__notice label-glass">
-      Projet de fan, non affilié au Metropolitan Museum of Art ·
+      {{ t('footer.notice') }}
       <button
         type="button"
         class="footer__toggle tap"
@@ -9,26 +9,26 @@
         [attr.aria-expanded]="creditsOpen()"
         (click)="toggleCredits()"
       >
-        Crédits
+        {{ t('footer.credits') }}
       </button>
     </p>
 
     @if (creditsOpen()) {
       <ul id="credits" class="footer__credits label-glass">
-        <li>Œuvres : The Metropolitan Museum of Art, domaine public (Open Access).</li>
+        <li>{{ t('footer.artworks') }}</li>
         <li>
-          Escalier du Met : Allen McGregor,
-          <a href="https://creativecommons.org/licenses/by/2.0/deed.fr" target="_blank" rel="noopener">CC BY 2.0</a>,
-          image redimensionnée.
+          {{ t('footer.stairs') }}
+          <a [href]="'https://creativecommons.org/licenses/by/2.0/' + t('footer.licenseLang')" target="_blank" rel="noopener">CC BY 2.0</a>,
+          {{ t('footer.resized') }}
         </li>
-        <li>Rayonnages : CHUTTERSNAP, licence Unsplash.</li>
-        <li>Librairie (boutique) : Sui Xu, licence Unsplash.</li>
-        <li>Vitrines (recherche) : Michael Pointner, licence Unsplash.</li>
+        <li>{{ t('footer.shelves') }}</li>
+        <li>{{ t('footer.bookshop') }}</li>
+        <li>{{ t('footer.showcases') }}</li>
         <li>
-          Icônes : Delapouite et Lorc, game-icons.net,
-          <a href="https://creativecommons.org/licenses/by/3.0/deed.fr" target="_blank" rel="noopener">CC BY 3.0</a>.
+          {{ t('footer.icons') }}
+          <a [href]="'https://creativecommons.org/licenses/by/3.0/' + t('footer.licenseLang')" target="_blank" rel="noopener">CC BY 3.0</a>.
         </li>
-        <li>Caisse : dessin vectoriel réalisé avec l'aide d'une IA.</li>
+        <li>{{ t('footer.crate') }}</li>
       </ul>
     }
   </div>

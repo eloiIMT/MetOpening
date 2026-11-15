@@ -10,7 +10,7 @@
         [attr.aria-label]="openLabel()"
         (click)="open()"
       >
-        <app-case-crate [stencil]="stencil()" decorative />
+        <app-case-crate [caseId]="caseId()" decorative />
       </button>
       @if (amount() > 1) {
         <span class="opening__badge" aria-hidden="true">×{{ amount() }}</span>
@@ -21,12 +21,12 @@
   <div class="opening__panel glass">
     <div class="opening__intro">
       <h1 id="opening-title" class="opening__title">Met Opening</h1>
-      <p class="opening__tagline">Découvrez l'art en ouvrant des caisses</p>
+      <p class="opening__tagline">{{ t('cases.openingTagline') }}</p>
     </div>
 
     @if (typeOptions().length > 1) {
       <label class="opening__type">
-        <span class="opening__amount-label">Type de caisse</span>
+        <span class="opening__amount-label">{{ t('cases.openingTypeLabel') }}</span>
         <select class="opening__select" (change)="pickType($event)">
           @for (option of typeOptions(); track option.value) {
             <option [value]="option.value" [selected]="option.value === caseType()">{{ option.label }}</option>
@@ -43,9 +43,9 @@
         </p>
         <p class="opening__refill">
           @if (countdown(); as time) {
-            Prochaine dans <span class="opening__refill-time">{{ time }}</span>
+            {{ t('cases.openingNextIn') }} <span class="opening__refill-time">{{ time }}</span>
           } @else {
-            <span class="opening__refill-time">Stock plein</span>
+            <span class="opening__refill-time">{{ t('cases.openingStockFull') }}</span>
           }
         </p>
       </div>
@@ -60,7 +60,7 @@
     }
 
     <div class="opening__amount">
-      <p id="amount-label" class="opening__amount-label">Nombre de caisses à ouvrir</p>
+      <p id="amount-label" class="opening__amount-label">{{ t('cases.openingAmountLabel') }}</p>
       <div class="amount-picker" role="group" aria-labelledby="amount-label">
         @for (option of options(); track option.value) {
           <button
@@ -84,12 +84,14 @@
       <button type="button" class="btn-primary tap" [disabled]="preparing()" (click)="open()">{{ openLabel() }}</button>
     } @else {
       <div class="opening__empty">
-        <button type="button" class="opening__empty-button" disabled aria-describedby="amount-hint">Stock épuisé</button>
-        <a class="opening__shop-link" routerLink="/case-shop">Acheter une caisse à la boutique</a>
+        <button type="button" class="opening__empty-button" disabled aria-describedby="amount-hint">{{ t('cases.openingOutOfStock') }}</button>
+        <a class="opening__shop-link" routerLink="/case-shop">{{ t('cases.openingShopLink') }}</a>
       </div>
     }
 
-    <p class="opening__failure" role="alert">{{ failure() }}</p>
+    <p class="opening__failure" role="alert">@if (failure()) {
+      {{ t('cases.openingFailure') }}
+    }</p>
 
     <app-case-odds class="opening__contents" />
   </div>

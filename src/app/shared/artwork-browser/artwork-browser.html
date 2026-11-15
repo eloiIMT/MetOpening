@@ -22,15 +22,15 @@
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
         <path d="M5 20V11M12 20V4M19 20v-6"></path>
       </svg>
-      Graphiques
+      {{ t('artworks.charts') }}
     </button>
   </div>
 
-  <aside id="browser-filters" class="filters glass" [class.filters--open]="filtersOpen()" aria-label="Filtres">
-    <h2 class="filters__title">Filtres</h2>
+  <aside id="browser-filters" class="filters glass" [class.filters--open]="filtersOpen()" [attr.aria-label]="t('artworks.filters')">
+    <h2 class="filters__title">{{ t('artworks.filters') }}</h2>
 
     <fieldset class="filters__group">
-      <legend class="filters__legend">Rareté</legend>
+      <legend class="filters__legend">{{ t('artworks.filterRarity') }}</legend>
       @for (tier of rarityOptions(); track tier.rarity) {
         <label class="filters__check">
           <input type="checkbox" class="filters__checkbox" [checked]="tier.checked" (change)="toggleRarity(tier.rarity)" />
@@ -42,54 +42,53 @@
     </fieldset>
 
     <label class="filters__field">
-      Catégorie
+      {{ t('artworks.filterCategory') }}
       <select class="filters__select" (change)="pickDepartment($event)">
-        <option value="all" [selected]="department() === null">Toutes les catégories</option>
-        @for (option of departmentOptions; track option.value) {
+        <option value="all" [selected]="department() === null">{{ t('artworks.filterAllCategories') }}</option>
+        @for (option of departmentOptions(); track option.value) {
           <option [value]="option.value" [selected]="option.value === department()">{{ option.label }}</option>
         }
       </select>
     </label>
 
     <label class="filters__field">
-      Tri
+      {{ t('artworks.filterSort') }}
       <select class="filters__select" (change)="pickSort($event)">
         @for (option of sortOptions(); track option.id) {
-          <option [value]="option.id" [selected]="option.id === sort()">{{ option.label }}</option>
+          <option [value]="option.id" [selected]="option.id === sort()">{{ t(option.label) }}</option>
         }
       </select>
     </label>
 
     @if (mode() === 'collection') {
       <div class="filters__sale">
-        <h3 class="filters__subtitle">Vente</h3>
+        <h3 class="filters__subtitle">{{ t('artworks.filterSale') }}</h3>
         <button type="button" class="btn-secondary tap filters__sale-button" [disabled]="duplicates().copies === 0" (click)="askSale()">
           {{ saleLabel() }}
         </button>
-        <p class="filters__hint">Vend les doubles des œuvres affichées. Un exemplaire de chaque œuvre est toujours conservé.</p>
       </div>
     }
   </aside>
 
-  <section class="results" aria-label="Œuvres">
+  <section class="results" [attr.aria-label]="t('artworks.resultsLabel')">
     <div class="results__bar glass">
       <label class="results__search">
         <span class="sr-only">{{ searchLabel() }}</span>
         <input
           type="search"
           class="results__input"
-          placeholder="Rechercher un titre, un artiste…"
+          [placeholder]="t('artworks.searchPlaceholder')"
           [value]="query()"
           (input)="typeQuery($event)"
         />
       </label>
       <p class="results__count" role="status">{{ resultLabel() }}</p>
       @if (hasFilters()) {
-        <button type="button" class="results__clear tap" (click)="clearFilters()">Effacer les filtres</button>
+        <button type="button" class="results__clear tap" (click)="clearFilters()">{{ t('artworks.clearFilters') }}</button>
       }
       @if (!chartsOpen()) {
         <button type="button" class="results__clear results__show-charts tap" aria-controls="browser-charts" aria-expanded="false" (click)="toggleCharts()">
-          Afficher les graphiques
+          {{ t('artworks.showCharts') }}
         </button>
       }
     </div>
@@ -99,7 +98,7 @@
     }
 
     @if (loading()) {
-      <p class="results__message glass">Chargement des œuvres…</p>
+      <p class="results__message glass">{{ t('artworks.loadingArtworks') }}</p>
     } @else if (visible().length > 0) {
       <ul class="results__grid">
         @for (card of shownCards(); track card.item.id) {
@@ -117,13 +116,13 @@
     } @else {
       <div class="results__empty glass">
         @if (items().length === 0 && mode() === 'collection') {
-          <h2 class="results__empty-title">Votre collection est vide</h2>
-          <p class="results__empty-text">Ouvrez des caisses pour découvrir vos premières œuvres.</p>
-          <a class="btn-primary tap" routerLink="/case-opening">Ouvrir une caisse</a>
+          <h2 class="results__empty-title">{{ t('artworks.emptyCollectionTitle') }}</h2>
+          <p class="results__empty-text">{{ t('artworks.emptyCollectionText') }}</p>
+          <a class="btn-primary tap" routerLink="/case-opening">{{ t('artworks.openCase') }}</a>
         } @else {
-          <h2 class="results__empty-title">Aucune œuvre trouvée</h2>
-          <p class="results__empty-text">Essayez une autre recherche ou d'autres filtres.</p>
-          <button type="button" class="btn-secondary tap" (click)="clearFilters()">Effacer les filtres</button>
+          <h2 class="results__empty-title">{{ t('artworks.noneFoundTitle') }}</h2>
+          <p class="results__empty-text">{{ t('artworks.noneFoundText') }}</p>
+          <button type="button" class="btn-secondary tap" (click)="clearFilters()">{{ t('artworks.clearFilters') }}</button>
         }
       </div>
     }
@@ -144,10 +143,10 @@
 </div>
 
 <dialog #saleDialog class="sale-dialog" aria-labelledby="sale-dialog-title">
-  <h2 id="sale-dialog-title" class="sale-dialog__title">Vendre les doubles ?</h2>
+  <h2 id="sale-dialog-title" class="sale-dialog__title">{{ t('artworks.saleDialogTitle') }}</h2>
   <p class="sale-dialog__text">{{ saleQuestion() }}</p>
   <div class="sale-dialog__actions">
-    <button type="button" class="btn-secondary tap" (click)="closeSale()">Annuler</button>
-    <button type="button" class="btn-primary tap" (click)="confirmSale()">Vendre</button>
+    <button type="button" class="btn-secondary tap" (click)="closeSale()">{{ t('artworks.cancel') }}</button>
+    <button type="button" class="btn-primary tap" (click)="confirmSale()">{{ t('artworks.sell') }}</button>
   </div>
 </dialog>

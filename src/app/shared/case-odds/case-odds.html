@@ -1,12 +1,13 @@
-<p class="odds__title">Chaque caisse contient {{ artworksPerCase }} œuvres. Pour chacune :</p>
+@let o = odds();
+<p class="odds__title">{{ t('cases.oddsTitle', { count: artworksPerCase }) }}</p>
 <ul class="odds">
   <li class="odds__item">
     <span class="dot dot--common" aria-hidden="true"></span>
-    Commune : {{ odds.common }} %
+    {{ t('cases.oddsCommon', { percent: o.common }) }}
   </li>
   <li class="odds__item">
     <span class="dot dot--uncommon" aria-hidden="true"></span>
-    Peu commune : {{ odds.uncommon }} %
+    {{ t('cases.oddsUncommon', { percent: o.uncommon }) }}
   </li>
   <li class="odds__item odds__item--top">
     <span class="odds__dots" aria-hidden="true">
@@ -15,8 +16,7 @@
       <span class="dot dot--legendary"></span>
     </span>
     <span>
-      Rare, Épique ou Légendaire : {{ odds.top }} % (Rare {{ odds.rare }} %, Épique {{ odds.epic }} %, Légendaire
-      {{ odds.legendary }} %)
+      {{ t('cases.oddsTop', { top: o.top, rare: o.rare, epic: o.epic, legendary: o.legendary }) }}
     </span>
   </li>
 </ul>

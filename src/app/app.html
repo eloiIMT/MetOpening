@@ -7,7 +7,7 @@
 }
 <p class="met-notice" role="status">
   @if (metPaused()) {
-    <span class="met-notice__text label-glass">Le Met a besoin d’une minute, les œuvres arrivent bientôt…</span>
+    <span class="met-notice__text label-glass">{{ t('nav.metPaused') }}</span>
   }
 </p>
 @if (openArtworkId(); as id) {

@@ -1,5 +1,5 @@
 <header class="nav-bar">
-  <nav class="nav-list" aria-label="Navigation principale">
+  <nav class="nav-list" [attr.aria-label]="t('nav.label')">
     @for (link of links; track link.path) {
       <a
         class="nav-pill tap"
@@ -10,17 +10,26 @@
         <svg class="nav-pill__icon" viewBox="0 0 512 512" width="22" height="22" aria-hidden="true" focusable="false">
           <path fill="currentColor" [attr.d]="link.icon"></path>
         </svg>
-        <span class="nav-pill__label">{{ link.label }}</span>
-        <span class="nav-pill__label nav-pill__label--short">{{ link.shortLabel }}</span>
+        <span class="nav-pill__label">{{ t(link.label) }}</span>
+        <span class="nav-pill__label nav-pill__label--short">{{ t(link.shortLabel) }}</span>
       </a>
     }
   </nav>
 
-    <div class="nav-tools">
+  <div class="nav-tools">
+    <button
+      type="button"
+      class="nav-language tap"
+      [attr.lang]="i18n.otherLocale()"
+      [attr.aria-label]="t('nav.languageLabel')"
+      (click)="i18n.toggle()"
+    >
+      {{ t('nav.languageButton') }}
+    </button>
     <a class="nav-coins tap" routerLink="/case-shop">
-      <span class="sr-only">Solde : </span>
+      <span class="sr-only">{{ t('nav.balance') }}</span>
       <span>{{ coinsLabel() }}</span>
-      <span class="sr-only">, ouvrir la boutique</span>
+      <span class="sr-only">{{ t('nav.openShop') }}</span>
     </a>
   </div>
 </header>

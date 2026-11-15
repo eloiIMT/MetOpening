@@ -3,16 +3,13 @@
 <section class="shop" aria-labelledby="shop-title">
   <header class="shop__header glass">
     <div class="shop__intro">
-      <h1 id="shop-title" class="shop__title">Boutique de caisses</h1>
-      <p class="shop__text">
-        Achetez des caisses thématiques, puis ouvrez-les depuis l'écran d'ouverture de caisses. Chaque caisse ne
-        contient que des œuvres de son département.
-      </p>
+      <h1 id="shop-title" class="shop__title">{{ t('cases.shopTitle') }}</h1>
+      <p class="shop__text">{{ t('cases.shopText') }}</p>
     </div>
   </header>
 
   <p class="shop__notice" role="status">
-    @if (message(); as text) {
+    @if (messageText(); as text) {
       <span class="shop__toast label-glass">{{ text }}</span>
     }
   </p>
@@ -25,7 +22,7 @@
           <li class="shop__cell">
             <article class="slot">
               <div class="slot__top">
-                <app-case-crate class="slot__crate" [class.slot__crate--poor]="!slot.affordable" [stencil]="slot.stencil" decorative />
+                <app-case-crate class="slot__crate" [class.slot__crate--poor]="!slot.affordable" [caseId]="slot.id" decorative />
                 <div class="slot__text">
                   <h3 class="slot__label">{{ slot.label }}</h3>
                   <p class="slot__price">{{ slot.priceLabel }}</p>
@@ -42,11 +39,11 @@
                   [attr.aria-describedby]="slot.affordable ? null : 'missing-' + slot.id"
                   (click)="buy(slot.id)"
                 >
-                  Acheter
+                  {{ t('cases.shopBuy') }}
                 </button>
                 @if (slot.owned > 0) {
                   <a class="btn-secondary tap slot__button" routerLink="/case-opening" [queryParams]="{ type: slot.id }">
-                    Ouvrir
+                    {{ t('cases.shopOpen') }}
                   </a>
                 }
               </div>

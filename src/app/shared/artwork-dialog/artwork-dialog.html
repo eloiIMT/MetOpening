@@ -6,7 +6,7 @@
   (click)="onDialogClick($event)"
 >
   <ng-template #closeButton>
-    <button type="button" class="detail__close btn-secondary tap" aria-label="Fermer la fiche" (click)="requestClose()">
+    <button type="button" class="detail__close btn-secondary tap" [attr.aria-label]="t('artworks.dialogClose')" (click)="requestClose()">
       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
         <path d="M17 7L7 17M7 7l10 10"></path>
       </svg>
@@ -16,7 +16,7 @@
   <div class="detail">
     @if (loading()) {
       <div class="detail__top">
-        <p class="detail__message">Chargement de l'œuvre…</p>
+        <p class="detail__message">{{ t('artworks.dialogLoading') }}</p>
         <ng-container [ngTemplateOutlet]="closeButton" />
       </div>
     } @else if (artwork(); as item) {
@@ -34,8 +34,8 @@
             <ng-container [ngTemplateOutlet]="closeButton" />
           </div>
           <h2 id="artwork-dialog-title" class="detail__title">{{ item.title }}</h2>
-          <p class="detail__artist">{{ item.artist ?? 'Artiste non identifié' }}</p>
-          <p class="detail__date">{{ item.date ?? 'Date inconnue' }}</p>
+          <p class="detail__artist">{{ item.artist ?? t('common.unknownArtist') }}</p>
+          <p class="detail__date">{{ item.date ?? t('common.unknownDate') }}</p>
 
           <dl class="detail__record">
             @for (row of record(); track row.label) {
@@ -56,15 +56,15 @@
                 }
               </div>
             } @else {
-              <p class="detail__copies">Pas dans votre collection</p>
+              <p class="detail__copies">{{ t('artworks.dialogNotOwned') }}</p>
               <p class="detail__hint">
-                Elle peut sortir d'une caisse classique ou de la caisse « {{ departmentLabel() }} ».
-                <a routerLink="/case-shop">Voir la boutique</a>
+                {{ t('artworks.dialogHint', { department: departmentLabel() }) }}
+                <a routerLink="/case-shop">{{ t('artworks.dialogShopLink') }}</a>
               </p>
             }
             <p class="detail__notice" role="status">{{ saleMessage() }}</p>
             <a class="detail__met" [href]="item.metUrl" target="_blank" rel="noopener">
-              Voir sur le site du Met
+              {{ t('artworks.dialogMetLink') }}
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                 <path d="M14 5h5v5M19 5l-8 8M10 7H6a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-4"></path>
               </svg>
@@ -75,14 +75,14 @@
     } @else {
       <div class="detail__missing">
         <div class="detail__top">
-          <h2 id="artwork-dialog-title" class="detail__title">{{ failed() ? 'Œuvre indisponible' : 'Œuvre introuvable' }}</h2>
+          <h2 id="artwork-dialog-title" class="detail__title">{{ failed() ? t('artworks.dialogUnavailable') : t('artworks.dialogNotFound') }}</h2>
           <ng-container [ngTemplateOutlet]="closeButton" />
         </div>
         <p class="detail__hint">
           @if (failed()) {
-            Le Met ne répond pas pour le moment. Réessayez dans une minute.
+            {{ t('artworks.dialogFailedText') }}
           } @else {
-            Cette œuvre n'existe pas dans le jeu.
+            {{ t('artworks.dialogMissingText') }}
           }
         </p>
       </div>
@@ -94,7 +94,7 @@
   <h2 id="artwork-sale-title" class="sale-dialog__title">{{ saleTitle() }}</h2>
   <p class="sale-dialog__text">{{ saleQuestion() }}</p>
   <div class="sale-dialog__actions">
-    <button type="button" class="btn-secondary tap" (click)="closeSale()">Annuler</button>
-    <button type="button" class="btn-primary tap" (click)="confirmSale()">Vendre</button>
+    <button type="button" class="btn-secondary tap" (click)="closeSale()">{{ t('artworks.cancel') }}</button>
+    <button type="button" class="btn-primary tap" (click)="confirmSale()">{{ t('artworks.sell') }}</button>
   </div>
 </dialog>
