@@ -8,6 +8,7 @@ function artwork(id: number, rarity: Rarity = 'common'): Artwork {
     title: `Artwork ${id}`,
     artist: null,
     date: null,
+    year: null,
     department: 'asian-art',
     rarity,
     imageSmall: '',

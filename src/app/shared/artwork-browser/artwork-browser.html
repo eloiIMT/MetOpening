@@ -1,16 +1,30 @@
-<div class="browser">
-  <button
-    type="button"
-    class="browser__toggle tap"
-    aria-controls="browser-filters"
-    [attr.aria-expanded]="filtersOpen()"
-    (click)="toggleFilters()"
-  >
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
-      <path d="M4 6h16M7 12h10M10 18h4"></path>
-    </svg>
-    {{ filtersToggleLabel() }}
-  </button>
+<div class="browser" [class.browser--no-charts]="!chartsOpen()">
+  <div class="browser__toggles">
+    <button
+      type="button"
+      class="browser__toggle tap"
+      aria-controls="browser-filters"
+      [attr.aria-expanded]="filtersOpen()"
+      (click)="toggleFilters()"
+    >
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
+        <path d="M4 6h16M7 12h10M10 18h4"></path>
+      </svg>
+      {{ filtersToggleLabel() }}
+    </button>
+    <button
+      type="button"
+      class="browser__toggle tap"
+      aria-controls="browser-charts"
+      [attr.aria-expanded]="chartsOpen()"
+      (click)="toggleCharts()"
+    >
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
+        <path d="M5 20V11M12 20V4M19 20v-6"></path>
+      </svg>
+      Graphiques
+    </button>
+  </div>
 
   <aside id="browser-filters" class="filters glass" [class.filters--open]="filtersOpen()" aria-label="Filtres">
     <h2 class="filters__title">Filtres</h2>
@@ -73,6 +87,11 @@
       @if (hasFilters()) {
         <button type="button" class="results__clear tap" (click)="clearFilters()">Effacer les filtres</button>
       }
+      @if (!chartsOpen()) {
+        <button type="button" class="results__clear results__show-charts tap" aria-controls="browser-charts" aria-expanded="false" (click)="toggleCharts()">
+          Afficher les graphiques
+        </button>
+      }
     </div>
 
     @if (loading()) {
@@ -110,6 +129,19 @@
       </div>
     }
   </section>
+
+  @if (chartsOpen()) {
+    <aside id="browser-charts" class="charts-panel glass" aria-labelledby="charts-title">
+      <app-artwork-charts
+        [rarityPool]="rarityPool()"
+        [departmentPool]="departmentPool()"
+        [visible]="visibleArtworks()"
+        [activeRarities]="rarities()"
+        [activeDepartment]="department()"
+        (closed)="toggleCharts()"
+      />
+    </aside>
+  }
 </div>
 
 <dialog #saleDialog class="sale-dialog" aria-labelledby="sale-dialog-title">

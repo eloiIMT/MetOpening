@@ -1,0 +1,96 @@
+<div class="charts__head">
+  <h2 id="charts-title" class="charts__title">Graphiques</h2>
+  <button type="button" class="charts__hide tap" aria-controls="browser-charts" aria-expanded="true" (click)="closed.emit()">
+    Masquer
+  </button>
+</div>
+
+<label class="charts__field">
+  Donnée
+  <select class="charts__select" (change)="pickData($event)">
+    @for (option of dataOptions; track option.id) {
+      <option [value]="option.id" [selected]="option.id === data()">{{ option.label }}</option>
+    }
+  </select>
+</label>
+
+@if (typeOptions().length > 1) {
+  <label class="charts__field">
+    Type de graphique
+    <select class="charts__select" (change)="pickType($event)">
+      @for (option of typeOptions(); track option.id) {
+        <option [value]="option.id" [selected]="option.id === type()">{{ option.label }}</option>
+      }
+    </select>
+  </label>
+}
+
+@if (entries().length === 0) {
+  <p class="charts__hint">Aucune donnée à afficher.</p>
+} @else {
+  <p class="charts__hint" aria-live="polite">{{ readout() ?? hint() }}</p>
+
+  @switch (type()) {
+    @case ('pie') {
+      <svg class="pie" viewBox="0 0 200 200" role="img" [attr.aria-label]="summary()">
+        @for (slice of pieSlices(); track slice.id) {
+          <path
+            class="pie__slice"
+            [attr.d]="slice.path"
+            [style.fill]="slice.color"
+            (mouseenter)="readout.set(slice.readout)"
+            (mouseleave)="readout.set(null)"
+          ></path>
+        }
+      </svg>
+      <ul class="legend">
+        @for (entry of entries(); track entry.id) {
+          <li>
+            <div class="legend__row">
+              <span class="legend__dot" aria-hidden="true" [style.background]="entry.color"></span>
+              <span class="legend__label">{{ entry.label }}</span>
+              <span class="legend__value">{{ entry.valueLabel }}</span>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+
+    @case ('bar') {
+      <ul class="bars">
+        @for (entry of entries(); track entry.id) {
+          <li>
+            <div class="bars__row">
+              <span class="bars__line">
+                <span class="legend__dot" aria-hidden="true" [style.background]="entry.color"></span>
+                <span class="legend__label">{{ entry.label }}</span>
+                <span class="legend__value">{{ entry.valueLabel }}</span>
+              </span>
+              <span class="bars__track" aria-hidden="true">
+                <span class="bars__fill" [style.width.%]="entry.width" [style.background]="entry.color"></span>
+              </span>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+
+    @case ('column') {
+      <div class="columns" role="img" [attr.aria-label]="summary()">
+        <div class="columns__plot">
+          @for (entry of entries(); track entry.id) {
+            <span class="columns__item" (mouseenter)="readout.set(entry.readout)" (mouseleave)="readout.set(null)">
+              <span class="columns__bar" [style.height.%]="entry.height" [style.background]="entry.color"></span>
+            </span>
+          }
+        </div>
+        <div class="columns__axis" aria-hidden="true">
+          @for (entry of entries(); track entry.id) {
+            <span class="columns__label">{{ entry.showLabel ? entry.label : '' }}</span>
+          }
+        </div>
+      </div>
+    }
+
+  }
+}

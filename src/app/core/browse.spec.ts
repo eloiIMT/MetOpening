@@ -13,6 +13,7 @@ function item(
     title,
     artist: options.artist ?? null,
     date: null,
+    year: null,
     department: options.department ?? 'asian-art',
     rarity,
     imageSmall: '',

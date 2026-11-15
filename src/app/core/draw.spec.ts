@@ -3,7 +3,7 @@ import { ARTWORKS_PER_CASE, Rarity } from './game-rules';
 import { RandomFn, drawCase, drawCases, pickRandom, poolFor, rollRarity, rollTopRarity } from './draw';
 
 function artwork(id: number, rarity: Rarity, department: DepartmentId = 'asian-art'): Artwork {
-  return { id, title: `Artwork ${id}`, artist: null, date: null, department, rarity, imageSmall: '', image: '', metUrl: '' };
+  return { id, title: `Artwork ${id}`, artist: null, date: null, year: null, department, rarity, imageSmall: '', image: '', metUrl: '' };
 }
 
 function sequence(...values: number[]): RandomFn {

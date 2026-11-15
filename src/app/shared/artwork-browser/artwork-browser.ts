@@ -16,6 +16,7 @@ import { BrowseCriteria, BrowserItem, SortId, browse, filterItems, summarizeDupl
 import { RARITY_RANK, Rarity } from '../../core/game-rules';
 import { DEPARTMENT_LABEL, RARITY_LABEL, formatCoins, formatCount } from '../../core/labels';
 import { ArtworkCard } from '../artwork-card/artwork-card';
+import { ArtworkCharts } from '../artwork-charts/artwork-charts';
 
 const RARITIES = (Object.keys(RARITY_RANK) as Rarity[]).sort((a, b) => RARITY_RANK[a] - RARITY_RANK[b]);
 
@@ -28,10 +29,11 @@ const SORT_OPTIONS: readonly { id: SortId; label: string }[] = [
 
 const PAGE_SIZE = 24;
 const PRELOAD_MARGIN = '600px 0px';
+const NARROW_QUERY = '(max-width: 899.98px)';
 
 @Component({
   selector: 'app-artwork-browser',
-  imports: [ArtworkCard, RouterLink],
+  imports: [ArtworkCard, ArtworkCharts, RouterLink],
   templateUrl: './artwork-browser.html',
   styleUrl: './artwork-browser.scss',
 })
@@ -49,6 +51,7 @@ export class ArtworkBrowser {
   protected readonly department = signal<DepartmentId | null>(null);
   protected readonly sort = signal<SortId>('rarity-desc');
   protected readonly filtersOpen = signal(false);
+  protected readonly chartsOpen = signal(!window.matchMedia(NARROW_QUERY).matches);
 
   protected readonly sortOptions = computed(() =>
     this.mode() === 'search' ? SORT_OPTIONS.filter((option) => option.id !== 'recent') : SORT_OPTIONS,
@@ -57,6 +60,7 @@ export class ArtworkBrowser {
   protected readonly searchLabel = computed(() =>
     this.mode() === 'search' ? 'Rechercher dans toutes les œuvres' : 'Rechercher dans la collection',
   );
+
   protected readonly departmentOptions = (Object.keys(DEPARTMENT_LABEL) as DepartmentId[])
     .map((value) => ({ value, label: DEPARTMENT_LABEL[value] }))
     .sort((a, b) => a.label.localeCompare(b.label, 'fr'));
@@ -69,6 +73,16 @@ export class ArtworkBrowser {
   }));
 
   private readonly visible = computed(() => browse(this.items(), this.criteria()));
+
+  protected readonly visibleArtworks = computed(() => this.visible().map((item) => item.artwork));
+
+  protected readonly rarityPool = computed(() =>
+    filterItems(this.items(), this.criteria(), true).map((item) => item.artwork),
+  );
+
+  protected readonly departmentPool = computed(() =>
+    filterItems(this.items(), { ...this.criteria(), department: null }).map((item) => item.artwork),
+  );
 
   protected readonly cards = computed(() =>
     this.visible().map((item) => ({
@@ -94,26 +108,6 @@ export class ArtworkBrowser {
     const next = Math.min(PAGE_SIZE, this.cards().length - this.limit());
     return `Afficher ${formatCount(next, 'œuvre', 'œuvres')} de plus`;
   });
-
-  constructor() {
-    effect((onCleanup) => {
-      this.limit();
-      const element = this.sentinel()?.nativeElement;
-      if (!element) {
-        return;
-      }
-      const observer = new IntersectionObserver(
-        (entries) => {
-          if (entries.some((entry) => entry.isIntersecting)) {
-            this.loadMore();
-          }
-        },
-        { rootMargin: PRELOAD_MARGIN },
-      );
-      observer.observe(element);
-      onCleanup(() => observer.disconnect());
-    });
-  }
 
   protected readonly rarityOptions = computed(() => {
     const pool = filterItems(this.items(), this.criteria(), true);
@@ -155,6 +149,26 @@ export class ArtworkBrowser {
     return `Vous allez vendre ${formatCount(copies, 'exemplaire en double', 'exemplaires en double')} pour ${formatCoins(coins)}. Un exemplaire de chaque œuvre reste dans votre collection.`;
   });
 
+  constructor() {
+    effect((onCleanup) => {
+      this.limit();
+      const element = this.sentinel()?.nativeElement;
+      if (!element) {
+        return;
+      }
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((entry) => entry.isIntersecting)) {
+            this.loadMore();
+          }
+        },
+        { rootMargin: PRELOAD_MARGIN },
+      );
+      observer.observe(element);
+      onCleanup(() => observer.disconnect());
+    });
+  }
+
   protected typeQuery(event: Event): void {
     this.query.set((event.target as HTMLInputElement).value);
   }
@@ -180,17 +194,12 @@ export class ArtworkBrowser {
     this.sort.set((event.target as HTMLSelectElement).value as SortId);
   }
 
-  private badgeFor(copies: number): string | null {
-    if (this.mode() === 'search') {
-      return copies > 0 ? 'Possédée' : null;
-    }
-    return copies > 1 ? `×${copies}` : null;
+  protected toggleCharts(): void {
+    this.chartsOpen.update((open) => !open);
   }
 
-  protected loadMore(): void {
-    if (this.hasMore()) {
-      this.limit.update((limit) => limit + PAGE_SIZE);
-    }
+  protected toggleFilters(): void {
+    this.filtersOpen.update((open) => !open);
   }
 
   protected clearFilters(): void {
@@ -199,8 +208,10 @@ export class ArtworkBrowser {
     this.department.set(null);
   }
 
-  protected toggleFilters(): void {
-    this.filtersOpen.update((open) => !open);
+  protected loadMore(): void {
+    if (this.hasMore()) {
+      this.limit.update((limit) => limit + PAGE_SIZE);
+    }
   }
 
   protected askSale(): void {
@@ -214,5 +225,12 @@ export class ArtworkBrowser {
 
   protected closeSale(): void {
     this.saleDialog()?.nativeElement.close();
+  }
+
+  private badgeFor(copies: number): string | null {
+    if (this.mode() === 'search') {
+      return copies > 0 ? 'Possédée' : null;
+    }
+    return copies > 1 ? `×${copies}` : null;
   }
 }

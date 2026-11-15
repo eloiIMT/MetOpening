@@ -18,6 +18,7 @@ export interface Artwork {
   readonly title: string;
   readonly artist: string | null;
   readonly date: string | null;
+  readonly year: number | null;
   readonly department: DepartmentId;
   readonly rarity: Rarity;
   readonly imageSmall: string;

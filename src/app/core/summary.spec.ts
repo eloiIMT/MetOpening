@@ -9,6 +9,7 @@ function drawn(id: number, rarity: Rarity, isNew = true): DrawnArtwork {
     title: `Artwork ${id}`,
     artist: null,
     date: null,
+    year: null,
     department: 'asian-art',
     rarity,
     imageSmall: '',
