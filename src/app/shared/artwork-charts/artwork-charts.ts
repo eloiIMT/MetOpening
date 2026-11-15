@@ -1,7 +1,8 @@
 import { Component, computed, input, linkedSignal, output, signal } from '@angular/core';
-import { Artwork, DepartmentId } from '../../core/artwork';
+import { DepartmentId } from '../../core/artwork';
 import {
   Century,
+  ChartItem,
   DEPARTMENT_COLOR,
   SERIES_COLOR,
   centuryRows,
@@ -58,9 +59,9 @@ function centuryLabel(century: Century, long: boolean): string {
   styleUrl: './artwork-charts.scss',
 })
 export class ArtworkCharts {
-  readonly rarityPool = input.required<readonly Artwork[]>();
-  readonly departmentPool = input.required<readonly Artwork[]>();
-  readonly visible = input.required<readonly Artwork[]>();
+  readonly rarityPool = input.required<readonly ChartItem[]>();
+  readonly departmentPool = input.required<readonly ChartItem[]>();
+  readonly visible = input.required<readonly ChartItem[]>();
   readonly activeRarities = input.required<ReadonlySet<Rarity>>();
   readonly activeDepartment = input.required<DepartmentId | null>();
 

@@ -1,10 +1,16 @@
-import { Artwork, DepartmentId } from './artwork';
+import { DepartmentId } from './artwork';
 import { RARITY_RANK, Rarity } from './game-rules';
 
 export interface ChartRow<K> {
   readonly key: K;
   readonly value: number;
   readonly share: number;
+}
+
+export interface ChartItem {
+  readonly rarity: Rarity;
+  readonly department: DepartmentId;
+  readonly century: number | null;
 }
 
 export interface Century {
@@ -27,6 +33,14 @@ export const DEPARTMENT_COLOR: Readonly<Record<DepartmentId, string>> = {
   'islamic-art': '#184F95',
   'egyptian-art': '#A35A1F',
   'arms-armor': '#5F6167',
+  'ancient-west-asian': '#8C6D2C',
+  'africa-oceania-americas': '#C2410C',
+  cloisters: '#4D7C0F',
+  'costume-institute': '#BE185D',
+  libraries: '#64748B',
+  'medieval-art': '#7C2D12',
+  'modern-contemporary': '#0E7490',
+  'robert-lehman': '#9D174D',
 };
 
 export const SERIES_COLOR = '#2A78D6';
@@ -53,31 +67,38 @@ export function centuryOf(year: number): Century {
   return { order: number, number, beforeCommonEra: false };
 }
 
-export function rarityRows(artworks: readonly Artwork[]): ChartRow<Rarity>[] {
-  return withShares(
-    RARITIES.map((rarity) => ({ key: rarity, value: artworks.filter((artwork) => artwork.rarity === rarity).length })),
-  );
+export function centuryFromOrder(order: number): Century {
+  return { order, number: Math.abs(order), beforeCommonEra: order < 0 };
 }
 
-export function departmentRows(artworks: readonly Artwork[]): ChartRow<DepartmentId>[] {
+export function rarityRows(items: readonly ChartItem[]): ChartRow<Rarity>[] {
+  const counts = new Map<Rarity, number>();
+  for (const item of items) {
+    counts.set(item.rarity, (counts.get(item.rarity) ?? 0) + 1);
+  }
+  return withShares(RARITIES.map((rarity) => ({ key: rarity, value: counts.get(rarity) ?? 0 })));
+}
+
+export function departmentRows(items: readonly ChartItem[]): ChartRow<DepartmentId>[] {
   const counts = new Map<DepartmentId, number>();
-  for (const artwork of artworks) {
-    counts.set(artwork.department, (counts.get(artwork.department) ?? 0) + 1);
+  for (const item of items) {
+    counts.set(item.department, (counts.get(item.department) ?? 0) + 1);
   }
   return withShares([...counts].map(([key, value]) => ({ key, value })).sort((a, b) => b.value - a.value));
 }
 
-export function centuryRows(artworks: readonly Artwork[]): ChartRow<Century>[] {
-  const counts = new Map<number, { key: Century; value: number }>();
-  for (const artwork of artworks) {
-    if (artwork.year === null) {
-      continue;
+export function centuryRows(items: readonly ChartItem[]): ChartRow<Century>[] {
+  const counts = new Map<number, number>();
+  for (const item of items) {
+    if (item.century !== null) {
+      counts.set(item.century, (counts.get(item.century) ?? 0) + 1);
     }
-    const century = centuryOf(artwork.year);
-    const entry = counts.get(century.order) ?? { key: century, value: 0 };
-    counts.set(century.order, { ...entry, value: entry.value + 1 });
   }
-  return withShares([...counts.values()].sort((a, b) => a.key.order - b.key.order));
+  return withShares(
+    [...counts]
+      .sort(([a], [b]) => a - b)
+      .map(([order, value]) => ({ key: centuryFromOrder(order), value })),
+  );
 }
 
 function withShares<K>(rows: readonly { key: K; value: number }[]): ChartRow<K>[] {

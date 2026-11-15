@@ -1,5 +1,5 @@
 import { Artwork } from './artwork';
-import { OwnedMap, addToCollection, resellDuplicates, sellCopies, sortByRarity } from './collection-rules';
+import { OwnedEntry, OwnedMap, addToCollection, resellDuplicates, sellCopies, sortByRarity } from './collection-rules';
 import { Rarity } from './game-rules';
 
 function artwork(id: number, rarity: Rarity = 'common'): Artwork {
@@ -19,17 +19,21 @@ function artwork(id: number, rarity: Rarity = 'common'): Artwork {
 
 const NOW = 1_000_000;
 
+function owns(id: number, count: number): OwnedEntry {
+  return { count, firstObtainedAt: NOW, artwork: artwork(id) };
+}
+
 describe('addToCollection', () => {
   it('adds a new artwork with one copy', () => {
     const { owned, drawn } = addToCollection({}, [artwork(1)], NOW);
-    expect(owned[1]).toEqual({ count: 1, firstObtainedAt: NOW });
+    expect(owned[1]).toEqual(owns(1, 1));
     expect(drawn[0].isNew).toBe(true);
   });
 
   it('counts a second copy as a duplicate', () => {
-    const before: OwnedMap = { 1: { count: 1, firstObtainedAt: NOW } };
+    const before: OwnedMap = { 1: owns(1, 1) };
     const { owned, drawn } = addToCollection(before, [artwork(1)], NOW + 500);
-    expect(owned[1]).toEqual({ count: 2, firstObtainedAt: NOW });
+    expect(owned[1]).toEqual(owns(1, 2));
     expect(drawn[0].isNew).toBe(false);
   });
 
@@ -39,10 +43,16 @@ describe('addToCollection', () => {
     expect(owned[1].count).toBe(2);
   });
 
+  it('keeps the latest snapshot of each artwork', () => {
+    const renamed = { ...artwork(1), title: 'Renamed' };
+    const { owned } = addToCollection({ 1: owns(1, 1) }, [renamed], NOW);
+    expect(owned[1].artwork.title).toBe('Renamed');
+  });
+
   it('does not modify the previous collection', () => {
-    const before: OwnedMap = { 1: { count: 1, firstObtainedAt: NOW } };
+    const before: OwnedMap = { 1: owns(1, 1) };
     addToCollection(before, [artwork(1), artwork(2)], NOW);
-    expect(before).toEqual({ 1: { count: 1, firstObtainedAt: NOW } });
+    expect(before).toEqual({ 1: owns(1, 1) });
   });
 });
 
@@ -70,9 +80,9 @@ describe('sortByRarity', () => {
 
 describe('resellDuplicates', () => {
   const owned: OwnedMap = {
-    1: { count: 3, firstObtainedAt: NOW },
-    2: { count: 1, firstObtainedAt: NOW },
-    3: { count: 2, firstObtainedAt: NOW },
+    1: owns(1, 3),
+    2: owns(2, 1),
+    3: owns(3, 2),
   };
 
   it('sells the extra copies and always keeps one', () => {
@@ -103,8 +113,8 @@ describe('resellDuplicates', () => {
 
 describe('sellCopies', () => {
   const owned: OwnedMap = {
-    1: { count: 3, firstObtainedAt: NOW },
-    2: { count: 1, firstObtainedAt: NOW },
+    1: owns(1, 3),
+    2: owns(2, 1),
   };
 
   it('sells one copy and keeps the others', () => {

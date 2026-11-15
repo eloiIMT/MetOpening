@@ -1,0 +1,93 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.placeholder {
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  border: 5px solid color-mix(in srgb, var(--tier-color) 50%, transparent);
+  border-radius: 16px;
+  background: #FFFFFF;
+  box-shadow: 0 6px 22px rgba(20, 20, 25, .14);
+
+  &__media {
+    aspect-ratio: 4 / 3;
+    margin: 12px;
+    border-radius: 8px;
+    background: var(--mat);
+  }
+
+  &__body {
+    flex: 1;
+    padding: 0 14px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__line {
+    height: 14px;
+    width: 85%;
+    border-radius: 7px;
+    background: var(--mat);
+
+    &--short {
+      width: 55%;
+    }
+  }
+
+  &__text {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  &__meta {
+    margin: 0;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+
+  &__tier {
+    align-self: flex-start;
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px 3px 7px;
+    border: 1.5px solid var(--tier-color);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  &__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--tier-color);
+  }
+
+  &--loading &__media,
+  &--loading &__line {
+    animation: placeholder-pulse 1.4s ease-in-out infinite;
+  }
+}
+
+@keyframes placeholder-pulse {
+  50% {
+    opacity: .45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .placeholder--loading .placeholder__media,
+  .placeholder--loading .placeholder__line {
+    animation: none;
+  }
+}

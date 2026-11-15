@@ -1,12 +1,12 @@
-import { DepartmentId } from './artwork';
-import { DEPARTMENT_LABEL } from './labels';
+import { CASE_PRICES } from './game-rules';
 import { SHOP_CASES, findShopCase, groupByPrice } from './shop';
 
 describe('SHOP_CASES', () => {
-  it('has 12 cases: the classic one and one per department', () => {
+  it('has 12 cases: the classic one and one per sold department', () => {
     expect(SHOP_CASES).toHaveLength(12);
     const departments = SHOP_CASES.map((shopCase) => shopCase.department).filter((department) => department !== null);
-    expect(new Set(departments)).toEqual(new Set(Object.keys(DEPARTMENT_LABEL) as DepartmentId[]));
+    const sold = Object.keys(CASE_PRICES).filter((id) => id !== 'classic');
+    expect(new Set(departments)).toEqual(new Set(sold));
   });
 
   it('makes the classic case draw from every department', () => {

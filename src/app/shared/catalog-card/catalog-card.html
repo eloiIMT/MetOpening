@@ -1,0 +1,26 @@
+@if (artwork(); as loaded) {
+  <app-artwork-card [artwork]="loaded" [badge]="badge()" [greyed]="greyed()" openable />
+} @else {
+  <article
+    class="placeholder"
+    [class.placeholder--loading]="loading()"
+    [style.--tier-color]="'var(--rarity-' + item().rarity + ')'"
+    [attr.aria-busy]="loading()"
+  >
+    <div class="placeholder__media"></div>
+    <div class="placeholder__body">
+      @if (loading()) {
+        <span class="placeholder__line"></span>
+        <span class="placeholder__line placeholder__line--short"></span>
+        <span class="sr-only">Chargement de l'œuvre n° {{ item().id }}</span>
+      } @else {
+        <p class="placeholder__text">{{ missingText() }}</p>
+        <p class="placeholder__meta">N° au Met {{ item().id }}</p>
+      }
+      <span class="placeholder__tier">
+        <span class="placeholder__dot" aria-hidden="true"></span>
+        {{ tierLabel() }}
+      </span>
+    </div>
+  </article>
+}

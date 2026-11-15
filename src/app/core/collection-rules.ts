@@ -4,6 +4,7 @@ import { RARITY_RANK, RESALE_VALUE } from './game-rules';
 export interface OwnedEntry {
   readonly count: number;
   readonly firstObtainedAt: number;
+  readonly artwork: Artwork;
 }
 
 export type OwnedMap = Readonly<Record<number, OwnedEntry>>;
@@ -22,7 +23,7 @@ export function addToCollection(owned: OwnedMap, artworks: readonly Artwork[], n
   const next: Record<number, OwnedEntry> = { ...owned };
   const drawn = artworks.map((artwork) => {
     const entry: OwnedEntry | undefined = next[artwork.id];
-    next[artwork.id] = entry ? { ...entry, count: entry.count + 1 } : { count: 1, firstObtainedAt: now };
+    next[artwork.id] = entry ? { ...entry, count: entry.count + 1, artwork } : { count: 1, firstObtainedAt: now, artwork };
     return { artwork, isNew: entry === undefined };
   });
   return { owned: next, drawn };

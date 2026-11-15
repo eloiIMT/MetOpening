@@ -6,7 +6,7 @@
       <button
         type="button"
         class="opening__crate-button"
-        [disabled]="amount() === 0"
+        [disabled]="amount() === 0 || preparing()"
         [attr.aria-label]="openLabel()"
         (click)="open()"
       >
@@ -81,13 +81,15 @@
     </div>
 
     @if (amount() > 0) {
-      <button type="button" class="btn-primary tap" (click)="open()">{{ openLabel() }}</button>
+      <button type="button" class="btn-primary tap" [disabled]="preparing()" (click)="open()">{{ openLabel() }}</button>
     } @else {
       <div class="opening__empty">
         <button type="button" class="opening__empty-button" disabled aria-describedby="amount-hint">Stock épuisé</button>
         <a class="opening__shop-link" routerLink="/case-shop">Acheter une caisse à la boutique</a>
       </div>
     }
+
+    <p class="opening__failure" role="alert">{{ failure() }}</p>
 
     <app-case-odds class="opening__contents" />
   </div>

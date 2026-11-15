@@ -5,6 +5,11 @@
 @if (!immersive()) {
   <app-site-footer />
 }
+<p class="met-notice" role="status">
+  @if (metPaused()) {
+    <span class="met-notice__text label-glass">Le Met a besoin d’une minute, les œuvres arrivent bientôt…</span>
+  }
+</p>
 @if (openArtworkId(); as id) {
   <app-artwork-dialog [artworkId]="id" (closed)="closeArtwork()" />
 }

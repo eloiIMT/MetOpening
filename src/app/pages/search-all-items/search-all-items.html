@@ -6,5 +6,5 @@
     <p class="search__stats">{{ statsLabel() }}</p>
   </header>
 
-  <app-artwork-browser mode="search" [items]="items()" [loading]="loading()" />
+  <app-artwork-browser mode="search" [items]="items()" [loading]="loading()" [note]="note()" (queryChange)="search($event)" />
 </section>

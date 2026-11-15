@@ -8,7 +8,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "data:build": "node scripts/build-artworks.mjs",
-    "data:test": "node --test scripts/"
+    "data:test": "node --test scripts/",
+    "data:index": "node scripts/build-index.mjs"
   },
   "private": true,
   "packageManager": "npm@11.20.0",

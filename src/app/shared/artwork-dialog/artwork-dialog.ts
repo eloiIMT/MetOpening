@@ -7,15 +7,19 @@ import {
   inject,
   input,
   output,
+  resource,
   signal,
   viewChild,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { Artwork } from '../../core/artwork';
 import { ArtworkService } from '../../core/artwork.service';
+import { CardIndexService } from '../../core/card-index.service';
 import { CollectionService } from '../../core/collection.service';
 import { RESALE_VALUE } from '../../core/game-rules';
 import { DEPARTMENT_LABEL, RARITY_LABEL, formatCoins, formatCount } from '../../core/labels';
+import { MetApiService } from '../../core/met-api.service';
 
 type SaleKind = 'one' | 'duplicates';
 
@@ -31,13 +35,21 @@ export class ArtworkDialog {
 
   private readonly artworkService = inject(ArtworkService);
   private readonly collection = inject(CollectionService);
+  private readonly cardIndex = inject(CardIndexService);
+  private readonly met = inject(MetApiService);
   private readonly dialog = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
   private readonly saleDialog = viewChild.required<ElementRef<HTMLDialogElement>>('saleDialog');
 
-  protected readonly loading = this.artworkService.isLoading;
+  private readonly lookup = resource({
+    params: () => Number(this.artworkId()),
+    loader: ({ params: id }) => this.findArtwork(id),
+  });
+
+  protected readonly loading = this.lookup.isLoading;
+  protected readonly failed = computed(() => this.lookup.status() === 'error');
   protected readonly saleMessage = signal('');
 
-  protected readonly artwork = computed(() => this.artworkService.find(Number(this.artworkId())) ?? null);
+  protected readonly artwork = computed(() => (this.lookup.hasValue() ? this.lookup.value() : null));
 
   protected readonly tierLabel = computed(() => {
     const artwork = this.artwork();
@@ -109,6 +121,15 @@ export class ArtworkDialog {
       this.artwork();
       this.saleMessage.set('');
     });
+  }
+
+  private async findArtwork(id: number): Promise<Artwork | null> {
+    const known = this.collection.owned()[id]?.artwork ?? this.artworkService.find(id);
+    if (known) {
+      return known;
+    }
+    const entry = Number.isInteger(id) ? await this.cardIndex.entry(id) : null;
+    return entry ? this.met.getArtwork(entry, true) : null;
   }
 
   protected requestClose(): void {

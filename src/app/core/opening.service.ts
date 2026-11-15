@@ -1,9 +1,9 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { ArtworkService } from './artwork.service';
+import { Artwork, DepartmentId } from './artwork';
+import { CardSupplyService } from './card-supply.service';
 import { CollectionService } from './collection.service';
 import { DrawnArtwork, sortByRarity } from './collection-rules';
-import { Artwork } from './artwork';
-import { drawCases, poolFor } from './draw';
+import { rollCaseRarities } from './draw';
 import { InventoryService } from './inventory.service';
 import { ShopCase } from './shop';
 import { StockService } from './stock.service';
@@ -17,30 +17,52 @@ export interface OpeningResult {
 
 @Injectable({ providedIn: 'root' })
 export class OpeningService {
-  private readonly artworkService = inject(ArtworkService);
+  private readonly supply = inject(CardSupplyService);
   private readonly stockService = inject(StockService);
   private readonly collection = inject(CollectionService);
   private readonly inventory = inject(InventoryService);
 
   private readonly result = signal<OpeningResult | null>(readStoredOpening());
-  readonly current = this.result.asReadonly();
+  private readonly preparingState = signal(false);
 
-  openFreeCases(amount: number): boolean {
-    const pool = poolFor(this.artworkService.artworks(), null);
-    if (pool.length === 0 || !this.stockService.consume(amount)) {
-      return false;
-    }
-    this.finishOpening('CLASSIQUE', drawCases(pool, amount));
-    return true;
+  readonly current = this.result.asReadonly();
+  readonly preparing = this.preparingState.asReadonly();
+
+  openFreeCases(amount: number): Promise<boolean> {
+    return this.open('CLASSIQUE', null, amount, {
+      canPay: () => this.stockService.canConsume(amount),
+      pay: () => this.stockService.consume(amount),
+    });
   }
 
-  openBoughtCases(shopCase: ShopCase, amount: number): boolean {
-    const pool = poolFor(this.artworkService.artworks(), shopCase.department);
-    if (pool.length === 0 || !this.inventory.consume(shopCase.id, amount)) {
+  openBoughtCases(shopCase: ShopCase, amount: number): Promise<boolean> {
+    return this.open(shopCase.stencil, shopCase.department, amount, {
+      canPay: () => this.inventory.countOf(shopCase.id) >= amount,
+      pay: () => this.inventory.consume(shopCase.id, amount),
+    });
+  }
+
+  private async open(
+    stencil: string,
+    department: DepartmentId | null,
+    amount: number,
+    payment: { canPay: () => boolean; pay: () => boolean },
+  ): Promise<boolean> {
+    if (this.preparingState() || amount <= 0 || !payment.canPay()) {
       return false;
     }
-    this.finishOpening(shopCase.stencil, drawCases(pool, amount));
-    return true;
+    this.preparingState.set(true);
+    try {
+      const rarities = Array.from({ length: amount }, () => rollCaseRarities());
+      const drawnCases = await this.supply.drawCases(rarities, department);
+      if (!payment.pay()) {
+        return false;
+      }
+      this.finishOpening(stencil, drawnCases);
+      return true;
+    } finally {
+      this.preparingState.set(false);
+    }
   }
 
   private finishOpening(stencil: string, drawnCases: readonly Artwork[][]): void {

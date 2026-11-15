@@ -1,15 +1,15 @@
-import type { DepartmentId } from './artwork';
+import type { ShopDepartmentId } from './artwork';
 import { CASE_PRICES } from './game-rules';
 import { DEPARTMENT_LABEL } from './labels';
 
-export type ShopCaseId = 'classic' | DepartmentId;
+export type ShopCaseId = 'classic' | ShopDepartmentId;
 
 export interface ShopCase {
   readonly id: ShopCaseId;
   readonly label: string;
   readonly stencil: string;
   readonly price: number;
-  readonly department: DepartmentId | null;
+  readonly department: ShopDepartmentId | null;
 }
 
 export interface PriceGroup {

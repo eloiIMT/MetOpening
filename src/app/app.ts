@@ -2,6 +2,8 @@ import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRouteSnapshot, Data, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
+import { CardSupplyService } from './core/card-supply.service';
+import { MetApiService } from './core/met-api.service';
 import { MainNav } from './layout/main-nav/main-nav';
 import { SiteFooter } from './layout/site-footer/site-footer';
 import { ArtworkDialog } from './shared/artwork-dialog/artwork-dialog';
@@ -22,6 +24,8 @@ const ARTWORK_PARAM = 'artwork';
 export class App {
   private readonly router = inject(Router);
 
+  protected readonly metPaused = inject(MetApiService).paused;
+
   private readonly navigation = toSignal(
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
@@ -32,6 +36,10 @@ export class App {
 
   protected readonly immersive = computed(() => this.navigation().data['immersive'] === true);
   protected readonly openArtworkId = computed(() => this.navigation().artworkId);
+
+  constructor() {
+    inject(CardSupplyService).start();
+  }
 
   protected closeArtwork(): void {
     const tree = this.router.parseUrl(this.router.url);

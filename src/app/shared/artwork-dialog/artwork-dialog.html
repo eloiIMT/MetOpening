@@ -75,10 +75,16 @@
     } @else {
       <div class="detail__missing">
         <div class="detail__top">
-          <h2 id="artwork-dialog-title" class="detail__title">Œuvre introuvable</h2>
+          <h2 id="artwork-dialog-title" class="detail__title">{{ failed() ? 'Œuvre indisponible' : 'Œuvre introuvable' }}</h2>
           <ng-container [ngTemplateOutlet]="closeButton" />
         </div>
-        <p class="detail__hint">Cette œuvre n'existe pas dans le jeu.</p>
+        <p class="detail__hint">
+          @if (failed()) {
+            Le Met ne répond pas pour le moment. Réessayez dans une minute.
+          } @else {
+            Cette œuvre n'existe pas dans le jeu.
+          }
+        </p>
       </div>
     }
   </div>

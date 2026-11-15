@@ -1,10 +1,5 @@
-import { Artwork, DepartmentId } from './artwork';
 import { ARTWORKS_PER_CASE, Rarity } from './game-rules';
-import { RandomFn, drawCase, drawCases, pickRandom, poolFor, rollRarity, rollTopRarity } from './draw';
-
-function artwork(id: number, rarity: Rarity, department: DepartmentId = 'asian-art'): Artwork {
-  return { id, title: `Artwork ${id}`, artist: null, date: null, year: null, department, rarity, imageSmall: '', image: '', metUrl: '' };
-}
+import { RandomFn, pickRandom, rollCaseRarities, rollRarity, rollTopRarity } from './draw';
 
 function sequence(...values: number[]): RandomFn {
   let index = 0;
@@ -20,17 +15,6 @@ function seeded(seed: number): RandomFn {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
-
-const POOL: Artwork[] = [
-  artwork(1, 'common'),
-  artwork(2, 'common'),
-  artwork(3, 'uncommon'),
-  artwork(4, 'rare'),
-  artwork(5, 'epic'),
-  artwork(6, 'legendary'),
-  artwork(7, 'common', 'egyptian-art'),
-  artwork(8, 'legendary', 'egyptian-art'),
-];
 
 describe('rollRarity', () => {
   it('gives a common below 0.50', () => {
@@ -83,29 +67,17 @@ describe('rollTopRarity', () => {
   });
 });
 
-describe('drawCase', () => {
-  it('always gives 5 artworks', () => {
-    expect(drawCase(POOL, seeded(3))).toHaveLength(ARTWORKS_PER_CASE);
+describe('rollCaseRarities', () => {
+  it('always rolls 5 rarities', () => {
+    expect(rollCaseRarities(seeded(3))).toHaveLength(ARTWORKS_PER_CASE);
   });
 
-  it('can give 5 commons in a row', () => {
-    const rarities = drawCase(POOL, () => 0).map((item) => item.rarity);
-    expect(rarities).toEqual(['common', 'common', 'common', 'common', 'common']);
+  it('rolls each slot on its own, so a case can hold 5 commons', () => {
+    expect(rollCaseRarities(() => 0)).toEqual<Rarity[]>(['common', 'common', 'common', 'common', 'common']);
   });
 
-  it('can give a legendary', () => {
-    const rarities = drawCase(POOL, () => 0.99).map((item) => item.rarity);
-    expect(rarities.every((rarity) => rarity === 'legendary')).toBe(true);
-  });
-
-  it('only draws from the given department', () => {
-    const cases = drawCases(poolFor(POOL, 'egyptian-art'), 10, seeded(7));
-    const departments = cases.flat().map((item) => item.department);
-    expect(departments.every((department) => department === 'egyptian-art')).toBe(true);
-  });
-
-  it('draws the requested number of cases', () => {
-    expect(drawCases(POOL, 5, seeded(1))).toHaveLength(5);
+  it('can hold several top artworks', () => {
+    expect(rollCaseRarities(() => 0.99)).toEqual<Rarity[]>(['legendary', 'legendary', 'legendary', 'legendary', 'legendary']);
   });
 });
 

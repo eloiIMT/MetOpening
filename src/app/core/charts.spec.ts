@@ -1,18 +1,19 @@
 import { Artwork, DepartmentId } from './artwork';
-import { centuryOf, centuryRows, departmentRows, pieSlicePath, rarityRows } from './charts';
+import { itemFromArtwork } from './browse';
+import { centuryFromOrder, centuryOf, centuryRows, departmentRows, pieSlicePath, rarityRows } from './charts';
 import { Rarity } from './game-rules';
 
 function artwork(id: number, rarity: Rarity, department: DepartmentId, year: number | null): Artwork {
   return { id, title: `Artwork ${id}`, artist: null, date: null, year, department, rarity, imageSmall: '', image: '', metUrl: '' };
 }
 
-const ARTWORKS: Artwork[] = [
+const ARTWORKS = [
   artwork(1, 'common', 'asian-art', 1750),
   artwork(2, 'common', 'asian-art', 1799),
   artwork(3, 'legendary', 'egyptian-art', -1350),
   artwork(4, 'rare', 'asian-art', 1801),
   artwork(5, 'rare', 'photographs', null),
-];
+].map((item) => itemFromArtwork(item, 1, null));
 
 describe('centuryOf', () => {
   it('finds the century of a year of our era', () => {
@@ -22,6 +23,13 @@ describe('centuryOf', () => {
 
   it('finds the century of a year before our era', () => {
     expect(centuryOf(-530)).toEqual({ order: -6, number: 6, beforeCommonEra: true });
+  });
+});
+
+describe('centuryFromOrder', () => {
+  it('gives back the century found by centuryOf', () => {
+    expect(centuryFromOrder(centuryOf(1750).order)).toEqual(centuryOf(1750));
+    expect(centuryFromOrder(centuryOf(-530).order)).toEqual(centuryOf(-530));
   });
 });
 

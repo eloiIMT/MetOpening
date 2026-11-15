@@ -85,9 +85,15 @@ export class CaseOpening {
       : null,
   );
 
-  protected readonly openLabel = computed(() =>
-    this.amount() === 1 ? 'Ouvrir 1 caisse' : `Ouvrir ${this.amount()} caisses`,
-  );
+  protected readonly preparing = this.openingService.preparing;
+  protected readonly failure = signal<string | null>(null);
+
+  protected readonly openLabel = computed(() => {
+    if (this.preparing()) {
+      return 'Préparation des œuvres…';
+    }
+    return this.amount() === 1 ? 'Ouvrir 1 caisse' : `Ouvrir ${this.amount()} caisses`;
+  });
 
   protected readonly stockUnit = computed(() => (this.stock() > 1 ? 'caisses gratuites' : 'caisse gratuite'));
 
@@ -118,13 +124,18 @@ export class CaseOpening {
     this.selectedAmount.set(value);
   }
 
-  protected open(): void {
+  protected async open(): Promise<void> {
     const shopCase = this.shopCase();
-    const opened = shopCase
-      ? this.openingService.openBoughtCases(shopCase, this.amount())
-      : this.openingService.openFreeCases(this.amount());
-    if (opened) {
-      this.router.navigate(['/case-opening/open']);
+    this.failure.set(null);
+    try {
+      const opened = shopCase
+        ? await this.openingService.openBoughtCases(shopCase, this.amount())
+        : await this.openingService.openFreeCases(this.amount());
+      if (opened) {
+        await this.router.navigate(['/case-opening/open']);
+      }
+    } catch {
+      this.failure.set('Le Met ne répond pas pour le moment. Vos caisses sont intactes, réessayez dans une minute.');
     }
   }
 }

@@ -1,4 +1,4 @@
-import type { DepartmentId } from './artwork';
+import type { ShopDepartmentId } from './artwork';
 
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
 
@@ -40,7 +40,7 @@ export const RESALE_VALUE: Readonly<Record<Rarity, number>> = {
   legendary: 1000,
 };
 
-export const CASE_PRICES: Readonly<Record<'classic' | DepartmentId, number>> = {
+export const CASE_PRICES: Readonly<Record<'classic' | ShopDepartmentId, number>> = {
   classic: 150,
   'european-paintings': 400,
   'drawings-prints': 400,

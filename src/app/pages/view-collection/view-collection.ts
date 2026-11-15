@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Artwork } from '../../core/artwork';
-import { ArtworkService } from '../../core/artwork.service';
-import { BrowserItem } from '../../core/browse';
+import { BrowserItem, itemFromArtwork } from '../../core/browse';
+import { CardIndexService } from '../../core/card-index.service';
 import { CollectionService } from '../../core/collection.service';
 import { formatCoins, formatCount } from '../../core/labels';
 import { ArtworkBrowser } from '../../shared/artwork-browser/artwork-browser';
@@ -13,25 +13,28 @@ import { ArtworkBrowser } from '../../shared/artwork-browser/artwork-browser';
   styleUrl: './view-collection.scss',
 })
 export class ViewCollection {
-  private readonly artworkService = inject(ArtworkService);
+  private readonly cardIndex = inject(CardIndexService);
   private readonly collection = inject(CollectionService);
 
-  protected readonly loading = this.artworkService.isLoading;
   protected readonly saleMessage = signal<string | null>(null);
 
-  protected readonly items = computed<BrowserItem[]>(() => {
-    const owned = this.collection.owned();
-    return this.artworkService.artworks().flatMap((artwork) => {
-      const entry = owned[artwork.id];
-      return entry ? [{ artwork, copies: entry.count, obtainedAt: entry.firstObtainedAt }] : [];
-    });
-  });
+  constructor() {
+    void this.cardIndex.load();
+  }
+
+  protected readonly items = computed<BrowserItem[]>(() =>
+    Object.values(this.collection.owned()).map((entry) =>
+      itemFromArtwork(entry.artwork, entry.count, entry.firstObtainedAt),
+    ),
+  );
 
   protected readonly statsLabel = computed(() => {
     const items = this.items();
     const copies = items.reduce((sum, item) => sum + item.copies, 0);
     const owned = formatCount(items.length, 'œuvre', 'œuvres');
-    return `${owned} sur ${this.artworkService.artworks().length} · ${formatCount(copies, 'exemplaire', 'exemplaires')}`;
+    const total = this.cardIndex.index()?.size;
+    const outOf = total === undefined ? '' : ` sur ${total.toLocaleString('fr-FR')}`;
+    return `${owned}${outOf} · ${formatCount(copies, 'exemplaire', 'exemplaires')}`;
   });
 
   protected sell(artworks: readonly Artwork[]): void {

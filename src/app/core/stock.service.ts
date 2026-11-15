@@ -17,6 +17,10 @@ export class StockService {
     inject(DestroyRef).onDestroy(() => clearInterval(timer));
   }
 
+  canConsume(amount: number): boolean {
+    return consumeStock(this.state(), amount, Date.now()) !== null;
+  }
+
   consume(amount: number): boolean {
     const now = Date.now();
     const next = consumeStock(this.state(), amount, now);

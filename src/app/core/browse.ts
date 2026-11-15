@@ -1,8 +1,10 @@
 import { Artwork, DepartmentId } from './artwork';
+import { IndexEntry } from './card-index';
+import { centuryOf } from './charts';
 import { RARITY_RANK, RESALE_VALUE, Rarity } from './game-rules';
 
-export interface BrowserItem {
-  readonly artwork: Artwork;
+export interface BrowserItem extends IndexEntry {
+  readonly artwork: Artwork | null;
   readonly copies: number;
   readonly obtainedAt: number | null;
 }
@@ -21,6 +23,18 @@ export interface DuplicatesSummary {
   readonly coins: number;
 }
 
+export function itemFromArtwork(artwork: Artwork, copies: number, obtainedAt: number | null): BrowserItem {
+  return {
+    id: artwork.id,
+    rarity: artwork.rarity,
+    department: artwork.department,
+    century: artwork.year === null ? null : centuryOf(artwork.year).order,
+    artwork,
+    copies,
+    obtainedAt,
+  };
+}
+
 export function normalizeText(text: string): string {
   return text.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().trim();
 }
@@ -33,9 +47,11 @@ export function filterItems(
   const needle = normalizeText(criteria.query);
   return items.filter(
     (item) =>
-      (needle === '' || normalizeText(`${item.artwork.title} ${item.artwork.artist ?? ''}`).includes(needle)) &&
-      (criteria.department === null || item.artwork.department === criteria.department) &&
-      (ignoreRarity || criteria.rarities.size === 0 || criteria.rarities.has(item.artwork.rarity)),
+      (needle === '' ||
+        (item.artwork !== null &&
+          normalizeText(`${item.artwork.title} ${item.artwork.artist ?? ''}`).includes(needle))) &&
+      (criteria.department === null || item.department === criteria.department) &&
+      (ignoreRarity || criteria.rarities.size === 0 || criteria.rarities.has(item.rarity)),
   );
 }
 
@@ -47,19 +63,23 @@ export function summarizeDuplicates(items: readonly BrowserItem[]): DuplicatesSu
   return items.reduce(
     (summary, item) => {
       const extra = Math.max(0, item.copies - 1);
-      return { copies: summary.copies + extra, coins: summary.coins + extra * RESALE_VALUE[item.artwork.rarity] };
+      return { copies: summary.copies + extra, coins: summary.coins + extra * RESALE_VALUE[item.rarity] };
     },
     { copies: 0, coins: 0 },
   );
 }
 
+const collator = new Intl.Collator('fr');
+
 function byTitle(a: BrowserItem, b: BrowserItem): number {
-  return a.artwork.title.localeCompare(b.artwork.title, 'fr');
+  const first = a.artwork?.title ?? '';
+  const second = b.artwork?.title ?? '';
+  return (first === second ? 0 : collator.compare(first, second)) || a.id - b.id;
 }
 
 const COMPARATORS: Readonly<Record<SortId, (a: BrowserItem, b: BrowserItem) => number>> = {
-  'rarity-asc': (a, b) => RARITY_RANK[a.artwork.rarity] - RARITY_RANK[b.artwork.rarity] || byTitle(a, b),
-  'rarity-desc': (a, b) => RARITY_RANK[b.artwork.rarity] - RARITY_RANK[a.artwork.rarity] || byTitle(a, b),
+  'rarity-asc': (a, b) => RARITY_RANK[a.rarity] - RARITY_RANK[b.rarity] || byTitle(a, b),
+  'rarity-desc': (a, b) => RARITY_RANK[b.rarity] - RARITY_RANK[a.rarity] || byTitle(a, b),
   recent: (a, b) => (b.obtainedAt ?? 0) - (a.obtainedAt ?? 0) || byTitle(a, b),
   title: byTitle,
 };

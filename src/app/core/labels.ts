@@ -13,6 +13,14 @@ export const DEPARTMENT_LABEL: Readonly<Record<DepartmentId, string>> = {
   'islamic-art': 'Art islamique',
   'egyptian-art': 'Art égyptien',
   'arms-armor': 'Armes et armures',
+  'ancient-west-asian': 'Proche-Orient ancien',
+  'africa-oceania-americas': 'Arts d’Afrique, d’Océanie et des Amériques',
+  cloisters: 'The Cloisters',
+  'costume-institute': 'Costume Institute',
+  libraries: 'Bibliothèques',
+  'medieval-art': 'Art médiéval',
+  'modern-contemporary': 'Art moderne et contemporain',
+  'robert-lehman': 'Collection Robert Lehman',
 };
 
 export const RARITY_LABEL: Readonly<Record<Rarity, string>> = {

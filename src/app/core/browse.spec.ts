@@ -1,5 +1,5 @@
 import { Artwork, DepartmentId } from './artwork';
-import { BrowseCriteria, BrowserItem, browse, filterItems, summarizeDuplicates } from './browse';
+import { BrowseCriteria, BrowserItem, browse, filterItems, itemFromArtwork, summarizeDuplicates } from './browse';
 import { Rarity } from './game-rules';
 
 function item(
@@ -20,7 +20,7 @@ function item(
     image: '',
     metUrl: '',
   };
-  return { artwork, copies: options.copies ?? 1, obtainedAt: options.obtainedAt ?? null };
+  return itemFromArtwork(artwork, options.copies ?? 1, options.obtainedAt ?? null);
 }
 
 const ITEMS: BrowserItem[] = [
@@ -33,15 +33,15 @@ const ALL: BrowseCriteria = { query: '', rarities: new Set(), department: null, 
 
 describe('browse', () => {
   it('finds a title without caring about accents or case', () => {
-    expect(browse(ITEMS, { ...ALL, query: 'EVENT' }).map((entry) => entry.artwork.id)).toEqual([3]);
+    expect(browse(ITEMS, { ...ALL, query: 'EVENT' }).map((entry) => entry.id)).toEqual([3]);
   });
 
   it('also searches in the artist name', () => {
-    expect(browse(ITEMS, { ...ALL, query: 'bruegel' }).map((entry) => entry.artwork.id)).toEqual([1]);
+    expect(browse(ITEMS, { ...ALL, query: 'bruegel' }).map((entry) => entry.id)).toEqual([1]);
   });
 
   it('keeps only the chosen department', () => {
-    expect(browse(ITEMS, { ...ALL, department: 'arms-armor' }).map((entry) => entry.artwork.id)).toEqual([2]);
+    expect(browse(ITEMS, { ...ALL, department: 'arms-armor' }).map((entry) => entry.id)).toEqual([2]);
   });
 
   it('shows every rarity when none is ticked, and only the ticked ones otherwise', () => {
@@ -50,7 +50,7 @@ describe('browse', () => {
   });
 
   it('sorts by rarity, by date obtained or by title', () => {
-    const ids = (sort: BrowseCriteria['sort']) => browse(ITEMS, { ...ALL, sort }).map((entry) => entry.artwork.id);
+    const ids = (sort: BrowseCriteria['sort']) => browse(ITEMS, { ...ALL, sort }).map((entry) => entry.id);
     expect(ids('rarity-asc')).toEqual([3, 2, 1]);
     expect(ids('rarity-desc')).toEqual([1, 2, 3]);
     expect(ids('recent')).toEqual([2, 3, 1]);
@@ -60,6 +60,32 @@ describe('browse', () => {
   it('can ignore the rarity filter to count each rarity', () => {
     const criteria = { ...ALL, rarities: new Set<Rarity>(['epic']) };
     expect(filterItems(ITEMS, criteria, true)).toHaveLength(3);
+  });
+});
+
+describe('itemFromArtwork', () => {
+  it('turns the year into a signed century', () => {
+    const base = ITEMS[0].artwork as Artwork;
+    expect(itemFromArtwork({ ...base, year: 1565 }, 1, null).century).toBe(16);
+    expect(itemFromArtwork({ ...base, year: -530 }, 1, null).century).toBe(-6);
+    expect(itemFromArtwork(base, 1, null).century).toBeNull();
+  });
+});
+
+describe('browse without loaded artworks', () => {
+  const light: BrowserItem[] = [
+    { id: 9, rarity: 'rare', department: 'asian-art', century: 18, artwork: null, copies: 0, obtainedAt: null },
+    { id: 4, rarity: 'rare', department: 'asian-art', century: null, artwork: null, copies: 0, obtainedAt: null },
+    { id: 7, rarity: 'epic', department: 'egyptian-art', century: -3, artwork: null, copies: 0, obtainedAt: null },
+  ];
+
+  it('filters and sorts on the index data alone, ties broken by Met number', () => {
+    expect(browse(light, { ...ALL, sort: 'rarity-desc' }).map((entry) => entry.id)).toEqual([7, 4, 9]);
+    expect(browse(light, { ...ALL, department: 'asian-art' }).map((entry) => entry.id)).toEqual([4, 9]);
+  });
+
+  it('never matches a text search without the artwork', () => {
+    expect(browse(light, { ...ALL, query: 'vase' })).toEqual([]);
   });
 });
 

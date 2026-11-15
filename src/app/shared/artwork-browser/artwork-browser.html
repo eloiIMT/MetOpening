@@ -94,18 +94,17 @@
       }
     </div>
 
+    @if (note(); as text) {
+      <p class="results__message glass">{{ text }}</p>
+    }
+
     @if (loading()) {
       <p class="results__message glass">Chargement des œuvres…</p>
-    } @else if (cards().length > 0) {
+    } @else if (visible().length > 0) {
       <ul class="results__grid">
-        @for (card of shownCards(); track card.artwork.id) {
+        @for (card of shownCards(); track card.item.id) {
           <li class="results__cell">
-            <app-artwork-card
-              [artwork]="card.artwork"
-              [badge]="card.badge"
-              [greyed]="card.greyed"
-              openable
-            />
+            <app-catalog-card [item]="card.item" [badge]="card.badge" [greyed]="card.greyed" />
           </li>
         }
       </ul>
@@ -135,7 +134,7 @@
       <app-artwork-charts
         [rarityPool]="rarityPool()"
         [departmentPool]="departmentPool()"
-        [visible]="visibleArtworks()"
+        [visible]="visible()"
         [activeRarities]="rarities()"
         [activeDepartment]="department()"
         (closed)="toggleCharts()"

@@ -13,10 +13,11 @@ import {
 import { RouterLink } from '@angular/router';
 import { Artwork, DepartmentId } from '../../core/artwork';
 import { BrowseCriteria, BrowserItem, SortId, browse, filterItems, summarizeDuplicates } from '../../core/browse';
+import { rarityRows } from '../../core/charts';
 import { RARITY_RANK, Rarity } from '../../core/game-rules';
 import { DEPARTMENT_LABEL, RARITY_LABEL, formatCoins, formatCount } from '../../core/labels';
-import { ArtworkCard } from '../artwork-card/artwork-card';
 import { ArtworkCharts } from '../artwork-charts/artwork-charts';
+import { CatalogCard } from '../catalog-card/catalog-card';
 
 const RARITIES = (Object.keys(RARITY_RANK) as Rarity[]).sort((a, b) => RARITY_RANK[a] - RARITY_RANK[b]);
 
@@ -33,7 +34,7 @@ const NARROW_QUERY = '(max-width: 899.98px)';
 
 @Component({
   selector: 'app-artwork-browser',
-  imports: [ArtworkCard, ArtworkCharts, RouterLink],
+  imports: [ArtworkCharts, CatalogCard, RouterLink],
   templateUrl: './artwork-browser.html',
   styleUrl: './artwork-browser.scss',
 })
@@ -41,7 +42,9 @@ export class ArtworkBrowser {
   readonly items = input.required<readonly BrowserItem[]>();
   readonly mode = input<'collection' | 'search'>('collection');
   readonly loading = input(false, { transform: booleanAttribute });
+  readonly note = input<string | null>(null);
   readonly sellDuplicates = output<readonly Artwork[]>();
+  readonly queryChange = output<string>();
 
   private readonly saleDialog = viewChild<ElementRef<HTMLDialogElement>>('saleDialog');
   private readonly sentinel = viewChild<ElementRef<HTMLElement>>('sentinel');
@@ -54,7 +57,7 @@ export class ArtworkBrowser {
   protected readonly chartsOpen = signal(!window.matchMedia(NARROW_QUERY).matches);
 
   protected readonly sortOptions = computed(() =>
-    this.mode() === 'search' ? SORT_OPTIONS.filter((option) => option.id !== 'recent') : SORT_OPTIONS,
+    this.mode() === 'search' ? SORT_OPTIONS.filter((option) => option.id.startsWith('rarity')) : SORT_OPTIONS,
   );
 
   protected readonly searchLabel = computed(() =>
@@ -72,24 +75,16 @@ export class ArtworkBrowser {
     sort: this.sort(),
   }));
 
-  private readonly visible = computed(() => browse(this.items(), this.criteria()));
-
-  protected readonly visibleArtworks = computed(() => this.visible().map((item) => item.artwork));
-
-  protected readonly rarityPool = computed(() =>
-    filterItems(this.items(), this.criteria(), true).map((item) => item.artwork),
+  private readonly filterCriteria = computed<BrowseCriteria>(() =>
+    this.mode() === 'search' ? { ...this.criteria(), query: '' } : this.criteria(),
   );
+
+  protected readonly visible = computed(() => browse(this.items(), this.filterCriteria()));
+
+  protected readonly rarityPool = computed(() => filterItems(this.items(), this.filterCriteria(), true));
 
   protected readonly departmentPool = computed(() =>
-    filterItems(this.items(), { ...this.criteria(), department: null }).map((item) => item.artwork),
-  );
-
-  protected readonly cards = computed(() =>
-    this.visible().map((item) => ({
-      artwork: item.artwork,
-      badge: this.badgeFor(item.copies),
-      greyed: item.copies === 0,
-    })),
+    filterItems(this.items(), { ...this.filterCriteria(), department: null }),
   );
 
   private readonly limit = linkedSignal({
@@ -97,26 +92,32 @@ export class ArtworkBrowser {
     computation: () => PAGE_SIZE,
   });
 
-  protected readonly shownCards = computed(() => this.cards().slice(0, this.limit()));
-  protected readonly hasMore = computed(() => this.limit() < this.cards().length);
+  protected readonly shownCards = computed(() =>
+    this.visible()
+      .slice(0, this.limit())
+      .map((item) => ({ item, badge: this.badgeFor(item.copies), greyed: item.copies === 0 })),
+  );
+
+  protected readonly hasMore = computed(() => this.limit() < this.visible().length);
 
   protected readonly progressLabel = computed(
-    () => `${this.shownCards().length} sur ${formatCount(this.cards().length, 'œuvre affichée', 'œuvres affichées')}`,
+    () =>
+      `${this.shownCards().length} sur ${formatCount(this.visible().length, 'œuvre affichée', 'œuvres affichées')}`,
   );
 
   protected readonly moreLabel = computed(() => {
-    const next = Math.min(PAGE_SIZE, this.cards().length - this.limit());
+    const next = Math.min(PAGE_SIZE, this.visible().length - this.limit());
     return `Afficher ${formatCount(next, 'œuvre', 'œuvres')} de plus`;
   });
 
   protected readonly rarityOptions = computed(() => {
-    const pool = filterItems(this.items(), this.criteria(), true);
+    const rows = rarityRows(this.rarityPool());
     return RARITIES.map((rarity) => ({
       rarity,
       label: RARITY_LABEL[rarity],
       color: `var(--rarity-${rarity})`,
       checked: this.rarities().has(rarity),
-      count: pool.filter((item) => item.artwork.rarity === rarity).length,
+      count: (rows.find((row) => row.key === rarity)?.value ?? 0).toLocaleString('fr-FR'),
     }));
   });
 
@@ -132,7 +133,9 @@ export class ArtworkBrowser {
 
   protected readonly resultLabel = computed(() => {
     const shown = formatCount(this.visible().length, 'œuvre', 'œuvres');
-    return this.hasFilters() ? `${shown} sur ${this.items().length}` : shown;
+    return this.visible().length < this.items().length
+      ? `${shown} sur ${this.items().length.toLocaleString('fr-FR')}`
+      : shown;
   });
 
   protected readonly duplicates = computed(() => summarizeDuplicates(this.visible()));
@@ -170,7 +173,12 @@ export class ArtworkBrowser {
   }
 
   protected typeQuery(event: Event): void {
-    this.query.set((event.target as HTMLInputElement).value);
+    this.setQuery((event.target as HTMLInputElement).value);
+  }
+
+  private setQuery(query: string): void {
+    this.query.set(query);
+    this.queryChange.emit(query);
   }
 
   protected toggleRarity(rarity: Rarity): void {
@@ -203,7 +211,7 @@ export class ArtworkBrowser {
   }
 
   protected clearFilters(): void {
-    this.query.set('');
+    this.setQuery('');
     this.rarities.set(new Set());
     this.department.set(null);
   }
@@ -219,7 +227,7 @@ export class ArtworkBrowser {
   }
 
   protected confirmSale(): void {
-    this.sellDuplicates.emit(this.visible().map((item) => item.artwork));
+    this.sellDuplicates.emit(this.visible().flatMap((item) => (item.artwork ? [item.artwork] : [])));
     this.closeSale();
   }
 
