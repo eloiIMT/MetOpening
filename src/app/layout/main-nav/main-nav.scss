@@ -9,7 +9,8 @@
   pointer-events: none;
 
   .nav-list,
-  .nav-tools {
+  .nav-tools,
+  .nav-language {
     pointer-events: auto;
   }
 
@@ -34,6 +35,7 @@
 
 .nav-list {
   grid-column: 2;
+  grid-row: 1;
   min-width: 0;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -84,6 +86,7 @@
 
 .nav-tools {
   grid-column: 3;
+  grid-row: 1;
   justify-self: end;
   display: flex;
   align-items: center;
@@ -112,6 +115,9 @@
 }
 
 .nav-language {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: start;
   min-width: 44px;
   justify-content: center;
   padding: 8px 12px;

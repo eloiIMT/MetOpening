@@ -8,7 +8,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "data:test": "node --test scripts/",
-    "data:index": "node scripts/build-index.mjs"
+    "data:index": "node scripts/build-index.mjs",
+    "build:pages": "ng build --base-href /MetOpening/ && node -e \"require('fs').copyFileSync('dist/met-opening/browser/index.html','dist/met-opening/browser/404.html');require('fs').writeFileSync('dist/met-opening/browser/.nojekyll','')\""
   },
   "private": true,
   "packageManager": "npm@11.20.0",

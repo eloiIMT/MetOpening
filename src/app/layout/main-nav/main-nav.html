@@ -1,4 +1,13 @@
 <header class="nav-bar">
+  <button
+    type="button"
+    class="nav-language tap"
+    [attr.lang]="i18n.otherLocale()"
+    [attr.aria-label]="t('nav.languageLabel')"
+    (click)="i18n.toggle()"
+  >
+    {{ t('nav.languageButton') }}
+  </button>
   <nav class="nav-list" [attr.aria-label]="t('nav.label')">
     @for (link of links; track link.path) {
       <a
@@ -17,15 +26,6 @@
   </nav>
 
   <div class="nav-tools">
-    <button
-      type="button"
-      class="nav-language tap"
-      [attr.lang]="i18n.otherLocale()"
-      [attr.aria-label]="t('nav.languageLabel')"
-      (click)="i18n.toggle()"
-    >
-      {{ t('nav.languageButton') }}
-    </button>
     <a class="nav-coins tap" routerLink="/case-shop">
       <span class="sr-only">{{ t('nav.balance') }}</span>
       <span>{{ coinsLabel() }}</span>
