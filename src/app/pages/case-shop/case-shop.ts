@@ -15,11 +15,10 @@ import { CaseCrate } from '../../shared/case-crate/case-crate';
 export class CaseShop {
   private readonly wallet = inject(WalletService);
   private readonly inventory = inject(InventoryService);
-  private readonly i18n = inject(I18n);
 
-  protected readonly t = this.i18n.t;
+  protected readonly t = inject(I18n).t;
 
-  protected readonly message = signal<{ id: ShopCaseId; count: number } | null>(null);
+  private readonly message = signal<{ id: ShopCaseId; count: number } | null>(null);
 
   protected readonly messageText = computed(() => {
     const message = this.message();

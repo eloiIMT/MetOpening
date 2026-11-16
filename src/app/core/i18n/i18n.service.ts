@@ -2,7 +2,7 @@ import { Injectable, computed, effect, signal } from '@angular/core';
 import { LOCALES, LOCALE_TAG, Locale, Params, formatMessage } from './i18n';
 import { MessageKey, lookup } from './messages';
 
-export const LOCALE_STORAGE_KEY = 'met-opening.locale';
+const LOCALE_STORAGE_KEY = 'met-opening.locale';
 
 @Injectable({ providedIn: 'root' })
 export class I18n {
@@ -23,7 +23,7 @@ export class I18n {
 
   readonly number = (value: number): string => value.toLocaleString(this.tag());
 
-  setLocale(locale: Locale): void {
+  private setLocale(locale: Locale): void {
     this.current.set(locale);
     try {
       localStorage.setItem(LOCALE_STORAGE_KEY, locale);

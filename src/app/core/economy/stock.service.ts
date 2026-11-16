@@ -2,7 +2,7 @@ import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core'
 import { STOCK_MAX } from '../game/game-rules';
 import { StockState, consumeStock, msUntilNextRefill, settleStock } from './stock-rules';
 
-export const STOCK_STORAGE_KEY = 'met-opening.stock';
+const STOCK_STORAGE_KEY = 'met-opening.stock';
 
 @Injectable({ providedIn: 'root' })
 export class StockService {

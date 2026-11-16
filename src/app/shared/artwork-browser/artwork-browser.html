@@ -144,8 +144,6 @@
         [rarityPool]="rarityPool()"
         [departmentPool]="departmentPool()"
         [visible]="visible()"
-        [activeRarities]="rarities()"
-        [activeDepartment]="department()"
         (closed)="toggleCharts()"
       />
     </aside>
@@ -153,7 +151,7 @@
 </div>
 
 <dialog #saleDialog class="sale-dialog" aria-labelledby="sale-dialog-title">
-  <h2 id="sale-dialog-title" class="sale-dialog__title">{{ t('artworks.saleDialogTitle') }}</h2>
+  <h2 id="sale-dialog-title" class="sale-dialog__title">{{ t('artworks.saleTitleDuplicates') }}</h2>
   <p class="sale-dialog__text">{{ saleQuestion() }}</p>
   <div class="sale-dialog__actions">
     <button type="button" class="btn-secondary tap" (click)="closeSale()">{{ t('artworks.cancel') }}</button>

@@ -1,5 +1,4 @@
-import { CASE_PRICES } from '../game/game-rules';
-import { SHOP_CASES, findShopCase, groupByPrice } from './shop';
+import { CASE_PRICES, SHOP_CASES, findShopCase, groupByPrice } from './shop';
 
 describe('SHOP_CASES', () => {
   it('has 12 cases: the classic one and one per sold department', () => {

@@ -1,5 +1,4 @@
 import type { ShopDepartmentId } from '../artworks/artwork';
-import { CASE_PRICES } from '../game/game-rules';
 
 export type ShopCaseId = 'classic' | ShopDepartmentId;
 
@@ -13,6 +12,21 @@ export interface PriceGroup {
   readonly price: number;
   readonly cases: readonly ShopCase[];
 }
+
+export const CASE_PRICES: Readonly<Record<'classic' | ShopDepartmentId, number>> = {
+  classic: 150,
+  'european-paintings': 400,
+  'drawings-prints': 400,
+  'american-wing': 400,
+  'european-sculpture': 250,
+  'asian-art': 250,
+  photographs: 250,
+  'musical-instruments': 250,
+  'greek-roman': 250,
+  'islamic-art': 250,
+  'egyptian-art': 250,
+  'arms-armor': 250,
+};
 
 export const SHOP_CASES: readonly ShopCase[] = (Object.keys(CASE_PRICES) as ShopCaseId[]).map((id) => ({
   id,

@@ -7,7 +7,7 @@ import { favorites } from './favorites';
 import { footer, nav, routes } from './layout';
 import { openings } from './openings';
 
-export const MESSAGES = {
+const MESSAGES = {
   common,
   departments,
   rarities,

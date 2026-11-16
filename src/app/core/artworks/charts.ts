@@ -1,5 +1,5 @@
 import { DepartmentId } from './artwork';
-import { RARITY_RANK, Rarity } from '../game/game-rules';
+import { RARITIES, Rarity } from '../game/game-rules';
 
 export interface ChartRow<K> {
   readonly key: K;
@@ -19,7 +19,8 @@ export interface Century {
   readonly beforeCommonEra: boolean;
 }
 
-const RARITIES = (Object.keys(RARITY_RANK) as Rarity[]).sort((a, b) => RARITY_RANK[a] - RARITY_RANK[b]);
+const PIE_CENTER = 100;
+const PIE_RADIUS = 96;
 
 export const DEPARTMENT_COLOR: Readonly<Record<DepartmentId, string>> = {
   'european-paintings': '#2A78D6',
@@ -45,17 +46,17 @@ export const DEPARTMENT_COLOR: Readonly<Record<DepartmentId, string>> = {
 
 export const SERIES_COLOR = '#2A78D6';
 
-export function pieSlicePath(start: number, end: number, center = 100, radius = 96): string {
+export function pieSlicePath(start: number, end: number): string {
   const round = (value: number) => Math.round(value * 100) / 100;
   if (end - start >= 0.9999) {
-    return `M ${center} ${center - radius} A ${radius} ${radius} 0 1 1 ${center} ${center + radius} A ${radius} ${radius} 0 1 1 ${center} ${center - radius} Z`;
+    return `M ${PIE_CENTER} ${PIE_CENTER - PIE_RADIUS} A ${PIE_RADIUS} ${PIE_RADIUS} 0 1 1 ${PIE_CENTER} ${PIE_CENTER + PIE_RADIUS} A ${PIE_RADIUS} ${PIE_RADIUS} 0 1 1 ${PIE_CENTER} ${PIE_CENTER - PIE_RADIUS} Z`;
   }
   const point = (fraction: number) => {
     const angle = fraction * 2 * Math.PI - Math.PI / 2;
-    return `${round(center + radius * Math.cos(angle))} ${round(center + radius * Math.sin(angle))}`;
+    return `${round(PIE_CENTER + PIE_RADIUS * Math.cos(angle))} ${round(PIE_CENTER + PIE_RADIUS * Math.sin(angle))}`;
   };
   const largeArc = end - start > 0.5 ? 1 : 0;
-  return `M ${center} ${center} L ${point(start)} A ${radius} ${radius} 0 ${largeArc} 1 ${point(end)} Z`;
+  return `M ${PIE_CENTER} ${PIE_CENTER} L ${point(start)} A ${PIE_RADIUS} ${PIE_RADIUS} 0 ${largeArc} 1 ${point(end)} Z`;
 }
 
 export function centuryOf(year: number): Century {
@@ -104,5 +105,5 @@ export function centuryRows(items: readonly ChartItem[]): ChartRow<Century>[] {
 function withShares<K>(rows: readonly { key: K; value: number }[]): ChartRow<K>[] {
   const nonEmpty = rows.filter((row) => row.value > 0);
   const total = nonEmpty.reduce((sum, row) => sum + row.value, 0);
-  return nonEmpty.map((row) => ({ ...row, share: total === 0 ? 0 : row.value / total }));
+  return nonEmpty.map((row) => ({ ...row, share: row.value / total }));
 }

@@ -1,8 +1,9 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Artwork } from '../artworks/artwork';
 import { readCachedArtwork, writeCachedArtwork } from './artwork-cache';
 import { IndexEntry } from '../artworks/card-index';
 import { MetObject, MetSearchResult, toArtwork } from './met-object';
+import { readLimiter, saveLimiter } from './limiter-storage';
 import { delayBeforeNext, recentRequests } from './rate-limit';
 
 const MET_API = 'https://collectionapi.metmuseum.org/public/collection/';
@@ -12,12 +13,6 @@ const MAX_PARALLEL = 6;
 const PAUSE_MS = 60_000;
 const MAX_ATTEMPTS = 3;
 const MIN_GAP_MS = 200;
-const LIMITER_STORAGE_KEY = 'met-opening.met-limiter';
-
-interface LimiterState {
-  readonly history: readonly number[];
-  readonly pausedUntil: number;
-}
 
 interface Task {
   readonly path: string;
@@ -38,7 +33,7 @@ export interface SearchMatches {
   readonly ids: readonly number[];
 }
 
-export function abortError(): Error {
+function abortError(): Error {
   return new DOMException('The request was cancelled', 'AbortError');
 }
 
@@ -55,10 +50,8 @@ export class MetApiService {
   private active = 0;
   private timer: ReturnType<typeof setTimeout> | undefined;
 
-  private readonly waitingCount = signal(0);
   private readonly pausedState = signal(false);
 
-  readonly busy = computed(() => this.waitingCount() > 0);
   readonly paused = this.pausedState.asReadonly();
 
   constructor() {
@@ -98,8 +91,8 @@ export class MetApiService {
     });
   }
 
-  searchIds(params: Readonly<Record<string, string>>): Promise<SearchMatches> {
-    const query = new URLSearchParams({ hasImages: 'true', limit: '500', offset: '0', ...params }).toString();
+  searchIds(term: string): Promise<SearchMatches> {
+    const query = new URLSearchParams({ hasImages: 'true', limit: '500', offset: '0', q: term }).toString();
     let pending = this.searches.get(query);
     if (!pending) {
       pending = this.request<MetSearchResult>(`v1.1/search?${query}`, true).then((result) => ({
@@ -157,13 +150,11 @@ export class MetApiService {
           const position = this.queue.indexOf(task);
           if (position !== -1) {
             this.queue.splice(position, 1);
-            this.updateWaiting();
             reject(abortError());
           }
         },
         { once: true },
       );
-      this.updateWaiting();
       this.pump();
     });
   }
@@ -209,7 +200,6 @@ export class MetApiService {
       }
     } finally {
       this.active--;
-      this.updateWaiting();
       this.pump();
     }
   }
@@ -229,28 +219,5 @@ export class MetApiService {
       this.pausedState.set(false);
       this.pump();
     }, duration);
-  }
-
-  private updateWaiting(): void {
-    this.waitingCount.set(this.queue.length + this.active);
-  }
-}
-
-function readLimiter(): LimiterState {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(LIMITER_STORAGE_KEY) ?? 'null') as Partial<LimiterState> | null;
-    const history = Array.isArray(parsed?.history) ? parsed.history.filter((time) => typeof time === 'number') : [];
-    const pausedUntil = typeof parsed?.pausedUntil === 'number' ? parsed.pausedUntil : 0;
-    return { history, pausedUntil };
-  } catch {
-    return { history: [], pausedUntil: 0 };
-  }
-}
-
-function saveLimiter(state: LimiterState): void {
-  try {
-    localStorage.setItem(LIMITER_STORAGE_KEY, JSON.stringify(state));
-  } catch {
-    return;
   }
 }

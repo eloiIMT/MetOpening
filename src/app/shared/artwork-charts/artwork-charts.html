@@ -67,7 +67,7 @@
                 <span class="legend__value">{{ entry.valueLabel }}</span>
               </span>
               <span class="bars__track" aria-hidden="true">
-                <span class="bars__fill" [style.width.%]="entry.width" [style.background]="entry.color"></span>
+                <span class="bars__fill" [style.width.%]="entry.size" [style.background]="entry.color"></span>
               </span>
             </div>
           </li>
@@ -80,7 +80,7 @@
         <div class="columns__plot">
           @for (entry of entries(); track entry.id) {
             <span class="columns__item" (mouseenter)="readout.set(entry.readout)" (mouseleave)="readout.set(null)">
-              <span class="columns__bar" [style.height.%]="entry.height" [style.background]="entry.color"></span>
+              <span class="columns__bar" [style.height.%]="entry.size" [style.background]="entry.color"></span>
             </span>
           }
         </div>

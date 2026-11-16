@@ -1,9 +1,7 @@
 import { DepartmentId } from './artwork';
-import { Rarity } from '../game/game-rules';
+import { RARITIES, Rarity } from '../game/game-rules';
 
-export const CARD_INDEX_VERSION = 1;
-
-const TIER_ORDER: readonly Rarity[] = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
+const CARD_INDEX_VERSION = 1;
 
 export interface CardIndexFile {
   readonly version: number;
@@ -54,7 +52,7 @@ export function entryAt(index: CardIndex, position: number): IndexEntry {
   const century = index.centuries[position];
   return {
     id: index.ids[position],
-    rarity: TIER_ORDER[index.tiers[position]],
+    rarity: RARITIES[index.tiers[position]],
     department: index.departmentNames[index.departments[position]],
     century: century === 0 ? null : century,
   };
@@ -79,7 +77,7 @@ export function findEntry(index: CardIndex, id: number): IndexEntry | null {
 }
 
 export function poolIds(index: CardIndex, rarity: Rarity, department: DepartmentId | null): number[] {
-  const tier = TIER_ORDER.indexOf(rarity);
+  const tier = RARITIES.indexOf(rarity);
   const departmentCode = department === null ? -1 : index.departmentNames.indexOf(department);
   const ids: number[] = [];
   for (let position = 0; position < index.size; position++) {

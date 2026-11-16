@@ -10,7 +10,7 @@ describe('FavoritesService', () => {
     const favorites = TestBed.inject(FavoritesService);
     favorites.toggle(42);
     expect(favorites.has(42)).toBe(true);
-    expect(favorites.count()).toBe(1);
+    expect(favorites.favorites().size).toBe(1);
     favorites.toggle(42);
     expect(favorites.has(42)).toBe(false);
   });

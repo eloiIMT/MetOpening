@@ -1,5 +1,5 @@
 import { Artwork, DepartmentId } from '../artworks/artwork';
-import { Rarity } from './game-rules';
+import { RARITIES, Rarity } from './game-rules';
 
 export type Reserve = Readonly<Record<Rarity, readonly Artwork[]>>;
 
@@ -10,8 +10,6 @@ export const RESERVE_TARGET: Readonly<Record<Rarity, number>> = {
   epic: 2,
   legendary: 1,
 };
-
-const RARITIES = Object.keys(RESERVE_TARGET) as Rarity[];
 
 export const EMPTY_RESERVE: Reserve = { common: [], uncommon: [], rare: [], epic: [], legendary: [] };
 

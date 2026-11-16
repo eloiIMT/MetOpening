@@ -25,7 +25,6 @@ const PLAIN_LIGHT = '#FFF1C9';
 export class Opening {
   private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
-  private readonly i18n = inject(I18n);
   private readonly reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   private readonly startedAt = performance.now();
   private counter: ReturnType<typeof setInterval> | undefined;
@@ -34,7 +33,7 @@ export class Opening {
   private readonly track = viewChild<ElementRef<HTMLElement>>('track');
   private readonly cardItems = viewChildren<ElementRef<HTMLElement>>('cardItem');
 
-  protected readonly t = this.i18n.t;
+  protected readonly t = inject(I18n).t;
   protected readonly result = inject(OpeningService).current;
   protected readonly stencilText = computed(() => {
     const result = this.result();
@@ -53,7 +52,7 @@ export class Opening {
     Math.min(MAX_STAGGER_MS, Math.max(MIN_STAGGER_MS, REVEAL_WINDOW_MS / Math.max(this.total(), 1))),
   );
 
-  protected readonly bestRarity = computed(() =>
+  private readonly bestRarity = computed(() =>
     this.allDrawn().reduce<Rarity>(
       (best, item) => (RARITY_RANK[item.artwork.rarity] > RARITY_RANK[best] ? item.artwork.rarity : best),
       'common',

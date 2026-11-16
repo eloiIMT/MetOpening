@@ -17,8 +17,7 @@ const MAX_CARD_DELAY_MS = 800;
   styleUrl: './opening-summary.scss',
 })
 export class OpeningSummary {
-  private readonly i18n = inject(I18n);
-  protected readonly t = this.i18n.t;
+  protected readonly t = inject(I18n).t;
   private readonly result = inject(OpeningService).current;
 
   protected readonly recap = computed(() => {

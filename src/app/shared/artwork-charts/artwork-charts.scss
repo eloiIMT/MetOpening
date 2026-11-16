@@ -89,12 +89,9 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    border: 0;
     border-radius: 10px;
-    background: transparent;
     color: var(--ink);
     font: 400 14px var(--font-body);
-    text-align: left;
   }
 
   &__dot {
@@ -134,12 +131,9 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
-    border: 0;
     border-radius: 10px;
-    background: transparent;
     color: var(--ink);
     font: 400 14px var(--font-body);
-    text-align: left;
   }
 
   &__line {

@@ -36,8 +36,13 @@ export function formatMessage(message: Message, params: Params, locale: Locale):
   });
 }
 
+const PLURAL_RULES: Readonly<Record<Locale, Intl.PluralRules>> = {
+  fr: new Intl.PluralRules(LOCALE_TAG.fr),
+  en: new Intl.PluralRules(LOCALE_TAG.en),
+};
+
 function pluralOf(count: string | number | undefined, locale: Locale): keyof Plural {
-  return typeof count === 'number' && new Intl.PluralRules(LOCALE_TAG[locale]).select(count) === 'one'
+  return typeof count === 'number' && PLURAL_RULES[locale].select(count) === 'one'
     ? 'one'
     : 'other';
 }

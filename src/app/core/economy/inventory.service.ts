@@ -1,18 +1,14 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Inventory, addCases, countCases, removeCases } from './inventory-rules';
-import { SHOP_CASES, ShopCase, ShopCaseId } from './shop';
+import { ShopCase, ShopCaseId, findShopCase } from './shop';
 import { WalletService } from './wallet.service';
 
-export const INVENTORY_STORAGE_KEY = 'met-opening.inventory';
-
-const SHOP_CASE_IDS = new Set<string>(SHOP_CASES.map((shopCase) => shopCase.id));
+const INVENTORY_STORAGE_KEY = 'met-opening.inventory';
 
 @Injectable({ providedIn: 'root' })
 export class InventoryService {
   private readonly wallet = inject(WalletService);
   private readonly state = signal<Inventory>(readStoredInventory());
-
-  readonly inventory = this.state.asReadonly();
 
   countOf(id: ShopCaseId): number {
     return countCases(this.state(), id);
@@ -57,7 +53,7 @@ function readStoredInventory(): Inventory {
     }
     const result: Partial<Record<ShopCaseId, number>> = {};
     for (const [id, count] of Object.entries(parsed)) {
-      if (SHOP_CASE_IDS.has(id) && typeof count === 'number' && Number.isInteger(count) && count > 0) {
+      if (findShopCase(id) !== undefined && typeof count === 'number' && Number.isInteger(count) && count > 0) {
         result[id as ShopCaseId] = count;
       }
     }

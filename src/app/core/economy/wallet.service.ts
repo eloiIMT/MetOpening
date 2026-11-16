@@ -8,7 +8,7 @@ export class WalletService {
   private readonly balance = signal(readStoredCoins());
   readonly coins = this.balance.asReadonly();
 
-  canAfford(price: number): boolean {
+  private canAfford(price: number): boolean {
     return this.coins() >= price;
   }
 

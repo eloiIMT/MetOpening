@@ -43,7 +43,6 @@ export const artworks = defineMessages(
     openCase: 'Ouvrir une caisse',
     noneFoundTitle: 'Aucune œuvre trouvée',
     noneFoundText: "Essayez une autre recherche ou d'autres filtres.",
-    saleDialogTitle: 'Vendre les doubles ?',
     cancel: 'Annuler',
     sell: 'Vendre',
     cardOpen: 'Ouvrir la fiche de {title}',
@@ -74,7 +73,6 @@ export const artworks = defineMessages(
     ordinalNd: '{number}e',
     ordinalRd: '{number}e',
     ordinalTh: '{number}e',
-    centuryShort: '{ordinal}',
     centuryShortBce: '{ordinal} av.',
     centuryLong: '{ordinal} siècle',
     centuryLongBce: '{ordinal} siècle av. J.-C.',
@@ -97,10 +95,6 @@ export const artworks = defineMessages(
     recordMetNumber: 'N° au Met',
     copiesOwned: { one: 'Vous en possédez {count} exemplaire', other: 'Vous en possédez {count} exemplaires' },
     sellOne: 'Vendre 1 exemplaire · {coins}',
-    sellDuplicates: {
-      one: 'Vendre {count} double · {coins}',
-      other: 'Vendre {count} doubles · {coins}',
-    },
     saleTitleOne: 'Vendre un exemplaire ?',
     saleTitleDuplicates: 'Vendre les doubles ?',
     dialogSaleDuplicates: {
@@ -167,7 +161,6 @@ export const artworks = defineMessages(
     openCase: 'Open a case',
     noneFoundTitle: 'No artworks found',
     noneFoundText: 'Try another search or different filters.',
-    saleDialogTitle: 'Sell duplicates?',
     cancel: 'Cancel',
     sell: 'Sell',
     cardOpen: 'Open details for {title}',
@@ -198,7 +191,6 @@ export const artworks = defineMessages(
     ordinalNd: '{number}nd',
     ordinalRd: '{number}rd',
     ordinalTh: '{number}th',
-    centuryShort: '{ordinal}',
     centuryShortBce: '{ordinal} BCE',
     centuryLong: '{ordinal} century',
     centuryLongBce: '{ordinal} century BCE',
@@ -221,10 +213,6 @@ export const artworks = defineMessages(
     recordMetNumber: 'Met no.',
     copiesOwned: { one: 'You own {count} copy', other: 'You own {count} copies' },
     sellOne: 'Sell 1 copy · {coins}',
-    sellDuplicates: {
-      one: 'Sell {count} duplicate · {coins}',
-      other: 'Sell {count} duplicates · {coins}',
-    },
     saleTitleOne: 'Sell one copy?',
     saleTitleDuplicates: 'Sell duplicates?',
     dialogSaleDuplicates: {

@@ -4,7 +4,7 @@ const DB_NAME = 'met-opening';
 const DB_VERSION = 1;
 const STORE = 'artworks';
 
-export interface CachedArtwork {
+interface CachedArtwork {
   readonly artwork: Artwork | null;
   readonly fetchedAt: number;
 }

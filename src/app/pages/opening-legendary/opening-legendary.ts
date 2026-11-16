@@ -11,8 +11,7 @@ import { OpeningService } from '../../core/game/opening.service';
   styleUrl: './opening-legendary.scss',
 })
 export class OpeningLegendary {
-  private readonly i18n = inject(I18n);
-  protected readonly t = this.i18n.t;
+  protected readonly t = inject(I18n).t;
   private readonly result = inject(OpeningService).current;
   private readonly step = signal(0);
 

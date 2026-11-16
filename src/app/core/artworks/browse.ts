@@ -36,7 +36,7 @@ export function itemFromArtwork(artwork: Artwork, copies: number, obtainedAt: nu
   };
 }
 
-export function normalizeText(text: string): string {
+function normalizeText(text: string): string {
   return text.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().trim();
 }
 
@@ -76,7 +76,7 @@ const collator = new Intl.Collator('fr');
 function byTitle(a: BrowserItem, b: BrowserItem): number {
   const first = a.artwork?.title ?? '';
   const second = b.artwork?.title ?? '';
-  return (first === second ? 0 : collator.compare(first, second)) || a.id - b.id;
+  return collator.compare(first, second) || a.id - b.id;
 }
 
 const COMPARATORS: Readonly<Record<SortId, (a: BrowserItem, b: BrowserItem) => number>> = {

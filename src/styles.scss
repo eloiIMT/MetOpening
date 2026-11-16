@@ -141,16 +141,6 @@ button:disabled {
   cursor: pointer;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .btn-primary:not(:disabled):hover {
-    background: var(--accent-hover);
-  }
-
-  .btn-secondary:not(:disabled):hover {
-    background: var(--mat);
-  }
-}
-
 .btn-secondary {
   min-height: 52px;
   box-sizing: border-box;
@@ -166,6 +156,17 @@ button:disabled {
   text-decoration: none;
   cursor: pointer;
 }
+
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:not(:disabled):hover {
+    background: var(--accent-hover);
+  }
+
+  .btn-secondary:not(:disabled):hover {
+    background: var(--mat);
+  }
+}
+
 .sale-dialog {
   width: min(420px, calc(100vw - 32px));
   box-sizing: border-box;

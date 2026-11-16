@@ -1,6 +1,6 @@
-import type { ShopDepartmentId } from '../artworks/artwork';
-
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+
+export const RARITIES: readonly Rarity[] = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
 
 export const RARITY_RANK: Readonly<Record<Rarity, number>> = {
   common: 0,
@@ -38,19 +38,4 @@ export const RESALE_VALUE: Readonly<Record<Rarity, number>> = {
   rare: 50,
   epic: 200,
   legendary: 1000,
-};
-
-export const CASE_PRICES: Readonly<Record<'classic' | ShopDepartmentId, number>> = {
-  classic: 150,
-  'european-paintings': 400,
-  'drawings-prints': 400,
-  'american-wing': 400,
-  'european-sculpture': 250,
-  'asian-art': 250,
-  photographs: 250,
-  'musical-instruments': 250,
-  'greek-roman': 250,
-  'islamic-art': 250,
-  'egyptian-art': 250,
-  'arms-armor': 250,
 };

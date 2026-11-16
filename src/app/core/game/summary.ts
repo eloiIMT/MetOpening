@@ -1,6 +1,6 @@
 import { Artwork } from '../artworks/artwork';
 import { DrawnArtwork } from '../collection/collection-rules';
-import { RARITY_RANK, RESALE_VALUE, Rarity } from './game-rules';
+import { RARITIES, RARITY_RANK, RESALE_VALUE, Rarity } from './game-rules';
 
 export interface SummaryItem {
   readonly artwork: Artwork;
@@ -19,8 +19,6 @@ export interface OpeningRecap {
   readonly tally: readonly RarityCount[];
   readonly items: readonly SummaryItem[];
 }
-
-const RARITIES = (Object.keys(RARITY_RANK) as Rarity[]).sort((a, b) => RARITY_RANK[a] - RARITY_RANK[b]);
 
 export function summarizeOpening(drawn: readonly DrawnArtwork[]): OpeningRecap {
   const grouped = new Map<number, SummaryItem>();

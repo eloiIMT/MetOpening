@@ -2,11 +2,11 @@ import { Injectable, inject } from '@angular/core';
 import { Artwork, DepartmentId, isArtwork } from '../artworks/artwork';
 import { CardIndexService } from '../artworks/card-index.service';
 import { RandomFn, pickRandom } from './draw';
-import { Rarity } from './game-rules';
+import { RARITIES, Rarity } from './game-rules';
 import { MetApiService, isAbortError } from '../met/met-api.service';
-import { EMPTY_RESERVE, RESERVE_TARGET, Reserve, addToReserve, mostNeededRarity, takeFromReserve } from './reserve';
+import { EMPTY_RESERVE, Reserve, addToReserve, mostNeededRarity, takeFromReserve } from './reserve';
 
-export const RESERVE_STORAGE_KEY = 'met-opening.reserve';
+const RESERVE_STORAGE_KEY = 'met-opening.reserve';
 
 const MAX_TRIES = 6;
 
@@ -104,7 +104,7 @@ function readStoredReserve(): Reserve {
     }
     const parsed = JSON.parse(raw) as Partial<Record<Rarity, unknown>>;
     let reserve = EMPTY_RESERVE;
-    for (const rarity of Object.keys(RESERVE_TARGET) as Rarity[]) {
+    for (const rarity of RARITIES) {
       const cards = parsed[rarity];
       for (const card of Array.isArray(cards) ? cards : []) {
         if (isArtwork(card) && card.rarity === rarity) {

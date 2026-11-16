@@ -8,7 +8,7 @@ import { InventoryService } from '../economy/inventory.service';
 import { ShopCase, ShopCaseId, findShopCase } from '../economy/shop';
 import { StockService } from '../economy/stock.service';
 
-export const OPENING_STORAGE_KEY = 'met-opening.last-opening';
+const OPENING_STORAGE_KEY = 'met-opening.last-opening';
 
 export interface OpeningResult {
   readonly caseId: ShopCaseId;

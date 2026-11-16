@@ -1,5 +1,4 @@
 import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
-import { DepartmentId } from '../../core/artworks/artwork';
 import {
   Century,
   ChartItem,
@@ -10,7 +9,6 @@ import {
   pieSlicePath,
   rarityRows,
 } from '../../core/artworks/charts';
-import { Rarity } from '../../core/game/game-rules';
 import { I18n } from '../../core/i18n/i18n.service';
 import { MessageKey } from '../../core/i18n/messages';
 
@@ -24,8 +22,6 @@ interface ChartEntry {
   readonly value: number;
   readonly share: number;
   readonly color: string;
-  readonly active: boolean;
-  readonly pickable: boolean;
 }
 
 const DATA_OPTIONS: readonly { id: ChartData; label: MessageKey }[] = [
@@ -57,8 +53,6 @@ export class ArtworkCharts {
   readonly rarityPool = input.required<readonly ChartItem[]>();
   readonly departmentPool = input.required<readonly ChartItem[]>();
   readonly visible = input.required<readonly ChartItem[]>();
-  readonly activeRarities = input.required<ReadonlySet<Rarity>>();
-  readonly activeDepartment = input.required<DepartmentId | null>();
 
   readonly closed = output<void>();
 
@@ -89,8 +83,6 @@ export class ArtworkCharts {
           value: row.value,
           share: row.share,
           color: `var(--rarity-${row.key})`,
-          active: this.activeRarities().has(row.key),
-          pickable: true,
         }));
       case 'department':
         return this.departmentEntries();
@@ -102,8 +94,6 @@ export class ArtworkCharts {
           value: row.value,
           share: row.share,
           color: SERIES_COLOR,
-          active: false,
-          pickable: false,
         }));
     }
   });
@@ -114,8 +104,7 @@ export class ArtworkCharts {
     const step = Math.max(1, Math.ceil(entries.length / AXIS_LABEL_COUNT));
     return entries.map((entry, index) => ({
       ...entry,
-      width: (entry.value / max) * 100,
-      height: (entry.value / max) * 100,
+      size: (entry.value / max) * 100,
       showLabel: index % step === 0 || index === entries.length - 1,
       valueLabel: `(${entry.value}) ${this.percentLabel(entry.share)}`,
       readout: this.t('artworks.chartReadout', {
@@ -185,7 +174,7 @@ export class ArtworkCharts {
     if (long) {
       return this.t(bce ? 'artworks.centuryLongBce' : 'artworks.centuryLong', { ordinal });
     }
-    return this.t(bce ? 'artworks.centuryShortBce' : 'artworks.centuryShort', { ordinal });
+    return bce ? this.t('artworks.centuryShortBce', { ordinal }) : ordinal;
   }
 
   private departmentEntries(): ChartEntry[] {
@@ -196,8 +185,6 @@ export class ArtworkCharts {
       value: row.value,
       share: row.share,
       color: DEPARTMENT_COLOR[row.key],
-      active: this.activeDepartment() === row.key,
-      pickable: true,
     }));
   }
 }

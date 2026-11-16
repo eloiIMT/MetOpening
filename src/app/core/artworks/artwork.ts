@@ -1,4 +1,4 @@
-import { Rarity } from '../game/game-rules';
+import { RARITIES, Rarity } from '../game/game-rules';
 
 export type ShopDepartmentId =
   | 'european-paintings'
@@ -36,7 +36,6 @@ export interface Artwork {
   readonly image: string;
   readonly metUrl: string;
 }
-const RARITIES: readonly string[] = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
 
 export function isArtwork(value: unknown): value is Artwork {
   if (typeof value !== 'object' || value === null) {
@@ -49,7 +48,7 @@ export function isArtwork(value: unknown): value is Artwork {
     typeof artwork.title === 'string' &&
     typeof artwork.department === 'string' &&
     typeof artwork.rarity === 'string' &&
-    RARITIES.includes(artwork.rarity) &&
+    (RARITIES as readonly string[]).includes(artwork.rarity) &&
     typeof artwork.imageSmall === 'string' &&
     typeof artwork.image === 'string' &&
     typeof artwork.metUrl === 'string'

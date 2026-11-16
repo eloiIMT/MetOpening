@@ -15,14 +15,12 @@ import { RouterLink } from '@angular/router';
 import { Artwork, DepartmentId } from '../../core/artworks/artwork';
 import { BrowseCriteria, BrowserItem, SortId, browse, filterItems, summarizeDuplicates } from '../../core/artworks/browse';
 import { DEPARTMENT_COLOR, rarityRows } from '../../core/artworks/charts';
-import { RARITY_RANK, Rarity } from '../../core/game/game-rules';
+import { FavoritesService } from '../../core/collection/favorites.service';
+import { RARITIES, Rarity } from '../../core/game/game-rules';
 import { I18n } from '../../core/i18n/i18n.service';
 import { MessageKey } from '../../core/i18n/messages';
 import { ArtworkCharts } from '../artwork-charts/artwork-charts';
 import { CatalogCard } from '../catalog-card/catalog-card';
-import { FavoritesService } from '../../core/collection/favorites.service';
-
-const RARITIES = (Object.keys(RARITY_RANK) as Rarity[]).sort((a, b) => RARITY_RANK[a] - RARITY_RANK[b]);
 
 const DEPARTMENT_IDS = Object.keys(DEPARTMENT_COLOR) as DepartmentId[];
 
@@ -140,7 +138,7 @@ export class ArtworkBrowser {
   protected readonly hasFilters = computed(() => this.activeFilterCount() > 0);
 
   protected readonly filtersToggleLabel = computed(() =>
-    this.activeFilterCount() > 0
+    this.hasFilters()
       ? this.t('artworks.filtersCount', { count: this.activeFilterCount() })
       : this.t('artworks.filters'),
   );

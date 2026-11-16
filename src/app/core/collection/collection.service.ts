@@ -13,7 +13,7 @@ import {
 import { MetApiService } from '../met/met-api.service';
 import { WalletService } from '../economy/wallet.service';
 
-export const COLLECTION_STORAGE_KEY = 'met-opening.collection';
+const COLLECTION_STORAGE_KEY = 'met-opening.collection';
 
 type LegacyEntry = Omit<OwnedEntry, 'artwork'>;
 

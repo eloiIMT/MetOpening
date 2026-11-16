@@ -18,8 +18,7 @@ export class ArtworkCard {
   readonly openable = input(false, { transform: booleanAttribute });
   readonly greyed = input(false, { transform: booleanAttribute });
 
-  private readonly i18n = inject(I18n);
-  protected readonly t = this.i18n.t;
+  protected readonly t = inject(I18n).t;
 
   protected readonly openQuery = computed(() => ({ artwork: this.artwork().id }));
 

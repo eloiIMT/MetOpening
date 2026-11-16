@@ -16,8 +16,7 @@ export class CatalogCard {
   readonly greyed = input(false, { transform: booleanAttribute });
 
   private readonly met = inject(MetApiService);
-  private readonly i18n = inject(I18n);
-  protected readonly t = this.i18n.t;
+  protected readonly t = inject(I18n).t;
 
   private readonly lookup = resource({
     params: () => (this.item().artwork ? undefined : this.item()),
@@ -28,7 +27,7 @@ export class CatalogCard {
     () => this.item().artwork ?? (this.lookup.hasValue() ? this.lookup.value() : null),
   );
 
-  protected readonly loading = computed(() => this.lookup.isLoading());
+  protected readonly loading = this.lookup.isLoading;
   protected readonly tierLabel = computed(() => this.t(`rarities.${this.item().rarity}`));
 
   protected readonly idText = computed(() => String(this.item().id));

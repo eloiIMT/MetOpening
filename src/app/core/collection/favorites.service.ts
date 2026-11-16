@@ -1,4 +1,4 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 
 export const FAVORITES_STORAGE_KEY = 'met-opening.favorites';
 
@@ -7,7 +7,6 @@ export class FavoritesService {
   private readonly ids = signal<ReadonlySet<number>>(readStoredFavorites());
 
   readonly favorites = this.ids.asReadonly();
-  readonly count = computed(() => this.ids().size);
 
   has(id: number): boolean {
     return this.ids().has(id);

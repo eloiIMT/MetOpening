@@ -16,8 +16,7 @@ const SEARCH_DELAY_MS = 400;
   styleUrl: './search-all-items.scss',
 })
 export class SearchAllItems {
-  private readonly i18n = inject(I18n);
-  protected readonly t = this.i18n.t;
+  protected readonly t = inject(I18n).t;
 
   private readonly cardIndex = inject(CardIndexService);
   private readonly collection = inject(CollectionService);
@@ -28,7 +27,7 @@ export class SearchAllItems {
 
   private readonly matches = resource({
     params: () => this.term() || undefined,
-    loader: ({ params }) => this.met.searchIds({ q: params }),
+    loader: ({ params }) => this.met.searchIds(params),
   });
 
   private readonly catalog = computed(() => {
@@ -75,7 +74,7 @@ export class SearchAllItems {
 
   protected readonly statsLabel = computed(() => {
     const all = this.allItems();
-    const owned = Object.keys(this.collection.owned()).length;
+    const owned = this.collection.ownedCount();
     return this.t('artworks.searchStats', {
       artworks: this.t('common.artworks', { count: all.length }),
       owned: this.t('artworks.searchOwned', { count: owned }),

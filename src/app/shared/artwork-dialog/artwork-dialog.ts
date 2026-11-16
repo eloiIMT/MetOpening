@@ -12,7 +12,6 @@ import {
   viewChild,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
-import { FavoriteButton } from '../favorite-button/favorite-button';
 import { RouterLink } from '@angular/router';
 import { Artwork } from '../../core/artworks/artwork';
 import { CardIndexService } from '../../core/artworks/card-index.service';
@@ -20,6 +19,7 @@ import { CollectionService } from '../../core/collection/collection.service';
 import { RESALE_VALUE } from '../../core/game/game-rules';
 import { I18n } from '../../core/i18n/i18n.service';
 import { MetApiService } from '../../core/met/met-api.service';
+import { FavoriteButton } from '../favorite-button/favorite-button';
 
 type SaleKind = 'one' | 'duplicates';
 
@@ -33,8 +33,7 @@ export class ArtworkDialog {
   readonly artworkId = input.required<string>();
   readonly closed = output<void>();
 
-  private readonly i18n = inject(I18n);
-  protected readonly t = this.i18n.t;
+  protected readonly t = inject(I18n).t;
 
   private readonly collection = inject(CollectionService);
   private readonly cardIndex = inject(CardIndexService);
@@ -79,7 +78,7 @@ export class ArtworkDialog {
       return [];
     }
     return [
-      { label: this.t('artworks.recordDepartment'), value: this.t(`departments.${artwork.department}`) },
+      { label: this.t('artworks.recordDepartment'), value: this.departmentLabel() },
       { label: this.t('artworks.recordDate'), value: artwork.date ?? this.t('artworks.recordDateUnknown') },
       { label: this.t('artworks.recordResale'), value: this.coins(RESALE_VALUE[artwork.rarity]) },
       { label: this.t('artworks.recordMetNumber'), value: String(artwork.id) },
@@ -105,7 +104,7 @@ export class ArtworkDialog {
   );
 
   protected readonly sellDuplicatesLabel = computed(() =>
-    this.t('artworks.sellDuplicates', {
+    this.t('artworks.saleLabel', {
       count: this.copies() - 1,
       coins: this.coins((this.copies() - 1) * this.unitPrice()),
     }),

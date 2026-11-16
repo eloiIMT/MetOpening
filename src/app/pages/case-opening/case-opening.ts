@@ -25,9 +25,8 @@ export class CaseOpening {
   private readonly inventory = inject(InventoryService);
   private readonly openingService = inject(OpeningService);
   private readonly router = inject(Router);
-  private readonly i18n = inject(I18n);
 
-  protected readonly t = this.i18n.t;
+  protected readonly t = inject(I18n).t;
 
   protected readonly stockMax = STOCK_MAX;
   protected readonly stock = this.stockService.stock;

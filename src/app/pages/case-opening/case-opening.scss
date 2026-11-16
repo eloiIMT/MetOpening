@@ -131,7 +131,7 @@
     font-weight: 600;
   }
 
-    &__hint {
+  &__hint {
     margin: 0;
     font-size: 14px;
     line-height: 1.4;
@@ -257,8 +257,6 @@
   .opening__shop-link:hover {
     color: var(--ink-2);
   }
-}
-@media (hover: hover) and (pointer: fine) {
   .opening__crate-button:not(:disabled):hover {
     transform: translateY(-4px) rotate(-1deg);
   }

@@ -1,59 +1,26 @@
-# MetOpening
+# Met Opening
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.7.
+Met Opening est un jeu d'ouverture de caisses dont les butins sont des œuvres du domaine public issues de l'API du Metropolitan Museum of Art. Le site est disponible en français et en anglais, n'a pas de backend et conserve toutes les données (collection, favoris, pièces) dans le navigateur.
 
-## Development server
+Site en ligne : https://eloiimt.github.io/MetOpening/
 
-To start a local development server, run:
+## Commandes
 
-```bash
-ng serve
-```
+- `npm start` : serveur de développement.
+- `npm test` : tests de l'application.
+- `npm run data:test` : tests des scripts de données.
+- `npm run data:index` : génère l'index des œuvres (nécessite le dossier `Specs/` qui n'est pas dans Git).
+- `npm run build` : build de production.
+- `npm run build:pages` : build pour GitHub Pages sous `/MetOpening/`.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Structure
 
-## Code scaffolding
+- `src/app/core/artworks`, `core/met` : index des œuvres et accès à l'API du Met.
+- `src/app/core/game`, `core/collection`, `core/economy` : règles de jeu, collection et favoris, pièces, stock et boutique.
+- `src/app/core/i18n` : traductions et service de langue.
+- `src/app/shared`, `src/app/pages`, `src/app/layout` : composants partagés, pages et navigation.
+- `scripts` : génération de l'index et préparation du déploiement.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Crédits
 
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Les crédits figurent dans le pied de page du site.
