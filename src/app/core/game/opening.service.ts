@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { Artwork, DepartmentId } from '../artworks/artwork';
 import { CardSupplyService } from './card-supply.service';
 import { CollectionService } from '../collection/collection.service';
@@ -10,7 +10,10 @@ import { StockService } from '../economy/stock.service';
 
 const OPENING_STORAGE_KEY = 'met-opening.last-opening';
 
+export type CaseChoice = 'free' | ShopCaseId;
+
 export interface OpeningResult {
+  readonly choice: CaseChoice;
   readonly caseId: ShopCaseId;
   readonly cases: readonly (readonly DrawnArtwork[])[];
 }
@@ -28,8 +31,10 @@ export class OpeningService {
   readonly current = this.result.asReadonly();
   readonly preparing = this.preparingState.asReadonly();
 
+  readonly lastChoice = computed<CaseChoice>(() => this.result()?.choice ?? 'free');
+
   openFreeCases(amount: number): Promise<boolean> {
-    return this.open('classic', null, amount, {
+    return this.open('free', null, amount, {
       canPay: () => this.stockService.canConsume(amount),
       pay: () => this.stockService.consume(amount),
     });
@@ -43,7 +48,7 @@ export class OpeningService {
   }
 
   private async open(
-    caseId: ShopCaseId,
+    choice: CaseChoice,
     department: DepartmentId | null,
     amount: number,
     payment: { canPay: () => boolean; pay: () => boolean },
@@ -58,16 +63,16 @@ export class OpeningService {
       if (!payment.pay()) {
         return false;
       }
-      this.finishOpening(caseId, drawnCases);
+      this.finishOpening(choice, drawnCases);
       return true;
     } finally {
       this.preparingState.set(false);
     }
   }
 
-  private finishOpening(caseId: ShopCaseId, drawnCases: readonly Artwork[][]): void {
+  private finishOpening(choice: CaseChoice, drawnCases: readonly Artwork[][]): void {
     const cases = drawnCases.map((drawnCase) => sortByRarity(this.collection.add(drawnCase)));
-    const result: OpeningResult = { caseId, cases };
+    const result: OpeningResult = { choice, caseId: choice === 'free' ? 'classic' : choice, cases };
     this.result.set(result);
     saveOpening(result);
   }
@@ -90,8 +95,9 @@ function isOpeningResult(value: unknown): value is OpeningResult {
   if (typeof value !== 'object' || value === null) {
     return false;
   }
-  const { caseId, cases } = value as Partial<OpeningResult>;
-  return typeof caseId === 'string' && findShopCase(caseId) !== undefined && Array.isArray(cases) && cases.every((drawnCase) => Array.isArray(drawnCase));
+  const { choice, caseId, cases } = value as Partial<OpeningResult>;
+  return (choice === 'free' || (typeof choice === 'string' && findShopCase(choice) !== undefined)) &&
+    typeof caseId === 'string' && findShopCase(caseId) !== undefined && Array.isArray(cases) && cases.every((drawnCase) => Array.isArray(drawnCase));
 }
 
 function saveOpening(result: OpeningResult): void {

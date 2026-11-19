@@ -4,7 +4,7 @@ import { cases } from './cases';
 import { crate, departments, rarities, raritiesPlural, stencils } from './catalog';
 import { common } from './common';
 import { favorites } from './favorites';
-import { footer, nav, routes } from './layout';
+import { footer, nav } from './layout';
 import { openings } from './openings';
 
 const MESSAGES = {
@@ -14,7 +14,6 @@ const MESSAGES = {
   raritiesPlural,
   stencils,
   crate,
-  routes,
   nav,
   footer,
   cases,

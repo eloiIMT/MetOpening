@@ -1,26 +1,5 @@
 import { defineMessages } from '../i18n';
 
-export const routes = defineMessages(
-  {
-    caseOpening: 'Ouverture de caisses · Met Opening',
-    opening: 'Ouverture en cours · Met Opening',
-    legendary: 'Une Légendaire ! · Met Opening',
-    summary: 'Résumé de l’ouverture · Met Opening',
-    collection: 'Ma collection · Met Opening',
-    search: 'Rechercher dans les œuvres · Met Opening',
-    shop: 'Boutique de caisses · Met Opening',
-  },
-  {
-    caseOpening: 'Case opening · Met Opening',
-    opening: 'Opening · Met Opening',
-    legendary: 'A Legendary! · Met Opening',
-    summary: 'Opening summary · Met Opening',
-    collection: 'My collection · Met Opening',
-    search: 'Search the artworks · Met Opening',
-    shop: 'Case shop · Met Opening',
-  },
-);
-
 export const nav = defineMessages(
   {
     label: 'Navigation principale',
