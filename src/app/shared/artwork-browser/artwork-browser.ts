@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Artwork, DepartmentId } from '../../core/artworks/artwork';
-import { BrowseCriteria, BrowserItem, SortId, browse, filterItems, summarizeDuplicates } from '../../core/artworks/browse';
+import { BrowseCriteria, BrowserItem, SortDirection, SortKey, browse, filterItems, isIndexSort, summarizeDuplicates } from '../../core/artworks/browse';
 import { DEPARTMENT_COLOR, rarityRows } from '../../core/artworks/charts';
 import { FavoritesService } from '../../core/collection/favorites.service';
 import { RARITIES, Rarity } from '../../core/game/game-rules';
@@ -24,11 +24,18 @@ import { CatalogCard } from '../catalog-card/catalog-card';
 
 const DEPARTMENT_IDS = Object.keys(DEPARTMENT_COLOR) as DepartmentId[];
 
-const SORT_OPTIONS: readonly { id: SortId; label: MessageKey }[] = [
-  { id: 'rarity-asc', label: 'artworks.sortRarityAsc' },
-  { id: 'rarity-desc', label: 'artworks.sortRarityDesc' },
-  { id: 'recent', label: 'artworks.sortRecent' },
+const SORT_OPTIONS: readonly { id: SortKey; label: MessageKey }[] = [
+  { id: 'rarity', label: 'artworks.sortRarity' },
+  { id: 'date', label: 'artworks.sortDate' },
+  { id: 'obtained', label: 'artworks.sortObtained' },
   { id: 'title', label: 'artworks.sortTitle' },
+  { id: 'artist', label: 'artworks.sortArtist' },
+  { id: 'copies', label: 'artworks.sortCopies' },
+];
+
+const DIRECTION_OPTIONS: readonly { id: SortDirection; label: MessageKey }[] = [
+  { id: 'asc', label: 'artworks.sortAsc' },
+  { id: 'desc', label: 'artworks.sortDesc' },
 ];
 
 const PAGE_SIZE = 24;
@@ -60,12 +67,14 @@ export class ArtworkBrowser {
   protected readonly rarities = signal<ReadonlySet<Rarity>>(new Set());
   protected readonly department = signal<DepartmentId | null>(null);
   protected readonly favoritesOnly = signal(false);
-  protected readonly sort = signal<SortId>('rarity-desc');
+  protected readonly sort = signal<SortKey>('rarity');
+  protected readonly direction = signal<SortDirection>('desc');
+  protected readonly directionOptions = DIRECTION_OPTIONS;
   protected readonly filtersOpen = signal(false);
   protected readonly chartsOpen = signal(!window.matchMedia(NARROW_QUERY).matches);
 
   protected readonly sortOptions = computed(() =>
-    this.mode() === 'search' ? SORT_OPTIONS.filter((option) => option.id.startsWith('rarity')) : SORT_OPTIONS,
+    this.mode() === 'search' ? SORT_OPTIONS.filter((option) => isIndexSort(option.id)) : SORT_OPTIONS,
   );
 
   protected readonly searchLabel = computed(() =>
@@ -84,6 +93,7 @@ export class ArtworkBrowser {
     department: this.department(),
     favorites: this.favoritesOnly() ? this.favoritesService.favorites() : null,
     sort: this.sort(),
+    direction: this.direction(),
   }));
 
   private readonly filterCriteria = computed<BrowseCriteria>(() =>
@@ -211,7 +221,11 @@ export class ArtworkBrowser {
   }
 
   protected pickSort(event: Event): void {
-    this.sort.set((event.target as HTMLSelectElement).value as SortId);
+    this.sort.set((event.target as HTMLSelectElement).value as SortKey);
+  }
+
+  protected pickDirection(event: Event): void {
+    this.direction.set((event.target as HTMLSelectElement).value as SortDirection);
   }
 
   protected toggleCharts(): void {

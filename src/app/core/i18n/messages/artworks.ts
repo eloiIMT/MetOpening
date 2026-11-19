@@ -2,10 +2,14 @@ import { defineMessages } from '../i18n';
 
 export const artworks = defineMessages(
   {
-    sortRarityAsc: 'Rareté : moins rares d’abord',
-    sortRarityDesc: 'Rareté : plus rares d’abord',
-    sortRecent: 'Date d’obtention : récentes d’abord',
-    sortTitle: 'Titre (A → Z)',
+    sortRarity: 'Rareté',
+    sortDate: 'Date de l’œuvre',
+    sortObtained: 'Date d’obtention',
+    sortTitle: 'Titre',
+    sortArtist: 'Artiste',
+    sortCopies: 'Nombre d’exemplaires',
+    sortAsc: 'Croissant',
+    sortDesc: 'Décroissant',
     searchAll: 'Rechercher dans toutes les œuvres',
     searchCollection: 'Rechercher dans la collection',
     progress: {
@@ -32,6 +36,7 @@ export const artworks = defineMessages(
     filterCategory: 'Catégorie',
     filterAllCategories: 'Toutes les catégories',
     filterSort: 'Tri',
+    filterOrder: 'Ordre',
     filterSale: 'Vente',
     resultsLabel: 'Œuvres',
     searchPlaceholder: 'Rechercher un titre, un artiste…',
@@ -120,10 +125,14 @@ export const artworks = defineMessages(
     searchOwned: { one: '{count} possédée', other: '{count} possédées' },
   },
   {
-    sortRarityAsc: 'Rarity: least rare first',
-    sortRarityDesc: 'Rarity: rarest first',
-    sortRecent: 'Date obtained: newest first',
-    sortTitle: 'Title (A → Z)',
+    sortRarity: 'Rarity',
+    sortDate: 'Artwork date',
+    sortObtained: 'Date obtained',
+    sortTitle: 'Title',
+    sortArtist: 'Artist',
+    sortCopies: 'Number of copies',
+    sortAsc: 'Ascending',
+    sortDesc: 'Descending',
     searchAll: 'Search all artworks',
     searchCollection: 'Search the collection',
     progress: {
@@ -150,6 +159,7 @@ export const artworks = defineMessages(
     filterCategory: 'Category',
     filterAllCategories: 'All categories',
     filterSort: 'Sort',
+    filterOrder: 'Order',
     filterSale: 'Sale',
     resultsLabel: 'Artworks',
     searchPlaceholder: 'Search a title, an artist…',

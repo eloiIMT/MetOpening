@@ -66,6 +66,15 @@
       </select>
     </label>
 
+    <label class="filters__field">
+      {{ t('artworks.filterOrder') }}
+      <select class="filters__select" (change)="pickDirection($event)">
+        @for (option of directionOptions; track option.id) {
+          <option [value]="option.id" [selected]="option.id === direction()">{{ t(option.label) }}</option>
+        }
+      </select>
+    </label>
+
     @if (mode() === 'collection') {
       <div class="filters__sale">
         <h3 class="filters__subtitle">{{ t('artworks.filterSale') }}</h3>

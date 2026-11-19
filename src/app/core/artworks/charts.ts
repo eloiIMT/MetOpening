@@ -68,6 +68,11 @@ export function centuryOf(year: number): Century {
   return { order: number, number, beforeCommonEra: false };
 }
 
+/** Middle year of a century order (16 → 1550, -6 → -550), the inverse of centuryOf. */
+export function centuryMidYear(order: number): number {
+  return order > 0 ? (order - 1) * 100 + 50 : order * 100 + 50;
+}
+
 export function centuryFromOrder(order: number): Century {
   return { order, number: Math.abs(order), beforeCommonEra: order < 0 };
 }

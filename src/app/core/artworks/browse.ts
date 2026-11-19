@@ -1,6 +1,6 @@
 import { Artwork, DepartmentId } from './artwork';
 import { IndexEntry } from './card-index';
-import { centuryOf } from './charts';
+import { centuryMidYear, centuryOf } from './charts';
 import { RARITY_RANK, RESALE_VALUE, Rarity } from '../game/game-rules';
 
 export interface BrowserItem extends IndexEntry {
@@ -9,14 +9,16 @@ export interface BrowserItem extends IndexEntry {
   readonly obtainedAt: number | null;
 }
 
-export type SortId = 'rarity-asc' | 'rarity-desc' | 'recent' | 'title';
+export type SortKey = 'rarity' | 'date' | 'obtained' | 'title' | 'artist' | 'copies';
+export type SortDirection = 'asc' | 'desc';
 
 export interface BrowseCriteria {
   readonly query: string;
   readonly rarities: ReadonlySet<Rarity>;
   readonly department: DepartmentId | null;
   readonly favorites: ReadonlySet<number> | null;
-  readonly sort: SortId;
+  readonly sort: SortKey;
+  readonly direction: SortDirection;
 }
 
 export interface DuplicatesSummary {
@@ -58,7 +60,7 @@ export function filterItems(
 }
 
 export function browse(items: readonly BrowserItem[], criteria: BrowseCriteria): BrowserItem[] {
-  return filterItems(items, criteria).sort(COMPARATORS[criteria.sort]);
+  return SORTS[criteria.sort].sort(filterItems(items, criteria), criteria.direction);
 }
 
 export function summarizeDuplicates(items: readonly BrowserItem[]): DuplicatesSummary {
@@ -73,15 +75,57 @@ export function summarizeDuplicates(items: readonly BrowserItem[]): DuplicatesSu
 
 const collator = new Intl.Collator('fr');
 
-function byTitle(a: BrowserItem, b: BrowserItem): number {
-  const first = a.artwork?.title ?? '';
-  const second = b.artwork?.title ?? '';
-  return collator.compare(first, second) || a.id - b.id;
+/** A sort key read once per item, then compared; missing values (null) go last whatever the direction. */
+interface SortEntry<T> {
+  readonly item: BrowserItem;
+  readonly value: T | null;
+  readonly title: string;
 }
 
-const COMPARATORS: Readonly<Record<SortId, (a: BrowserItem, b: BrowserItem) => number>> = {
-  'rarity-asc': (a, b) => RARITY_RANK[a.rarity] - RARITY_RANK[b.rarity] || byTitle(a, b),
-  'rarity-desc': (a, b) => RARITY_RANK[b.rarity] - RARITY_RANK[a.rarity] || byTitle(a, b),
-  recent: (a, b) => (b.obtainedAt ?? 0) - (a.obtainedAt ?? 0) || byTitle(a, b),
-  title: byTitle,
+/** Ties fall back to title A → Z, then Met number; equal titles (often both unknown) skip the collator. */
+function byTitle<T>(a: SortEntry<T>, b: SortEntry<T>): number {
+  return (a.title === b.title ? 0 : collator.compare(a.title, b.title)) || a.item.id - b.item.id;
+}
+
+function sorter<T>(
+  valueOf: (item: BrowserItem) => T | null,
+  compare: (a: T, b: T) => number,
+): (items: BrowserItem[], direction: SortDirection) => BrowserItem[] {
+  return (items, direction) => {
+    const sign = direction === 'asc' ? 1 : -1;
+    return items
+      .map((item): SortEntry<T> => ({ item, value: valueOf(item), title: item.artwork?.title ?? '' }))
+      .sort((a, b) => {
+        if (a.value === null || b.value === null) {
+          return Number(a.value === null) - Number(b.value === null) || byTitle(a, b);
+        }
+        return sign * compare(a.value, b.value) || byTitle(a, b);
+      })
+      .map((entry) => entry.item);
+  };
+}
+
+const byNumber = (a: number, b: number) => a - b;
+const byText = (a: string, b: string) => collator.compare(a, b);
+
+const SORTS: Readonly<
+  Record<SortKey, { readonly sort: ReturnType<typeof sorter>; readonly indexOnly: boolean }>
+> = {
+  rarity: { sort: sorter((item) => RARITY_RANK[item.rarity], byNumber), indexOnly: true },
+  date: {
+    sort: sorter(
+      (item) => item.artwork?.year ?? (item.century === null ? null : centuryMidYear(item.century)),
+      byNumber,
+    ),
+    indexOnly: true,
+  },
+  obtained: { sort: sorter((item) => item.obtainedAt, byNumber), indexOnly: false },
+  title: { sort: sorter((item) => item.artwork?.title ?? null, byText), indexOnly: false },
+  artist: { sort: sorter((item) => item.artwork?.artist ?? null, byText), indexOnly: false },
+  copies: { sort: sorter((item) => item.copies, byNumber), indexOnly: false },
 };
+
+/** Whether this sort works on index data alone (no artwork loaded), as in the global search. */
+export function isIndexSort(key: SortKey): boolean {
+  return SORTS[key].indexOnly;
+}
