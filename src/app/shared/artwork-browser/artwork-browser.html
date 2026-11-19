@@ -85,7 +85,7 @@
     }
   </aside>
 
-  <section class="results" [attr.aria-label]="t('artworks.resultsLabel')">
+  <section #resultsSection class="results" [attr.aria-label]="t('artworks.resultsLabel')">
     <div class="results__bar glass">
       <label class="results__search">
         <span class="sr-only">{{ searchLabel() }}</span>
@@ -122,12 +122,38 @@
           </li>
         }
       </ul>
-      @if (hasMore()) {
-        <div #sentinel class="results__more glass">
-          <p class="results__progress">{{ progressLabel() }}</p>
-          <button type="button" class="btn-secondary tap results__more-button" (click)="loadMore()">{{ moreLabel() }}</button>
+      <nav class="pager glass" [attr.aria-label]="t('artworks.pagination')">
+        <p class="pager__range">{{ rangeLabel() }}</p>
+        <div class="pager__nav">
+          <button
+            type="button"
+            class="btn-secondary tap pager__arrow"
+            [attr.aria-label]="t('artworks.previousPage')"
+            [disabled]="page() === 0"
+            (click)="goToPage(page() - 1)"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 6l-6 6 6 6"></path></svg>
+          </button>
+          <span class="pager__page" aria-live="polite">{{ pageLabel() }}</span>
+          <button
+            type="button"
+            class="btn-secondary tap pager__arrow"
+            [attr.aria-label]="t('artworks.nextPage')"
+            [disabled]="page() === pageCount() - 1"
+            (click)="goToPage(page() + 1)"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6l6 6-6 6"></path></svg>
+          </button>
         </div>
-      }
+        <label class="pager__size">
+          {{ t('artworks.perPage') }}
+          <select class="filters__select" (change)="pickPageSize($event)">
+            @for (size of pageSizeOptions; track size) {
+              <option [value]="size" [selected]="size === pageSize()">{{ size }}</option>
+            }
+          </select>
+        </label>
+      </nav>
     } @else {
       <div class="results__empty glass">
         @if (items().length === 0 && mode() === 'collection') {

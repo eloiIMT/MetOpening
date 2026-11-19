@@ -3,7 +3,6 @@ import {
   ElementRef,
   booleanAttribute,
   computed,
-  effect,
   inject,
   input,
   linkedSignal,
@@ -38,8 +37,8 @@ const DIRECTION_OPTIONS: readonly { id: SortDirection; label: MessageKey }[] = [
   { id: 'desc', label: 'artworks.sortDesc' },
 ];
 
-const PAGE_SIZE = 24;
-const PRELOAD_MARGIN = '600px 0px';
+const PAGE_SIZE_OPTIONS = [25, 50, 100, 200] as const;
+const DEFAULT_PAGE_SIZE = 50;
 const NARROW_QUERY = '(max-width: 899.98px)';
 
 @Component({
@@ -61,7 +60,7 @@ export class ArtworkBrowser {
   protected readonly t = this.i18n.t;
 
   private readonly saleDialog = viewChild<ElementRef<HTMLDialogElement>>('saleDialog');
-  private readonly sentinel = viewChild<ElementRef<HTMLElement>>('sentinel');
+  private readonly resultsSection = viewChild<ElementRef<HTMLElement>>('resultsSection');
 
   protected readonly query = signal('');
   protected readonly rarities = signal<ReadonlySet<Rarity>>(new Set());
@@ -108,27 +107,46 @@ export class ArtworkBrowser {
     filterItems(this.items(), { ...this.filterCriteria(), department: null }),
   );
 
-  private readonly limit = linkedSignal({
-    source: this.criteria,
-    computation: () => PAGE_SIZE,
+  protected readonly pageSize = signal(DEFAULT_PAGE_SIZE);
+  protected readonly pageSizeOptions = PAGE_SIZE_OPTIONS;
+
+  // Back to page 1 when the user changes a filter, not when the favorites set itself changes.
+  private readonly requestedPage = linkedSignal({
+    source: () => [
+      this.query(),
+      this.rarities(),
+      this.department(),
+      this.favoritesOnly(),
+      this.sort(),
+      this.direction(),
+      this.pageSize(),
+    ],
+    computation: () => 0,
   });
+
+  protected readonly pageCount = computed(() => Math.max(1, Math.ceil(this.visible().length / this.pageSize())));
+
+  protected readonly page = computed(() => Math.min(Math.max(this.requestedPage(), 0), this.pageCount() - 1));
+
+  private readonly pageStart = computed(() => this.page() * this.pageSize());
 
   protected readonly shownCards = computed(() =>
     this.visible()
-      .slice(0, this.limit())
+      .slice(this.pageStart(), this.pageStart() + this.pageSize())
       .map((item) => ({ item, badge: this.badgeFor(item.copies), greyed: item.copies === 0 })),
   );
 
-  protected readonly hasMore = computed(() => this.limit() < this.visible().length);
-
-  protected readonly progressLabel = computed(() =>
-    this.t('artworks.progress', { shown: this.shownCards().length, count: this.visible().length }),
+  protected readonly rangeLabel = computed(() =>
+    this.t('artworks.pageRange', {
+      from: this.pageStart() + 1,
+      to: Math.min(this.pageStart() + this.pageSize(), this.visible().length),
+      count: this.visible().length,
+    }),
   );
 
-  protected readonly moreLabel = computed(() => {
-    const next = Math.min(PAGE_SIZE, this.visible().length - this.limit());
-    return this.t('artworks.more', { count: next });
-  });
+  protected readonly pageLabel = computed(() =>
+    this.t('artworks.pageOf', { page: this.page() + 1, pages: this.pageCount() }),
+  );
 
   protected readonly rarityOptions = computed(() => {
     const rows = rarityRows(this.rarityPool());
@@ -173,26 +191,6 @@ export class ArtworkBrowser {
     const { copies, coins } = this.duplicates();
     return this.t('artworks.saleQuestion', { count: copies, coins: this.t('common.coins', { count: coins }) });
   });
-
-  constructor() {
-    effect((onCleanup) => {
-      this.limit();
-      const element = this.sentinel()?.nativeElement;
-      if (!element) {
-        return;
-      }
-      const observer = new IntersectionObserver(
-        (entries) => {
-          if (entries.some((entry) => entry.isIntersecting)) {
-            this.loadMore();
-          }
-        },
-        { rootMargin: PRELOAD_MARGIN },
-      );
-      observer.observe(element);
-      onCleanup(() => observer.disconnect());
-    });
-  }
 
   protected typeQuery(event: Event): void {
     this.setQuery((event.target as HTMLInputElement).value);
@@ -247,10 +245,16 @@ export class ArtworkBrowser {
     this.favoritesOnly.set(false);
   }
 
-  protected loadMore(): void {
-    if (this.hasMore()) {
-      this.limit.update((limit) => limit + PAGE_SIZE);
+  protected goToPage(page: number): void {
+    const before = this.page();
+    this.requestedPage.set(page);
+    if (this.page() !== before) {
+      this.resultsSection()?.nativeElement.scrollIntoView({ block: 'start' });
     }
+  }
+
+  protected pickPageSize(event: Event): void {
+    this.pageSize.set(Number((event.target as HTMLSelectElement).value));
   }
 
   protected askSale(): void {
